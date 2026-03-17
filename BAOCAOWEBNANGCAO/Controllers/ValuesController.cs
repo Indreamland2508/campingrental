@@ -20,49 +20,69 @@ namespace BAOCAOWEBNANGCAO.Controllers
         [HttpPost("webhook")]
         public async Task<IActionResult> ReceiveWebhook([FromBody] SePayWebhookData data)
         {
-            // 1. Chỉ xử lý khi có tiền vào
-            if (data == null || data.transferType != "in")
+            Console.WriteLine("=== CÓ TIN NHẮN TỪ SEPAY GỬI ĐẾN ===");
+
+            if (data == null)
             {
-                return Ok(new { success = true, message = "Không phải giao dịch nhận tiền." });
+                Console.WriteLine("LỖI: Dữ liệu gửi đến bị NULL");
+                return Ok(new { success = false, message = "Data null" });
             }
 
-            // 2. Lấy mã đơn hàng từ nội dung (Khách ghi: "DH" + Mã số)
+            Console.WriteLine($"Số tiền: {data.amount} | Nội dung: {data.transferContent} | Loại: {data.transferType}");
+
+            if (data.transferType != "in")
+            {
+                Console.WriteLine("Bỏ qua vì đây không phải giao dịch nhận tiền.");
+                return Ok(new { success = true });
+            }
+
             int? orderId = ExtractOrderId(data.transferContent);
+            Console.WriteLine($"Mã đơn hàng bóc tách được: {(orderId.HasValue ? orderId.Value.ToString() : "KHÔNG TÌM THẤY MÃ DH")}");
 
             if (orderId.HasValue)
             {
-                // 3. Tìm đơn hàng
                 var order = await _context.Orders.FindAsync(orderId.Value);
 
-                // Chỉ xử lý nếu đơn tồn tại và đang ở trạng thái chưa thanh toán
-                if (order != null && order.PaymentStatus == "Unpaid")
+                if (order == null)
                 {
-                    // Trường hợp 1: Khách hào phóng chuyển thẳng 100% tổng tiền
-                    if (data.amount >= order.TotalAmount)
+                    Console.WriteLine($"LỖI: Không tìm thấy đơn hàng số {orderId.Value} trong Database.");
+                }
+                else
+                {
+                    Console.WriteLine($"Đã thấy đơn #{order.Id}. Trạng thái hiện tại: {order.PaymentStatus}. Cần cọc: {order.DepositAmount}. Tổng: {order.TotalAmount}");
+
+                    if (order.PaymentStatus == "Unpaid")
                     {
-                        order.PaymentStatus = "Paid";
-                        order.RemainingAmount = 0;
-                    }
-                    // Trường hợp 2: Khách chuyển đúng bằng hoặc lớn hơn số tiền cọc
-                    else if (data.amount >= order.DepositAmount)
-                    {
-                        order.PaymentStatus = "Deposited";
-                        order.RemainingAmount = order.TotalAmount - data.amount; // Tính lại tiền khách còn nợ
+                        if (data.amount >= order.TotalAmount)
+                        {
+                            order.PaymentStatus = "Paid";
+                            order.RemainingAmount = 0;
+                            Console.WriteLine("=> Đã cập nhật thành PAID (Thanh toán đủ)");
+                        }
+                        else if (data.amount >= order.DepositAmount)
+                        {
+                            order.PaymentStatus = "Deposited";
+                            order.RemainingAmount = order.TotalAmount - data.amount;
+                            Console.WriteLine($"=> Đã cập nhật thành DEPOSITED (Đã cọc). Khách còn nợ: {order.RemainingAmount}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"LỖI: Khách chuyển {data.amount} NHỎ HƠN tiền cọc yêu cầu {order.DepositAmount}");
+                            return Ok(new { success = true, message = "Thiếu tiền cọc" });
+                        }
+
+                        _context.Update(order);
+                        await _context.SaveChangesAsync();
+                        Console.WriteLine("=== LƯU DATABASE THÀNH CÔNG ===");
                     }
                     else
                     {
-                        // Khách chuyển thiếu cả tiền cọc
-                        return Ok(new { success = true, message = "Số tiền chuyển chưa đủ mức cọc tối thiểu." });
+                        Console.WriteLine($"Đơn hàng này đã được xử lý trước đó rồi (Trạng thái: {order.PaymentStatus})");
                     }
-
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-
-                    return Ok(new { success = true, message = "Đã cập nhật trạng thái đơn hàng thành công." });
                 }
             }
 
-            return Ok(new { success = true, message = "Đã nhận được thông báo nhưng không xử lý đơn nào." });
+            return Ok(new { success = true });
         }
 
         private int? ExtractOrderId(string content)
