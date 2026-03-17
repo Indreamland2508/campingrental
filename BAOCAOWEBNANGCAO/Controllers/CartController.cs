@@ -136,7 +136,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 Note = note,
                 RentalStartDate = rentalStart,
                 RentalEndDate = rentalEnd,
-                OrderDate = DateTime.Now,
+                OrderDate = DateTime.UtcNow.AddHours(7),
 
                 TotalAmount = finalTotal,
                 DepositAmount = deposit,             // Lưu tiền cọc
