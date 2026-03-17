@@ -1,7 +1,7 @@
 using BAOCAOWEBNANGCAO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // --- PHẦN 1: CẤU HÌNH SERVICES (Trước khi Build) ---
