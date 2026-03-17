@@ -1,0 +1,100 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm danh mục mới";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    /* Card bo góc sâu đồng bộ Admin Dashboard */
+    .category-card {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+    }
+
+        .form-control:focus {
+            background-color: #fff;
+            border-color: #198754;
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1);
+        }
+
+    .btn-save-category {
+        background: linear-gradient(135deg, #198754 0%, #157347 100%);
+        border: none;
+        border-radius: 50rem;
+        padding: 12px 35px;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+        .btn-save-category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);
+        }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark m-0">🆕 Thêm danh mục mới</h3>
+                    <p class="text-muted small m-0">Phân loại sản phẩm (ví dụ: Lều cắm trại, Đồ dã ngoại...)</p>
+                </div>
+                <a asp-action="Index" class="btn btn-light rounded-pill px-4 border">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại
+                </a>
+            </div>
+
+            <div class="card category-card">
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4 small"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">Tên danh mục</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;"><i class="bi bi-bookmark-plus text-success"></i></span>
+                                <input asp-for="Name" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="Nhập tên loại sản phẩm..." />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">Mô tả ngắn</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả về nhóm sản phẩm này..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                            <a asp-action="Index" class="btn btn-light rounded-pill px-4">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success btn-save-category shadow">
+                                <i class="bi bi-save2 me-2"></i> Lưu danh mục
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

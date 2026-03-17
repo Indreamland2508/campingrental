@@ -1,0 +1,220 @@
+﻿@{
+    ViewData["Title"] = "Dashboard Tổng quan";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* --- NÂNG CẤP THẺ THỐNG KÊ (STAT CARDS) --- */
+    .stat-card-modern {
+        border: none;
+        border-radius: 24px;
+        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        padding: 28px 24px;
+        height: 100%;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+        .stat-card-modern:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+    .bg-gradient-revenue {
+        background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    }
+
+    .bg-gradient-pending {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .bg-gradient-products {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: #1a3a28;
+    }
+
+    .bg-gradient-orders {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .stat-card-modern h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.85;
+        margin-bottom: 8px;
+    }
+
+    .stat-card-modern h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+    }
+
+    .stat-icon-bg {
+        position: absolute;
+        right: -15px;
+        bottom: -20px;
+        font-size: 7rem;
+        opacity: 0.15;
+        z-index: 1;
+        transform: rotate(-10deg);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-footer {
+        position: relative;
+        z-index: 2;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .stat-footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+    .bg-gradient-products h5, .bg-gradient-products h2, .bg-gradient-products .stat-footer a, .bg-gradient-products .stat-footer i {
+        color: #1a3a28 !important;
+    }
+
+    .bg-gradient-products .stat-footer {
+        border-top-color: rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark d-inline-block me-2">🚀 Dashboard</h2>
+        <span class="badge bg-light text-success rounded-pill px-3 shadow-sm border">Hôm nay, @DateTime.Now.ToString("dd/MM/yyyy")</span>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card-modern bg-gradient-revenue">
+                <i class="bi bi-wallet2 stat-icon-bg"></i>
+                <div class="position-relative z-index-2">
+                    <h5>Tổng doanh thu</h5>
+                    <h2>@ViewBag.TotalRevenue.ToString("#,##0") đ</h2>
+                </div>
+                <div class="stat-footer">
+                    <a asp-controller="Orders" asp-action="Index" class="stretched-link">Chi tiết giao dịch</a>
+                    <i class="bi bi-arrow-right-short fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card-modern bg-gradient-pending">
+                <i class="bi bi-clock-history stat-icon-bg"></i>
+                <div class="position-relative z-index-2">
+                    <h5>Đơn chờ duyệt</h5>
+                    <h2>@ViewBag.PendingOrders</h2>
+                </div>
+                <div class="stat-footer">
+                    <a asp-controller="Orders" asp-action="Index" class="stretched-link">Xử lý ngay</a>
+                    <i class="bi bi-arrow-right-short fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card-modern bg-gradient-products">
+                <i class="bi bi-tent stat-icon-bg"></i>
+                <div class="position-relative z-index-2">
+                    <h5>Tổng sản phẩm</h5>
+                    <h2>@ViewBag.TotalProducts</h2>
+                </div>
+                <div class="stat-footer">
+                    <a asp-controller="Products" asp-action="Index" class="stretched-link">Quản lý kho</a>
+                    <i class="bi bi-arrow-right-short fs-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card-modern bg-gradient-orders">
+                <i class="bi bi-lightning-charge stat-icon-bg"></i>
+                <div class="position-relative z-index-2">
+                    <h5>Đơn hôm nay</h5>
+                    <h2>@ViewBag.TodayOrders</h2>
+                </div>
+                <div class="stat-footer">
+                    <span class="small fw-bold">Dữ liệu thời gian thực</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-radius: 24px;">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark m-0">
+                        <i class="bi bi-graph-up-arrow text-primary me-2"></i>
+                        Xu hướng doanh thu (7 ngày)
+                    </h5>
+                    <button class="btn btn-light btn-sm rounded-pill px-3 shadow-sm border" type="button">
+                        <i class="bi bi-download me-1"></i> Xuất báo cáo
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <canvas id="revenueChart" style="max-height: 350px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+
+<script>
+    var chartLabels = @Html.Raw(Json.Serialize(ViewBag.ChartLabels));
+    var chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+
+    var ctx = document.getElementById("revenueChart");
+    var myLineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: "Doanh thu (VNĐ)",
+                backgroundColor: "rgba(33, 147, 176, 0.8)",
+                hoverBackgroundColor: "rgba(33, 147, 176, 1)",
+                borderColor: "#2193b0",
+                borderWidth: 0,
+                data: chartData,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                xAxes: [{
+                    gridLines: { display: false },
+                    ticks: { fontColor: "#9e9e9e", fontStyle: "600" }
+                }],
+                yAxes: [{
+                    gridLines: { color: "rgba(0,0,0,0.03)", zeroLineColor: "transparent" },
+                    ticks: {
+                        beginAtZero: true,
+                        fontColor: "#9e9e9e",
+                        callback: function(value) {
+                            return value.toLocaleString('vi-VN') + ' đ';
+                        }
+                    }
+                }],
+            },
+            legend: { display: false }
+        }
+    });
+</script>

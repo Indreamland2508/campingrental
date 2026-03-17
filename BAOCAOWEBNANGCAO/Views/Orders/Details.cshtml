@@ -1,0 +1,310 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    /* Card bo góc và đổ bóng nhẹ */
+    .detail-card {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        margin-bottom: 1.5rem;
+    }
+
+        /* Tiêu đề các mục */
+        .detail-card .card-header {
+            border-radius: 24px 24px 0 0 !important;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+            .detail-card .card-header i {
+                margin-right: 12px;
+                font-size: 1.2rem;
+            }
+
+    /* Custom màu sắc cho các mục */
+    .header-customer {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+    /* Xanh dương nhạt */
+    .header-rental {
+        background: #fff4e6;
+        color: #d97706;
+    }
+    /* Cam nhạt */
+    .header-products {
+        background: #eaf5ea;
+        color: #157347;
+    }
+    /* Xanh lá nhạt */
+    .header-finance {
+        background: #fef9c3;
+        color: #ca8a04;
+    }
+    /* Vàng nhạt (Mới thêm) */
+
+    /* Bảng sản phẩm */
+    .table-detail thead th {
+        background-color: #f8faf9;
+        color: #4b5563;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        border: none;
+        padding: 1rem;
+    }
+
+    /* Alert thời gian thuê sang trọng */
+    .alert-rental-days {
+        background: linear-gradient(135deg, #198754 0%, #157347 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-weight: 700;
+    }
+
+    /* Nút bấm bo tròn viên thuốc */
+    .btn-pill {
+        border-radius: 50rem;
+        padding: 12px 25px;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+        .btn-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+</style>
+
+<div class="container-fluid px-4 py-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark m-0">📦 Chi tiết đơn hàng #@Model.Id</h2>
+            <p class="text-muted small">Cập nhật trạng thái và quản lý tài chính đơn thuê</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card detail-card">
+                <div class="card-header header-customer">
+                    <i class="bi bi-person-vcard-fill"></i> Thông tin khách hàng
+                </div>
+                <div class="card-body py-4">
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">Họ và tên</label>
+                        <span class="fw-bold fs-5 text-dark">@Model.CustomerName</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">Số điện thoại</label>
+                        <span class="fw-bold">@Model.CustomerPhone</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">Email</label>
+                        <span class="text-dark">@Model.CustomerEmail</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">Địa chỉ giao lều</label>
+                        <span class="text-dark small">@Model.ShippingAddress</span>
+                    </div>
+                    <hr class="opacity-25">
+                    <div>
+                        <label class="small text-muted d-block">Ghi chú</label>
+                        <em class="text-muted small">@(string.IsNullOrEmpty(Model.Note) ? "Không có ghi chú" : Model.Note)</em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card detail-card">
+                <div class="card-header header-rental">
+                    <i class="bi bi-calendar-range-fill"></i> Lịch thuê thiết bị
+                </div>
+                <div class="card-body py-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="text-center p-2 rounded-4 bg-light flex-grow-1 me-2">
+                            <label class="extra-small text-muted d-block" style="font-size: 0.7rem;">NGÀY NHẬN</label>
+                            <span class="fw-bold">@Model.RentalStartDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="text-center p-2 rounded-4 bg-light flex-grow-1 ms-2">
+                            <label class="extra-small text-muted d-block" style="font-size: 0.7rem;">NGÀY TRẢ</label>
+                            <span class="fw-bold">@Model.RentalEndDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+
+                    @{
+                        var days = (Model.RentalEndDate - Model.RentalStartDate).Days;
+                        if (days <= 0) days = 1;
+                    }
+                    <div class="alert alert-rental-days text-center mb-0 shadow-sm">
+                        <i class="bi bi-clock-history me-2"></i> Tổng thời gian: @days ngày
+                    </div>
+                </div>
+            </div>
+
+            <div class="card detail-card border border-warning border-2">
+                <div class="card-header header-finance">
+                    <i class="bi bi-wallet2"></i> Cập nhật Tiền nong
+                </div>
+                <div class="card-body py-4">
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="mb-3">
+                            <select name="paymentStatus" class="form-select border-warning shadow-sm fw-bold">
+                                <!option value="Unpaid" @(Model.PaymentStatus == "Unpaid" ? "selected" : "")>🔴 Khách chưa cọc</!option>
+                                <!option value="Deposited" @(Model.PaymentStatus == "Deposited" ? "selected" : "")>🟡 Đã nhận cọc (@Model.DepositAmount.ToString("#,##0")₫)</!option>
+                                <!option value="Paid" @(Model.PaymentStatus == "Paid" ? "selected" : "")>🟢 Đã thu đủ tiền</!option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold shadow-sm">LƯU TRẠNG THÁI TIỀN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card detail-card">
+                <div class="card-header header-products">
+                    <i class="bi bi-box-seam-fill"></i> Danh sách sản phẩm thuê
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle table-modern table-detail mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Sản phẩm</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Đơn giá/Ngày</th>
+                                    <th class="text-end pe-4">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderDetails)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(item.Product.ImageUrl) ? "/images/no-image.png" : item.Product.ImageUrl)" style="width: 50px; height: 50px; object-fit: cover;" class="rounded-3 me-3 border shadow-sm">
+                                                <span class="fw-bold text-dark">@item.Product.Name</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border px-3 rounded-pill fw-bold">@item.Quantity</span>
+                                        </td>
+                                        <td class="text-end text-muted small">@item.PricePerUnit.ToString("#,##0")₫</td>
+                                        <td class="text-end pe-4 fw-bold text-dark">@((item.PricePerUnit * item.Quantity).ToString("#,##0"))₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold py-3 text-muted">TỔNG ĐƠN HÀNG (x @days ngày):</td>
+                                    <td class="text-end pe-4 fw-bold fs-5 text-dark py-3">@Model.TotalAmount.ToString("#,##0")₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold py-2">TIỀN CỌC GIỮ ĐỒ (50%):</td>
+                                    <td class="text-end pe-4 fw-bold fs-5 text-warning py-2">@Model.DepositAmount.ToString("#,##0")₫</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold py-3">CẦN THU NỐT KHI GIAO LỀU:</td>
+                                    <td class="text-end pe-4 fw-bold fs-4 text-danger py-3">@Model.RemainingAmount.ToString("#,##0")₫</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-end align-items-center gap-3 bg-white p-3 rounded-pill shadow-sm">
+                <span class="text-muted small fw-bold me-auto ms-3"><i class="bi bi-truck me-2"></i>TIẾN TRÌNH GIAO NHẬN:</span>
+
+                @if (Model.Status == "Pending")
+                {
+                    <form asp-action="UpdateStatus" method="post" class="m-0">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="status" value="Approved" />
+                        <button type="submit" class="btn btn-success btn-pill shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Duyệt đơn & Đi giao
+                        </button>
+                    </form>
+
+                    <form asp-action="UpdateStatus" method="post" id="cancelOrderForm" class="m-0">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="status" value="Cancelled" />
+                        <button type="button" class="btn btn-outline-danger btn-pill" onclick="confirmCancel()">
+                            <i class="bi bi-x-circle me-1"></i> Hủy đơn
+                        </button>
+                    </form>
+                }
+                else if (Model.Status == "Approved" || Model.Status == "Delivering")
+                {
+                    <div class="badge bg-success-subtle text-success px-4 py-2 rounded-pill fw-bold border border-success m-0">
+                        <i class="bi bi-truck me-2"></i> KHÁCH ĐANG THUÊ
+                    </div>
+
+                    <form asp-action="UpdateStatus" method="post" class="m-0">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="status" value="Completed" />
+                        <button type="submit" class="btn btn-primary btn-pill shadow-sm">
+                            <i class="bi bi-box-arrow-in-down me-1"></i> Xác nhận đã nhận lại đồ
+                        </button>
+                    </form>
+                }
+                else if (Model.Status == "Completed")
+                {
+                    <div class="alert alert-success d-flex align-items-center rounded-pill px-4 m-0 fw-bold border-0 shadow-sm">
+                        <i class="bi bi-check-all fs-4 me-2"></i> Đã hoàn tất & nhập kho
+                    </div>
+                }
+                else if (Model.Status == "Cancelled")
+                {
+                    <div class="badge bg-secondary-subtle text-secondary px-4 py-2 rounded-pill fw-bold border m-0">
+                        <i class="bi bi-trash-fill me-2"></i> ĐƠN HÀNG ĐÃ HỦY
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmCancel() {
+            Swal.fire({
+                title: 'Xác nhận hủy đơn?',
+                text: "Hành động này sẽ hủy đơn hàng của khách và không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#198754',
+                confirmButtonText: 'Đúng, hủy đơn này!',
+                cancelButtonText: 'Không, quay lại',
+                reverseButtons: true,
+                borderRadius: '20px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('cancelOrderForm').submit();
+                }
+            })
+        }
+    </script>
+}

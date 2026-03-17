@@ -1,0 +1,283 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<style>
+    /* BỘ MÀU CHUẨN MINIMALIST */
+    :root {
+        --forest-dark: #1a3a28;
+    }
+
+    .font-serif {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+    }
+
+    /* 1. TỐI ƯU HÓA KHÔNG GIAN */
+    body {
+        background-color: #ffffff;
+    }
+
+    .luxury-container {
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
+
+    /* 2. KHUNG ẢNH TỐI GIẢN */
+    .img-display-frame {
+        background-color: #fcfcfc; /* Xám cực nhạt */
+        border: 1px solid #f0f0f0;
+        border-radius: 20px; /* Bo tròn lớn như trang Sản phẩm */
+        overflow: hidden;
+        position: sticky;
+        top: 120px; /* Cho độ bám dính (sticky) mượt hơn khi cuộn */
+        padding: 40px; /* Thêm khoảng thở cho ảnh */
+    }
+
+        .img-display-frame img {
+            width: 100%;
+            height: auto;
+            mix-blend-mode: multiply; /* Giữ lại nếu ảnh có nền trắng */
+            transition: transform 0.6s ease;
+        }
+
+        .img-display-frame:hover img {
+            transform: scale(1.05); /* Zoom nhẹ khi hover ảnh */
+        }
+
+    /* 3. TYPOGRAPHY */
+    .product-meta {
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .product-name-luxury {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem; /* Cỡ chữ lớn hơn một chút */
+        font-weight: 700;
+        color: var(--forest-dark);
+        margin-bottom: 15px;
+        line-height: 1.2;
+    }
+
+    .price-tag-luxury {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 30px;
+    }
+
+    .luxury-description {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #4b5563;
+        margin-bottom: 40px;
+        font-weight: 300;
+    }
+
+    /* 4. NÚT BẤM SANG TRỌNG */
+    .btn-luxury-action {
+        background-color: var(--forest-dark);
+        color: #ffffff;
+        border: none;
+        border-radius: 50rem;
+        padding: 18px 30px;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+        .btn-luxury-action:hover {
+            background-color: #15321e;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(26, 58, 40, 0.15);
+        }
+
+    /* 5. CỤM SỐ LƯỢNG (TỐI GIẢN) */
+    .quantity-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 20px 0;
+    }
+
+    .quantity-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6b7280;
+        letter-spacing: 1px;
+        margin-right: 20px;
+    }
+
+    .quantity-control {
+        border: 1px solid #e5e7eb;
+        border-radius: 50rem;
+        padding: 5px 15px;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        margin-right: 20px;
+    }
+
+    .quantity-input {
+        border: none;
+        text-align: center;
+        width: 50px;
+        font-weight: 600;
+        outline: none;
+        background: transparent;
+        color: var(--forest-dark);
+    }
+
+    /* 6. INFO COLLAPSE (Gạch chân mỏng) */
+    .info-collapse-item {
+        border-top: 1px solid #f0f0f0;
+        padding: 25px 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        color: var(--forest-dark);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: color 0.3s;
+    }
+
+        .info-collapse-item:hover {
+            color: #198754;
+        }
+
+        .info-collapse-item:last-child {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+    /* 7. CỤM ICON CHẤT LƯỢNG */
+    .quality-icons {
+        margin-top: 40px;
+        padding-top: 30px;
+        display: flex;
+        gap: 40px; /* Tăng khoảng cách giữa các icon */
+    }
+
+        .quality-icons .text-center i {
+            color: var(--forest-dark); /* Đổi màu icon sang xanh đậm */
+            font-size: 1.5rem; /* Giảm kích thước icon một chút */
+            opacity: 0.8;
+        }
+
+        .quality-icons .text-center p {
+            font-family: 'Playfair Display', serif; /* Dùng font Serif cho nhãn icon */
+            font-size: 0.8rem;
+            margin-top: 8px;
+            color: #4b5563;
+            font-style: italic;
+        }
+</style>
+
+<div class="container luxury-container">
+    <nav style="--bs-breadcrumb-divider: '·';" class="mb-5">
+        <ol class="breadcrumb small text-uppercase fw-bold" style="letter-spacing: 1.5px; font-size: 0.75rem;">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="ProductList" class="text-decoration-none text-muted">Shop</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="ProductList" asp-route-category="@Model.Category?.Name" class="text-decoration-none text-muted">
+                    @Model.Category?.Name
+                </a>
+            </li>
+            <li class="breadcrumb-item active" style="color: var(--forest-dark);">Chi tiết</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <div class="img-display-frame">
+                <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/no-image.png" : Model.ImageUrl)" alt="@Model.Name">
+            </div>
+        </div>
+
+        <div class="col-lg-5 offset-lg-1">
+            <div class="product-details-sticky">
+                <span class="product-meta">Mã sản phẩm: #@Model.Id</span>
+                <h1 class="product-name-luxury">@Model.Name</h1>
+                <div class="price-tag-luxury">@Model.PricePerDay.ToString("#,##0")₫ <span class="text-muted fs-6 fw-normal font-sans-serif">/ ngày</span></div>
+
+                <div class="luxury-description">
+                    @Model.Description
+                </div>
+
+                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                    <div class="quantity-row">
+                        <span class="quantity-label">Số lượng</span>
+                        <div class="quantity-control">
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.Quantity" class="quantity-input">
+                        </div>
+                        <span class="text-muted small">(@Model.Quantity sản phẩm sẵn có)</span>
+                    </div>
+
+                    <div class="mb-5">
+                        @if (Model.Quantity > 0)
+                        {
+                            <button type="submit" class="btn-luxury-action shadow-sm">
+                                Thêm Vào Túi Đồ Của Bạn
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary w-100 rounded-pill py-3" disabled style="background-color: #f3f4f6; color: #9ca3af; border: none; font-weight: 700; letter-spacing: 1px;">
+                                TẠM HẾT HÀNG
+                            </button>
+                        }
+                    </div>
+                </form>
+
+                <div class="mt-5">
+                    <a href="#" class="info-collapse-item">
+                        <span>Đặc tính sản phẩm</span>
+                        <i class="bi bi-plus"></i>
+                    </a>
+                    <a href="#" class="info-collapse-item">
+                        <span>Chính sách thuê & Trả đồ</span>
+                        <i class="bi bi-plus"></i>
+                    </a>
+                    <a href="#" class="info-collapse-item">
+                        <span>Dịch vụ hỗ trợ tại trại</span>
+                        <i class="bi bi-plus"></i>
+                    </a>
+                </div>
+
+                <div class="quality-icons">
+                    <div class="text-center">
+                        <i class="bi bi-shield-check"></i>
+                        <p>Đảm bảo chất lượng</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="bi bi-stars"></i>
+                        <p>Vệ sinh tiêu chuẩn</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="bi bi-truck"></i>
+                        <p>Giao tận nơi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

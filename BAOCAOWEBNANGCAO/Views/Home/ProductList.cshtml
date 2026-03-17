@@ -1,0 +1,344 @@
+﻿@model IEnumerable<BAOCAOWEBNANGCAO.Models.Product>
+@using System.Net
+@{
+    ViewData["Title"] = "Hệ sinh thái Camping";
+    string currentCat = ViewBag.CurrentCategory as string ?? "";
+
+    string bannerBgClass = "bg-default";
+    string bannerImg = "/images/products/hesinhthai.jpg";
+
+    if (currentCat == "Lều cắm trại") { bannerBgClass = "bg-tent"; bannerImg = "/images/products/leu.jpg"; }
+    else if (currentCat == "Dụng cụ nấu ăn") { bannerBgClass = "bg-cook"; bannerImg = "/images/products/bep.jpg"; }
+    else if (currentCat == "Phương tiện di chuyển") { bannerBgClass = "bg-move"; bannerImg = "/images/products/xe.jpg"; }
+    else if (currentCat == "Phụ kiện dã ngoại") { bannerBgClass = "bg-acc"; bannerImg = "/images/products/ban.jpg"; }
+}
+
+<style>
+    /* BỘ MÀU CHUẨN MINIMALIST */
+    :root {
+        --forest-dark: #1a3a28;
+    }
+
+    .font-serif {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+    }
+
+    /* 1. HỆ MÀU BANNER TỐI GIẢN - ĐỔI THÀNH ĐƠN SẮC THAY VÌ GRADIENT RỰC RỠ */
+    .bg-default {
+        background: var(--forest-dark);
+    }
+
+    .bg-tent {
+        background: #2b3a2a;
+    }
+
+    .bg-cook {
+        background: #3a2b2b;
+    }
+
+    .bg-move {
+        background: #1f2e34;
+    }
+
+    .bg-acc {
+        background: #2f3a44;
+    }
+
+    .page-header {
+        color: white;
+        border-radius: 30px; /* Bo tròn vừa phải */
+        padding: 80px 60px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+        /* Thêm overlay pattern nhẹ để banner đỡ trống */
+        .page-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+    .banner-illustration {
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        animation: floating 5s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+    }
+
+    @@keyframes floating {
+        0%
+
+    {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+
+    }
+
+    /* 2. THANH DANH MỤC STICKY SIÊU MẢNH */
+    .sticky-filter-container {
+        position: sticky;
+        top: 75px;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(15px);
+        padding: 25px 0 15px 0;
+        border-bottom: 1px solid #eef2ef;
+        margin-bottom: 50px;
+    }
+
+    .filter-luxury {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+        .filter-luxury::-webkit-scrollbar {
+            display: none;
+        }
+
+    .filter-link {
+        color: #9ca3af;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        transition: 0.3s;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .filter-link:hover {
+            color: var(--forest-dark);
+        }
+
+        .filter-link.active {
+            color: var(--forest-dark);
+        }
+
+            .filter-link.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                height: 2px;
+                background: var(--forest-dark);
+            }
+
+    /* 3. HIỆU ỨNG HIỆN DẦN (SCROLL REVEAL) */
+    .product-reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+        .product-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* 4. CARD SẢN PHẨM LUXURY ĐỒNG BỘ TRANG CHỦ */
+    .product-luxury-card {
+        border: none !important;
+        background: transparent;
+        transition: all 0.4s ease;
+        margin-bottom: 40px;
+        text-decoration: none !important;
+        display: block;
+    }
+
+    .img-luxury-frame {
+        background-color: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 25px; /* Bo tròn lớn như trang chủ */
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: 0.4s ease;
+    }
+
+        .img-luxury-frame img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+    .product-luxury-card:hover .img-luxury-frame {
+        background-color: #ffffff;
+        border-color: var(--forest-dark);
+        box-shadow: 0 20px 40px rgba(26, 58, 40, 0.06);
+    }
+
+    .product-luxury-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .product-info-minimal {
+        padding-top: 20px;
+        text-align: center; /* Đưa text ra giữa cho sang */
+    }
+
+    .luxury-cat-name {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #9ca3af;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .luxury-title {
+        font-family: 'Playfair Display', serif; /* Font Serif cho tiêu đề sản phẩm */
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--forest-dark);
+        margin-bottom: 10px;
+        display: block;
+        line-height: 1.4;
+        height: 3rem;
+        overflow: hidden;
+    }
+
+    .luxury-price {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    /* Nút trái tim nhỏ nhắn */
+    .wishlist-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #9ca3af;
+        font-size: 1.2rem;
+        z-index: 5;
+        transition: 0.3s;
+        background: white;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+        .wishlist-btn:hover {
+            color: #dc3545;
+            transform: scale(1.1);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="page-header @bannerBgClass">
+        <div class="row w-100 align-items-center position-relative z-1">
+            <div class="col-lg-7 text-start ps-lg-5">
+                <span class="badge bg-white text-dark rounded-pill px-4 py-2 mb-4 fw-bold font-monospace" style="letter-spacing: 1px;">DỰ ÁN CHÂU & TRƯỜNG</span>
+                <h1 class="display-3 fw-bold mb-4 font-serif">
+                    @(string.IsNullOrEmpty(currentCat) ? "Hệ Sinh Thái Dã Ngoại" :
+                                        currentCat == "Lều cắm trại" ? "Ngôi Nhà Giữa Đại Ngàn" :
+                                        currentCat == "Dụng cụ nấu ăn" ? "Bếp Lửa Hồng Xa Xứ" :
+                                        currentCat == "Phương tiện di chuyển" ? "Vượt Mọi Địa Hình" : "Tinh Tế Từng Chi Tiết")
+                </h1>
+                <p class="fs-5 text-white-50 fw-light">Cung cấp giải pháp trọn vẹn cho phong cách sống ngoài trời đẳng cấp.</p>
+            </div>
+            <div class="col-lg-5 text-center d-none d-lg-block">
+                <img src="@bannerImg" class="img-fluid banner-illustration" alt="Banner">
+            </div>
+        </div>
+    </div>
+
+    <div class="sticky-filter-container">
+        <div class="filter-luxury">
+            <a asp-action="ProductList" asp-route-category="" class="filter-link @(string.IsNullOrEmpty(currentCat) ? "active" : "")">Tất cả</a>
+            @if (ViewBag.Categories != null)
+            {
+                foreach (var cat in ViewBag.Categories)
+                {
+                    <a asp-action="ProductList" asp-route-category="@cat.Name" class="filter-link @(currentCat == cat.Name ? "active" : "")">@cat.Name</a>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="row g-5">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 product-reveal">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="product-luxury-card">
+                        <div class="img-luxury-frame">
+                            <div class="wishlist-btn"><i class="bi bi-heart"></i></div>
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                                 alt="@item.Name">
+                        </div>
+                        <div class="product-info-minimal">
+                            <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
+                            <span class="luxury-title">@item.Name</span>
+                            <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted font-serif fst-italic">Không tìm thấy sản phẩm nào trong danh mục này.</h4>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // JS XỬ LÝ HIỆU ỨNG HIỆN DẦN KHI CUỘN CHUỘT
+    document.addEventListener("DOMContentLoaded", function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Thêm delay nhỏ cho từng thẻ để tạo hiệu ứng lượn sóng (cascade)
+                    setTimeout(() => {
+                        entry.target.classList.add('active');
+                    }, index * 50);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.product-reveal').forEach(el => observer.observe(el));
+    });
+</script>

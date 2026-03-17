@@ -1,0 +1,306 @@
+﻿    @model List<BAOCAOWEBNANGCAO.Models.CartItem>
+    @{
+        ViewData["Title"] = "Thanh toán";
+        decimal cartTotal = Model.Sum(item => item.TotalPrice);
+    }
+
+    <style>
+        /* Tổng thể nền nã */
+    body {
+        background-color: #f4f7f5;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .checkout-card {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+        background: #fff;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 1px solid #eef2ef;
+        padding: 12px 16px;
+        background-color: #fcfdfc;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.08);
+            background-color: #fff;
+        }
+
+    .order-summary-box {
+        background: linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%);
+        border-radius: 24px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .btn-checkout-final {
+        background: linear-gradient(135deg, #198754 0%, #157347 100%);
+        border: none;
+        border-radius: 15px;
+        padding: 16px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        color: white;
+    }
+
+        .btn-checkout-final:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(25, 135, 84, 0.25);
+            color: white;
+        }
+
+    .badge-qty {
+        background: #198754 !important;
+        font-size: 0.7rem;
+    }
+
+    .text-primary-custom {
+        color: #198754 !important;
+    }
+
+    .bg-light-custom {
+        background-color: #f8faf9 !important;
+    }
+
+    /* CSS mới cho khối báo giá tiền cọc */
+    .deposit-box {
+        background-color: #fff4e5;
+        border: 1px dashed #ffc107;
+        border-radius: 15px;
+        padding: 15px;
+    }
+
+        /* Card trắng bo góc sâu */
+        .checkout-card {
+            border-radius: 24px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            background: #fff;
+        }
+
+        /* Input hiện đại */
+        .form-control {
+            border-radius: 12px;
+            border: 1px solid #eef2ef;
+            padding: 12px 16px;
+            background-color: #fcfdfc;
+            transition: all 0.3s;
+        }
+
+            .form-control:focus {
+                border-color: #198754;
+                box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.08);
+                background-color: #fff;
+            }
+
+        /* Tóm tắt đơn hàng bên phải */
+        .order-summary-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%);
+            border-radius: 24px;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* Nút đặt hàng "sang" */
+        .btn-checkout-final {
+            background: linear-gradient(135deg, #198754 0%, #157347 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            color: white;
+        }
+
+            .btn-checkout-final:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(25, 135, 84, 0.25);
+                color: white;
+            }
+
+        .badge-qty {
+            background: #198754 !important;
+            font-size: 0.7rem;
+        }
+
+        .text-primary-custom {
+            color: #198754 !important;
+        }
+
+        .bg-light-custom {
+            background-color: #f8faf9 !important;
+        }
+    </style>
+
+<div class="container py-5">
+    <form asp-action="Checkout" method="post" id="checkoutForm">
+        <div class="row g-4">
+
+            <div class="col-lg-7">
+                <div class="card checkout-card p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0 text-dark">Thông tin nhận hàng</h4>
+                        <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-primary-custom small fw-bold">
+                            <i class="bi bi-person-circle"></i> Đăng nhập
+                        </a>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="small fw-bold text-muted mb-1">Email liên hệ</label>
+                            <input type="email" name="customerEmail" class="form-control" placeholder="Để nhận thông báo đơn hàng...">
+                        </div>
+                        <div class="col-12">
+                            <label class="small fw-bold text-muted mb-1">Họ và tên người thuê</label>
+                            <input type="text" name="customerName" class="form-control" required placeholder="Họ và tên của bạn">
+                        </div>
+                        <div class="col-12">
+                            <label class="small fw-bold text-muted mb-1">Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white text-muted border-end-0" style="border-radius: 12px 0 0 12px;">🇻🇳 +84</span>
+                                <input type="text" name="customerPhone" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" required placeholder="Số điện thoại liên lạc">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="small fw-bold text-muted mb-1">Địa chỉ nhận lều</label>
+                            <input type="text" name="shippingAddress" class="form-control" required placeholder="Số nhà, Tên đường, Phường/Xã...">
+                        </div>
+                        <div class="col-12">
+                            <label class="small fw-bold text-muted mb-1">Ghi chú (tùy chọn)</label>
+                            <textarea name="note" class="form-control" rows="3" placeholder="Ví dụ: Giao lều trước 8h sáng..."></textarea>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mt-5 mb-3 text-dark"><i class="bi bi-calendar-event me-2 text-primary-custom"></i>Thời gian thuê</h5>
+                    <div class="row g-3 p-4 bg-light-custom rounded-4 border border-white shadow-sm">
+                        <div class="col-md-6">
+                            <label class="small text-muted fw-bold mb-1">Từ ngày</label>
+                            <input type="date" name="rentalStart" id="rentalStart" class="form-control bg-white shadow-sm" required value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted fw-bold mb-1">Đến ngày</label>
+                            <input type="date" name="rentalEnd" id="rentalEnd" class="form-control bg-white shadow-sm" required value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-12 text-end">
+                            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold" id="dayCountText">Thời gian: 1 ngày</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card checkout-card order-summary-box p-4 p-md-5">
+                    <h5 class="fw-bold mb-4 text-dark">Đơn hàng (@Model.Count sản phẩm)</h5>
+
+                    <div class="mb-4" style="max-height: 280px; overflow-y: auto; overflow-x: hidden;">
+                        @foreach (var item in Model)
+                        {
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-light">
+                                <div class="d-flex align-items-center">
+                                    <div class="position-relative me-3">
+                                        <img src="@item.Product.ImageUrl" style="width: 55px; height: 55px; object-fit: cover;" class="rounded-3 border shadow-sm">
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-qty shadow">@item.Quantity</span>
+                                    </div>
+                                    <div>
+                                        <p class="mb-0 fw-bold small text-dark">@item.Product.Name</p>
+                                        <span class="text-muted extra-small">@item.Product.Category?.Name</span>
+                                    </div>
+                                </div>
+                                <span class="small fw-bold text-dark">@item.TotalPrice.ToString("#,##0")₫</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control border-end-0" style="border-radius: 12px 0 0 12px;" placeholder="Mã giảm giá">
+                        <button class="btn btn-dark px-3 fw-bold" style="border-radius: 0 12px 12px 0;" type="button">Áp dụng</button>
+                    </div>
+
+                    <div class="py-3 mb-2">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Tạm tính (1 ngày)</span>
+                            <span class="fw-bold small text-dark">@cartTotal.ToString("#,##0")₫</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 border-bottom border-light pb-2">
+                            <span class="text-muted small">Số ngày thuê</span>
+                            <span class="fw-bold text-primary-custom" id="dayCountReview">1</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="h6 fw-bold text-muted m-0">TỔNG TIỀN</span>
+                            <span class="h5 fw-bold text-dark m-0" id="finalTotal">@cartTotal.ToString("#,##0")₫</span>
+                        </div>
+                    </div>
+
+                    <div class="deposit-box mb-4 shadow-sm">
+                        <div class="d-flex justify-content-between fw-bold text-warning-emphasis mb-1">
+                            <span><i class="bi bi-shield-lock-fill me-2"></i>Cọc giữ đồ (50%)</span>
+                            <span class="fs-4" id="depositAmount">@((cartTotal / 2).ToString("#,##0"))₫</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted border-top border-warning border-opacity-25 pt-2 mt-2">
+                            <span>Thanh toán nốt khi nhận</span>
+                            <span class="fw-bold" id="remainingAmount">@((cartTotal / 2).ToString("#,##0"))₫</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-checkout-final w-100 text-uppercase mb-3 shadow">
+                        Xác nhận & Thanh toán cọc
+                    </button>
+
+                    <div class="text-center">
+                        <a asp-action="Index" class="text-decoration-none text-muted small"><i class="bi bi-chevron-left"></i> Quay về giỏ hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const startInput = document.getElementById("rentalStart");
+        const endInput = document.getElementById("rentalEnd");
+        const dayCountText = document.getElementById("dayCountText");
+        const dayCountReview = document.getElementById("dayCountReview");
+
+        // Các thẻ hiển thị tiền
+        const finalTotalSpan = document.getElementById("finalTotal");
+        const depositAmountSpan = document.getElementById("depositAmount");
+        const remainingAmountSpan = document.getElementById("remainingAmount");
+
+        const basePrice = @cartTotal; // Lấy giá 1 ngày từ Server
+
+        function updatePrice() {
+            const start = new Date(startInput.value);
+            const end = new Date(endInput.value);
+            const diffTime = end - start;
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) diffDays = 1;
+
+            // Cập nhật số ngày
+            dayCountText.innerText = "Thời gian: " + diffDays + " ngày";
+            dayCountReview.innerText = diffDays;
+
+            // Tính toán tổng tiền
+            const total = basePrice * diffDays;
+            const deposit = total / 2;       // Tiền cọc 50%
+            const remaining = total - deposit; // Tiền còn lại
+
+            // Cập nhật ra màn hình với định dạng tiền tệ VN
+            finalTotalSpan.innerText = total.toLocaleString('vi-VN') + "₫";
+            depositAmountSpan.innerText = deposit.toLocaleString('vi-VN') + "₫";
+            remainingAmountSpan.innerText = remaining.toLocaleString('vi-VN') + "₫";
+        }
+
+        startInput.addEventListener("change", updatePrice);
+        endInput.addEventListener("change", updatePrice);
+    });
+</script>

@@ -1,0 +1,183 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Product
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .create-card {
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+    }
+
+        .form-control:focus {
+            background-color: #fff;
+            border-color: #198754;
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1);
+        }
+
+    .preview-container {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 15px;
+        border: 1px dashed #dee2e6;
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-save-new {
+        background: linear-gradient(135deg, #198754 0%, #157347 100%);
+        border: none;
+        border-radius: 50rem;
+        padding: 12px 35px;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+        .btn-save-new:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.2);
+        }
+
+    .btn-back {
+        border-radius: 50rem;
+        padding: 12px 25px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark m-0">🛒 Thêm sản phẩm mới</h3>
+                    <p class="text-muted small m-0">Điền thông tin để đưa sản phẩm mới vào kho thuê</p>
+                </div>
+                <a asp-action="Index" class="btn btn-light rounded-pill px-4 border btn-back">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại
+                </a>
+            </div>
+
+            <div class="card create-card">
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4 small"></div>
+
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <label asp-for="Name" class="form-label">Tên sản phẩm</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;"><i class="bi bi-tag text-muted"></i></span>
+                                    <input asp-for="Name" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="Nhập tên lều..." />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label asp-for="Description" class="form-label">Mô tả chi tiết</label>
+                                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả về chất liệu, kích thước, tính năng..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="PricePerDay" class="form-label">Giá thuê / ngày (VNĐ)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;"><i class="bi bi-cash-stack text-success"></i></span>
+                                    <input asp-for="PricePerDay" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="VD: 150000" />
+                                </div>
+                                <span asp-validation-for="PricePerDay" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Quantity" class="form-label">Số lượng nhập kho</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;"><i class="bi bi-box-fill text-primary"></i></span>
+                                    <input asp-for="Quantity" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="VD: 10" />
+                                </div>
+                                <span asp-validation-for="Quantity" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label asp-for="CategoryId" class="form-label">Phân loại sản phẩm</label>
+                                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                                    <option value="">-- Chọn loại sản phẩm --</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Tải lên hình ảnh</label>
+                                <div class="p-4 border rounded-3 bg-light text-center h-100 d-flex flex-column justify-content-center" style="border-style: dashed !important;">
+                                    <i class="bi bi-cloud-upload fs-1 text-muted mb-2"></i>
+                                    <input type="file" name="ImageFile" class="form-control border-0 bg-transparent" accept="image/*" onchange="previewImage(event)" />
+                                    <p class="text-muted small mt-2 mb-0">Hỗ trợ định dạng: JPG, PNG, WEBP</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4 text-center">
+                                <label class="form-label d-block">Xem trước ảnh</label>
+                                <div class="preview-container h-100">
+                                    <img id="imagePreview" src="#" alt="Preview" style="display:none; max-height:150px; border-radius:12px;" class="shadow-sm" />
+                                    <div id="previewPlaceholder" class="text-muted small">
+                                        <i class="bi bi-image fs-2 d-block mb-1"></i>
+                                        Chưa có ảnh được chọn
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                            <a asp-action="Index" class="btn btn-light btn-back">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success btn-save-new shadow">
+                                <i class="bi bi-save-fill me-2"></i> Lưu sản phẩm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById("imagePreview");
+            const placeholder = document.getElementById("previewPlaceholder");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                    placeholder.style.display = "none";
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

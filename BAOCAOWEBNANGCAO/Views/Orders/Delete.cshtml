@@ -1,0 +1,78 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Order
+
+@{
+    ViewData["Title"] = "Xóa đơn hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Áp dụng giao diện Admin
+}
+
+<div class="container-fluid px-4">
+    <h2 class="mt-4 text-danger fw-bold">🗑 Xóa đơn hàng #@Model.Id</h2>
+    
+    <div class="alert alert-danger shadow-sm" role="alert">
+        <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Cảnh báo!</h4>
+        <p>Bạn có chắc chắn muốn xóa đơn hàng này không? Hành động này <strong>không thể khôi phục</strong>.</p>
+        <hr>
+        <p class="mb-0 small">Nếu đơn hàng bị hủy, hãy cân nhắc đổi trạng thái sang "Cancelled" thay vì xóa vĩnh viễn.</p>
+    </div>
+
+    <div class="card mb-4 border-danger shadow-sm">
+        <div class="card-header bg-danger text-white fw-bold">
+            Thông tin đơn hàng
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-secondary border-bottom pb-2">Khách hàng</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Họ tên:</dt>
+                        <dd class="col-sm-8 fw-bold">@Model.CustomerName</dd>
+
+                        <dt class="col-sm-4">Số điện thoại:</dt>
+                        <dd class="col-sm-8">@Model.CustomerPhone</dd>
+
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">@Model.CustomerEmail</dd>
+                        
+                        <dt class="col-sm-4">Địa chỉ:</dt>
+                        <dd class="col-sm-8">@Model.ShippingAddress</dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="text-secondary border-bottom pb-2">Chi tiết thuê</h5>
+                    <dl class="row">
+                        <dt class="col-sm-4">Ngày đặt:</dt>
+                        <dd class="col-sm-8">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Thời gian thuê:</dt>
+                        <dd class="col-sm-8">
+                            @Model.RentalStartDate.ToString("dd/MM") - @Model.RentalEndDate.ToString("dd/MM")
+                        </dd>
+
+                        <dt class="col-sm-4">Trạng thái:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">@Model.Status</span>
+                        </dd>
+
+                        <dt class="col-sm-4 mt-2">Tổng tiền:</dt>
+                        <dd class="col-sm-8 mt-2">
+                            <span class="fs-5 text-danger fw-bold">@Model.TotalAmount.ToString("#,##0") đ</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer d-flex justify-content-end gap-2 bg-light">
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-return-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-danger fw-bold">
+                    <i class="bi bi-trash-fill"></i> Xác nhận xóa vĩnh viễn
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

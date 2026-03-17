@@ -1,0 +1,90 @@
+﻿@model List<BAOCAOWEBNANGCAO.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    decimal totalAmount = Model.Sum(item => item.TotalPrice);
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 fw-bold">🛒 Giỏ hàng (@Model.Count sản phẩm)</h2>
+
+    @if (Model.Count > 0)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-center">Giá thuê</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Thành tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="align-middle">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@item.Product.ImageUrl" style="width: 70px; height: 50px; object-fit: cover;" class="rounded me-3">
+                                                <h6 class="mb-0">@item.Product.Name</h6>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">@item.Product.PricePerDay.ToString("#,##0") đ</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary rounded-pill">@item.Quantity</span>
+                                        </td>
+                                        <td class="text-end fw-bold text-danger">
+                                            @item.TotalPrice.ToString("#,##0") đ
+                                        </td>
+                                        <td class="text-end">
+                                            <a asp-action="RemoveFromCart" asp-route-productId="@item.Product.Id" class="text-danger" title="Xóa">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Tóm tắt đơn hàng</h5>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Tạm tính:</span>
+                            <span class="fw-bold">@totalAmount.ToString("#,##0") đ</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fs-5 fw-bold">Tổng cộng:</span>
+                            <span class="fs-4 fw-bold text-danger">@totalAmount.ToString("#,##0") đ</span>
+                        </div>
+                        <a asp-action="Checkout" class="btn btn-success w-100 py-2 fw-bold text-uppercase">
+                            Tiến hành đặt thuê
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-link w-100 mt-2 text-decoration-none text-muted">
+                            <i class="bi bi-arrow-left"></i> Tiếp tục xem lều
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" style="width: 150px; opacity: 0.5;" class="mb-3">
+            <h4 class="text-muted">Giỏ hàng đang trống</h4>
+            <p class="mb-4">Hãy chọn thêm vài món đồ cắm trại thú vị nhé!</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-warning px-4 fw-bold">Quay lại trang chủ</a>
+        </div>
+    }
+</div>

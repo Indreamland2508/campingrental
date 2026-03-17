@@ -1,0 +1,208 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "Quản lý Tài khoản";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Bảng hiện đại: Loại bỏ viền thô, thêm khoảng thở */
+    .table-modern thead th {
+        background-color: #f4f8f5; /* Đổi màu nền header sang xanh lá cực nhẹ cho đồng bộ */
+        color: #4b5563;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        border: none;
+        padding: 1.25rem;
+    }
+
+    .table-modern tbody td {
+        padding: 1.25rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f3f5;
+        color: #495057;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8fbf9;
+        transition: background-color 0.2s ease;
+    }
+
+    /* MÀU XANH ĐẶC TRƯNG CỦA DỰ ÁN */
+    .text-forest {
+        color: #198754 !important;
+    }
+
+    .btn-forest {
+        background-color: #198754;
+        color: white;
+        border: none;
+        transition: all 0.3s;
+    }
+
+        .btn-forest:hover {
+            background-color: #157347;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25, 135, 84, 0.2);
+        }
+
+    /* Badge trạng thái bo tròn pill-style */
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid transparent;
+    }
+
+    .status-active {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border-color: #c8e6c9;
+    }
+
+    .status-pending {
+        background-color: #fff8e1;
+        color: #f57c00;
+        border-color: #ffe082;
+    }
+
+    /* Nút xóa tinh tế */
+    .btn-delete-soft {
+        background-color: #fff5f5;
+        color: #e03131;
+        border: 1px solid #ffe3e3;
+        border-radius: 10px;
+        padding: 0.5rem 0.8rem;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+        .btn-delete-soft:hover {
+            background-color: #fa5252;
+            color: white;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark m-0"><i class="bi bi-people-fill text-forest me-2"></i> Quản lý Tài khoản</h2>
+            <p class="text-muted small m-0">Danh sách nhân viên và quyền truy cập hệ thống</p>
+        </div>
+        <a asp-action="Create" class="btn btn-forest rounded-pill px-4 py-2 fw-bold shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Thêm Nhân Viên Mới
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 15px;">
+            <i class="bi bi-exclamation-octagon-fill me-2"></i> @TempData["Error"]
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm" style="border-radius: 24px; overflow: hidden;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Email / Tên đăng nhập</th>
+                            <th>Số điện thoại</th>
+                            <th>Trạng thái Email</th>
+                            <th class="text-end pe-4">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2 text-forest"></i>
+                                    Chưa có tài khoản nào được tạo.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <img src="/images/avatars/@(item.Id).jpg"
+                                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=@item.UserName&background=1a3a28&color=fff&size=80&bold=true';"
+                                                 class="rounded-circle shadow-sm me-3"
+                                                 style="width: 45px; height: 45px; object-fit: cover; border: 2px solid #eaf5ea;" alt="@item.UserName">
+
+                                            <span class="fw-bold text-dark">@item.UserName</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">
+                                            <i class="bi bi-telephone me-1"></i>
+                                            @(string.IsNullOrEmpty(item.PhoneNumber) ? "Trống" : item.PhoneNumber)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (item.EmailConfirmed)
+                                        {
+                                            <span class="status-badge status-active">
+                                                <i class="bi bi-patch-check-fill me-1"></i> Đã kích hoạt
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-pending">
+                                                <i class="bi bi-hourglass-split me-1"></i> Chưa kích hoạt
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                onclick="confirmDeleteAccount('@item.Email')">
+                                            <i class="bi bi-trash3 me-1"></i> Xóa
+                                        </button>
+
+                                        <form id="delete-form-@item.Email" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;">
+                                            @Html.AntiForgeryToken()
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDeleteAccount(email) {
+            Swal.fire({
+                title: 'Xóa tài khoản nhân viên?',
+                html: `Bạn có chắc chắn muốn xóa tài khoản <b class="text-danger">${email}</b>?<br><small class="text-muted">Hành động này không thể hoàn tác!</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#198754',
+                confirmButtonText: 'Đúng, xóa ngay!',
+                cancelButtonText: 'Không, giữ lại',
+                reverseButtons: true,
+                borderRadius: '20px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + email).submit();
+                }
+            })
+        }
+    </script>
+}

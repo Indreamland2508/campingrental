@@ -1,0 +1,460 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<style>
+    /* BỘ FONT VÀ MÀU CHỦ ĐẠO MỚI CỦA TOÀN TRANG */
+    :root {
+        --forest-dark: #1a3a28;
+        --forest-light: #198754;
+        --elegant-bg: #fcfcfc;
+    }
+
+    .font-serif {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+    }
+
+    /* 1. HERO SECTION (TỐI GIẢN & SANG TRỌNG) */
+    .minimal-hero-section {
+        background-color: var(--elegant-bg);
+        padding: 80px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        line-height: 1.1;
+        color: var(--forest-dark);
+        margin-bottom: 20px;
+    }
+
+    .hero-image-wrapper {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+    /* Nút bấm đồng bộ toàn trang */
+    .btn-elegant {
+        background-color: var(--forest-dark);
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-radius: 50rem;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+        .btn-elegant:hover {
+            background-color: #15321e;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(26, 58, 40, 0.2);
+            color: white;
+        }
+
+    /* 2. TRENDING SECTION (SẠCH SẼ, NỔI BẬT SẢN PHẨM) */
+    .minimal-trending-wrapper {
+        padding: 80px 0;
+        background-color: #ffffff;
+    }
+
+    .section-heading {
+        font-size: 3rem;
+        color: var(--forest-dark);
+        margin-bottom: 10px;
+    }
+
+    .product-card-elegant {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+        .product-card-elegant:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(26, 58, 40, 0.08);
+            border-color: var(--forest-dark);
+        }
+
+    .img-trending-container {
+        border-radius: 12px;
+        height: 240px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+        .img-trending-container img {
+            transition: transform 0.8s ease;
+        }
+
+    .product-card-elegant:hover .img-trending-container img {
+        transform: scale(1.08);
+    }
+
+    .badge-hot-elegant {
+        background-color: #dc3545;
+        color: white;
+        font-weight: bold;
+        letter-spacing: 1px;
+        font-size: 0.7rem;
+    }
+
+    /* 3. STATS & ABOUT (ĐỒNG BỘ FONT) */
+    .stats-box {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+        margin-top: -60px;
+        position: relative;
+        z-index: 5;
+    }
+
+    .stat-item {
+        padding: 40px;
+        text-align: center;
+        border-right: 1px solid #f0f0f0;
+    }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+    .stat-number {
+        color: var(--forest-dark);
+        font-weight: 700;
+        font-size: 3rem;
+        display: block;
+    }
+
+    .img-overlap-container {
+        position: relative;
+        height: 450px;
+    }
+
+    .img-main {
+        width: 80%;
+        border-radius: 20px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+
+    .img-float {
+        width: 55%;
+        border-radius: 20px;
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        border: 10px solid white;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        z-index: 2;
+    }
+
+
+    /* 4. TOTAL MINIMALIST REVIEW BOX & FORM (ĐÃ FIX LỖI TÀNG HÌNH) */
+    .total-minimal-review-wrapper {
+        padding: 100px 0;
+        margin-top: 50px;
+        position: relative;
+        overflow: hidden;
+        background-color: var(--forest-dark); /* BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ LÓT NỀN XANH ĐẬM */
+    }
+
+        .total-minimal-review-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2; /* Tăng độ nét của ảnh lên một chút */
+            z-index: 0;
+            filter: grayscale(100%) blur(3px); /* Giảm độ nhòe đi để nhìn thấy vân cảnh dã ngoại */
+        }
+
+    .feedback-card-minimal {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 35px;
+        color: white;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease;
+    }
+
+        .feedback-card-minimal:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+    .minimal-form .form-control,
+    .minimal-form .form-select {
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 0;
+        padding: 15px 0;
+        background-color: transparent;
+        box-shadow: none;
+        font-size: 1rem;
+        color: white;
+        transition: border-color 0.3s ease;
+    }
+
+        .minimal-form .form-control:focus,
+        .minimal-form .form-select:focus {
+            border-bottom-color: white;
+            outline: none;
+        }
+
+        .minimal-form .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .minimal-form .form-select option {
+            color: #000; /* Fix lỗi chữ trắng trên nền trắng ở menu xổ xuống */
+        }
+
+    .btn-white-elegant {
+        background-color: #ffffff;
+        color: var(--forest-dark);
+        border: none;
+        padding: 16px 40px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-radius: 50rem;
+        transition: all 0.3s;
+        text-transform: uppercase;
+    }
+
+        .btn-white-elegant:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+</style>
+
+<div class="minimal-hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-4 font-monospace">HOT SUMMER 2026</span>
+                <h1 class="hero-title font-serif">Khám phá<br><i class="text-success">Thiên Nhiên.</i></h1>
+                <p class="text-muted fs-5 mb-5 lh-lg">Dịch vụ cho thuê lều trại chất lượng cao, mang đến trải nghiệm dã ngoại hoàn hảo và đẳng cấp nhất tại Hà Nội.</p>
+                <a href="/Home/ProductList" class="btn-elegant shadow-sm">Bắt đầu hành trình</a>
+            </div>
+            <div class="col-lg-7">
+                <div class="hero-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2070&auto=format&fit=crop" class="img-fluid w-100" style="object-fit: cover; height: 500px;" alt="Luxury Camping">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="minimal-trending-wrapper">
+    <div class="container">
+        <div class="row align-items-end mb-5">
+            <div class="col-md-8">
+                <h2 class="section-heading font-serif">Sản phẩm <i class="text-success">gây bão.</i></h2>
+                <p class="text-muted">Những thiết bị được lựa chọn nhiều nhất cho mùa cắm trại năm nay.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="/Home/ProductList" class="text-success fw-bold text-decoration-none">
+                    XEM TẤT CẢ TỦ ĐỒ <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="swiper trending-swiper">
+            <div class="swiper-wrapper pb-5">
+                @if (ViewBag.TrendingProducts != null)
+                {
+                    foreach (var product in (List<BAOCAOWEBNANGCAO.Models.Product>)ViewBag.TrendingProducts)
+                    {
+                        <div class="swiper-slide h-auto">
+                            <div class="product-card-elegant">
+                                <div class="img-trending-container">
+                                    <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : product.ImageUrl)"
+                                         class="w-100 h-100 object-fit-cover" alt="@product.Name">
+                                    <span class="position-absolute top-0 start-0 m-3 badge badge-hot-elegant rounded-pill px-3 py-2 text-uppercase">
+                                        Trending
+                                    </span>
+                                </div>
+
+                                <h5 class="fw-bold text-dark mb-3" style="font-size: 1.1rem; height: 3rem; overflow: hidden; line-height: 1.4;">@product.Name</h5>
+
+                                <div class="mt-auto pt-3 border-top border-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-muted small d-block">Giá thuê/ngày</span>
+                                        <span class="fs-5 fw-bold text-success">@product.PricePerDay.ToString("#,##0")₫</span>
+                                    </div>
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-dark rounded-pill px-3 py-1 fw-bold" style="font-size: 0.85rem;">
+                                        CHI TIẾT
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5 pt-4">
+    <div class="row align-items-center py-5 g-5">
+        <div class="col-lg-6">
+            <div class="img-overlap-container">
+                <img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=2068&auto=format&fit=crop" class="img-main" alt="Camping Story">
+                <img src="/images/products/hesinhthai.jpg" class="img-float" alt="Ecosystem">
+            </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+            <h6 class="text-success fw-bold text-uppercase tracking-widest mb-3" style="letter-spacing: 2px;">Về chúng tôi</h6>
+            <h2 class="font-serif section-heading mb-4">Mang thiên nhiên<br>đến gần bạn hơn.</h2>
+            <p class="text-muted mb-5 lh-lg fs-6">Giữa những ồn ào của phố thị, chúng tôi - Châu & Trường - ở đây để chuẩn bị cho bạn những trang thiết bị tốt nhất, giúp bạn có những kỷ niệm không thể nào quên dưới bầu trời đầy sao.</p>
+            <button class="btn-elegant">ĐỌC THÊM VỀ CHÚNG TÔI</button>
+        </div>
+    </div>
+</div>
+
+<section class="total-minimal-review-wrapper">
+
+    <div class="container mb-5 pb-5 border-bottom" style="border-color: rgba(255,255,255,0.1) !important; position: relative; z-index: 1;">
+        <div class="text-center mb-5">
+            <h2 class="font-serif" style="font-size: 3.5rem; color: #ffffff;">KHÁCH HÀNG NÓI GÌ.</h2>
+            <p class="text-white-50 mt-3 fs-5">Những trải nghiệm chân thực nhất từ cộng đồng cắm trại</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            @if (ViewBag.Feedbacks != null && ((List<BAOCAOWEBNANGCAO.Models.Feedback>)ViewBag.Feedbacks).Any())
+            {
+                foreach (var fb in (List<BAOCAOWEBNANGCAO.Models.Feedback>)ViewBag.Feedbacks)
+                {
+                    <div class="col-md-4">
+                        <div class="feedback-card-minimal">
+                            <div class="text-warning mb-4" style="letter-spacing: 2px;">
+                                @for (int i = 0; i < fb.Rating; i++)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                            </div>
+                            <p class="opacity-75 font-serif mb-4 fs-5" style="line-height: 1.6;">"@fb.Content"</p>
+                            <div class="d-flex align-items-center mt-auto pt-4 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold; color: white; background-color: #198754;">
+                                    @fb.CustomerName.Substring(0, 1).ToUpper()
+                                </div>
+                                <h6 class="mb-0 text-white fw-bold text-uppercase" style="letter-spacing: 1px;">@fb.CustomerName</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center text-white-50 font-serif fs-5 py-5">Chưa có lời tâm tình nào được chia sẻ.</div>
+            }
+        </div>
+    </div>
+
+    <div class="container pt-5 position-relative z-1">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 pe-lg-5">
+                <h2 class="font-serif" style="font-size: 4.5rem; color: #ffffff; line-height: 1;">FORM<br><i class="text-success">YOUR</i><br>STORY.</h2>
+                <p class="fs-6 lh-lg mt-4" style="color: rgba(255,255,255,0.7);">
+                    Mỗi chuyến đi là một câu chuyện. Hãy để lại vài dòng cảm nhận của bạn về dịch vụ của chúng tôi để lan tỏa tình yêu thiên nhiên đến mọi người.
+                </p>
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success border-0 bg-success text-white mt-4 rounded-0 px-4">
+                        <i class="bi bi-check2-circle me-2"></i> @TempData["SuccessMessage"]
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-6 offset-lg-1">
+                <form asp-action="SendFeedback" method="post" class="minimal-form">
+                    <div class="mb-4">
+                        <input type="text" name="CustomerName" class="form-control" placeholder="Tên của bạn" required>
+                    </div>
+
+                    <div class="mb-4 position-relative">
+                        <select name="Rating" class="form-select" required>
+                            <option value="5">★★★★★ Tuyệt vời</option>
+                            <option value="4">★★★★ Rất tốt</option>
+                            <option value="3">★★★ Bình thường</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-5">
+                        <textarea name="Content" class="form-control" rows="3" placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-white-elegant w-100">
+                        GỬI CẢM NHẬN
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container stats-box mb-5">
+    <div class="row g-0">
+        <div class="col-md-4 stat-item">
+            <span class="stat-number font-serif">1,200+</span>
+            <p class="text-muted mb-0 fw-bold small text-uppercase tracking-widest">Đơn hàng thành công</p>
+        </div>
+        <div class="col-md-4 stat-item">
+            <span class="stat-number font-serif">500+</span>
+            <p class="text-muted mb-0 fw-bold small text-uppercase tracking-widest">Thiết bị sẵn có</p>
+        </div>
+        <div class="col-md-4 stat-item">
+            <span class="stat-number font-serif">4.9/5</span>
+            <p class="text-muted mb-0 fw-bold small text-uppercase tracking-widest">Đánh giá hài lòng</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var swiper = new Swiper(".trending-swiper", {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: { delay: 3500, disableOnInteraction: false },
+            pagination: { el: ".swiper-pagination", clickable: true },
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+                1200: { slidesPerView: 4 },
+            },
+        });
+    });
+</script>

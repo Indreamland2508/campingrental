@@ -1,0 +1,67 @@
+﻿@model IEnumerable<BAOCAOWEBNANGCAO.Models.Feedback>
+@{
+    ViewData["Title"] = "Quản lý đánh giá";
+    Layout = "_AdminLayout"; // Hoặc Layout chung của bạn
+}
+
+<div class="container-fluid py-4">
+    <div class="card shadow border-0" style="border-radius: 20px;">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold text-success mb-0"><i class="bi bi-chat-left-dots me-2"></i>DANH SÁCH ĐÁNH GIÁ</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Khách hàng</th>
+                            <th>Nội dung</th>
+                            <th>Đánh giá</th>
+                            <th>Ngày gửi</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.CustomerName</td>
+                                <td style="max-width: 300px;" class="text-truncate">@item.Content</td>
+                                <td>
+                                    @for (int i = 0; i < item.Rating; i++)
+                                    {
+                                        <i class="bi bi-star-fill text-warning" style="font-size: 0.8rem;"></i>
+                                    }
+                                </td>
+                                <td class="small">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (item.IsApproved)
+                                    {
+                                        <span class="badge bg-success-subtle text-success rounded-pill px-3">Đã duyệt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning rounded-pill px-3">Chờ duyệt</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <form asp-action="ToggleApproval" asp-route-id="@item.Id" method="post">
+                                            <button type="submit" class="btn btn-sm @(item.IsApproved ? "btn-outline-warning" : "btn-success") rounded-pill px-3">
+                                                @(item.IsApproved ? "Hủy duyệt" : "Duyệt ngay")
+                                            </button>
+                                        </form>
+                                        <form asp-action="DeleteFeedback" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
