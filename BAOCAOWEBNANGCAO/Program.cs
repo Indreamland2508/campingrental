@@ -11,7 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 // 2. Cấu hình Identity
 // Tìm đoạn AddDbContext và thay thế/kiểm tra đoạn Identity bên dưới:
@@ -72,5 +72,17 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await DbSeeder.SeedDefaultData(services);
 }
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CampingDbContext>();
+        context.Database.Migrate(); // Tự động cập nhật cấu trúc database trên Render
+    }
+    catch (Exception ex)
+    {
+        // Log lỗi nếu cần
+    }
+}
 app.Run();
