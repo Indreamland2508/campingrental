@@ -1,61 +1,73 @@
-﻿@{
+﻿@model BAOCAOWEBNANGCAO.Models.Order
+
+@{
     ViewData["Title"] = "Đặt hàng thành công";
 }
 
-<div class="container py-5 text-center">
-    <div class="card border-0 shadow-lg p-5 mx-auto" style="max-width: 600px; border-radius: 30px;">
-        <div class="mb-4">
-            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-        </div>
+<div class="container mt-5 text-center mb-5">
+    <div class="mb-4">
+        <h1 class="text-success" style="font-size: 4rem;">✓</h1>
+    </div>
+    <h2 class="text-success fw-bold">🎉 Đặt hàng thành công!</h2>
+    <p class="fs-5">Mã đơn hàng của bạn là: <strong class="text-primary">#@Model.Id</strong></p>
 
-        <h2 class="fw-bold text-dark mb-3">Đặt thuê lều thành công!</h2>
-        <p class="text-muted mb-4 px-lg-4">
-            Cảm ơn Châu đã tin tưởng dịch vụ của **Camping Rental**. Đơn hàng của bạn đã được hệ thống ghi nhận. Nhân viên sẽ liên hệ xác nhận trong vòng 15 phút tới.
-        </p>
+    <div class="card mx-auto shadow-lg border-0 mt-4" style="max-width: 500px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h4 class="card-title fw-bold mb-3">Hướng dẫn thanh toán tiền cọc</h4>
+            <p class="text-muted mb-4">Vui lòng quét mã QR dưới đây để thanh toán <strong class="text-danger">50%</strong> tiền cọc. Hệ thống sẽ tự động xác nhận đơn hàng sau 1-2 phút.</p>
 
-        <div class="bg-light rounded-4 p-3 mb-4 text-start">
-            <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted small">Trạng thái:</span>
-                <span class="badge bg-success-subtle text-success rounded-pill">Đang chờ xác nhận</span>
+            @{
+                // ⚠️ THAY THÔNG TIN TÀI KHOẢN CỦA BẠN VÀO ĐÂY NHÉ!
+                string bankId = "MB"; // Mã ngân hàng (VD: MB, VCB, TCB, ACB...)
+                string accountNo = "0982412582005"; // Số tài khoản ngân hàng của bạn
+                string accountName = "NGUYEN HOANG CHAU"; // Tên chủ tài khoản (Viết hoa không dấu)
+
+                // Nội dung chuyển khoản BẮT BUỘC phải là DH + Mã đơn hàng
+                string transferContent = $"DH{Model.Id}";
+
+                // Số tiền cọc (Ép kiểu về số nguyên để không bị lỗi số thập phân)
+                long amountToPay = (long)Model.DepositAmount;
+
+                // Tạo link ảnh QR từ API của VietQR
+                string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact.png?amount={amountToPay}&addInfo={transferContent}&accountName={accountName}";
+            }
+
+            <img src="@qrUrl" alt="Mã QR Thanh Toán" class="img-fluid border rounded p-2 mb-4 shadow-sm" style="max-width: 250px;" />
+
+            <div class="alert alert-light text-start border" style="background-color: #f8f9fa;">
+                <p class="mb-2 fw-bold text-center text-dark">Hoặc chuyển khoản thủ công:</p>
+                <hr class="mt-1 mb-2">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Ngân hàng:</span>
+                    <strong>@bankId</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Số tài khoản:</span>
+                    <strong>@accountNo</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Chủ tài khoản:</span>
+                    <strong>@accountName</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Cần cọc (50%):</span>
+                    <strong class="text-danger fs-5">@amountToPay.ToString("N0") VNĐ</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="text-muted">Nội dung CK:</span>
+                    <strong class="text-primary fs-4 bg-light px-2 border border-primary rounded">@transferContent</strong>
+                </div>
             </div>
-            <div class="d-flex justify-content-between">
-                <span class="text-muted small">Thời gian cắm trại:</span>
-                <span class="fw-bold small">Cập nhật trong mail</span>
-            </div>
-        </div>
 
-        <div class="d-grid gap-2">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-success rounded-pill py-3 fw-bold shadow">
-                TIẾP TỤC KHÁM PHÁ
-            </a>
-            <p class="extra-small text-muted mt-2">Mọi thắc mắc vui lòng gọi: <span class="fw-bold">0123.456.789</span></p>
+            <div class="mt-4">
+                <p class="text-muted small">
+                    Trạng thái đơn: <span class="badge bg-warning text-dark">Chờ thanh toán cọc</span>
+                </p>
+                <p class="text-muted small">
+                    Tiền mặt thu lúc nhận lều: <strong>@Model.RemainingAmount.ToString("N0") VNĐ</strong>
+                </p>
+                <a href="/" class="btn btn-outline-primary mt-2 rounded-pill px-5">Về trang chủ</a>
+            </div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<script>
-    var duration = 3 * 1000;
-    var end = Date.now() + duration;
-
-    (function frame() {
-      confetti({
-        particleCount: 3,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#198754', '#ffffff']
-      });
-      confetti({
-        particleCount: 3,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#198754', '#ffffff']
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    }());
-</script>
