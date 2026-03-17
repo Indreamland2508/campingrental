@@ -1,0 +1,64 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Order
+
+@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+}
+
+<div class="container mt-5 text-center mb-5">
+    <h2 class="text-primary fw-bold">Thanh toán tiền cọc</h2>
+    <p class="fs-5">Mã đơn hàng: <strong>#@Model.Id</strong></p>
+
+    <div class="card mx-auto shadow-lg border-0 mt-4" style="max-width: 500px; border-radius: 15px;">
+        <div class="card-body p-4">
+            <h4 class="card-title fw-bold mb-3">Quét mã QR để thanh toán</h4>
+            <p class="text-muted mb-4">Vui lòng dùng App Ngân hàng quét mã QR dưới đây. Trình duyệt sẽ <strong class="text-success">tự động chuyển trang</strong> ngay khi nhận được tiền cọc.</p>
+
+            @{
+                string bankId = "MB"; // Thay bằng NH của bạn
+                string accountNo = "0982412582005"; // Thay Số TK
+                string accountName = "NGUYEN HOANG CHAU"; // Thay Tên
+                string transferContent = $"DH{Model.Id}";
+                long amountToPay = (long)Model.DepositAmount;
+                string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact.png?amount={amountToPay}&addInfo={transferContent}&accountName={accountName}";
+            }
+
+            <img src="@qrUrl" alt="Mã QR" class="img-fluid border rounded p-2 mb-3 shadow-sm" style="max-width: 250px;" />
+
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
+                <span class="text-primary fw-bold">Đang chờ thanh toán...</span>
+            </div>
+
+            <div class="alert alert-light text-start border" style="background-color: #f8f9fa;">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Cần cọc (50%):</span><strong class="text-danger fs-5">@amountToPay.ToString("N0") VNĐ</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="text-muted">Nội dung CK:</span><strong class="text-primary fs-4 bg-light px-2 border border-primary rounded">@transferContent</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var orderId = @Model.Id;
+
+        // Cứ 3 giây hỏi server 1 lần
+        var checkInterval = setInterval(function () {
+            fetch('/Cart/CheckPaymentStatus?id=' + orderId)
+                .then(response => response.json())
+                .then(data => {
+                    // Nếu tiền đã vào (Cọc hoặc Trả đủ)
+                    if (data.status === 'Deposited' || data.status === 'Paid') {
+                        clearInterval(checkInterval); // Dừng hỏi
+
+                        // ĐÂY CHÍNH LÀ LÚC CHUYỂN HƯỚNG TỰ ĐỘNG SANG TRANG SUCCESS!
+                        window.location.href = '/Cart/OrderSuccess/' + orderId;
+                    }
+                })
+                .catch(error => console.error('Lỗi:', error));
+        }, 3000);
+    </script>
+}

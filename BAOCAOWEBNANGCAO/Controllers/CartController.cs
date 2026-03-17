@@ -168,18 +168,40 @@ namespace BAOCAOWEBNANGCAO.Controllers
             HttpContext.Session.Remove("GioHangCuaToi");
             HttpContext.Session.Remove("CartCount");
 
-            // 6. CHUYỂN HƯỚNG KÈM THEO ID ĐƠN HÀNG ĐỂ HIỆN QR MÃ CỌC
-            return RedirectToAction("OrderSuccess", new { id = order.Id });
+            // 6. CHUYỂN HƯỚNG SANG TRANG THANH TOÁN QR
+            return RedirectToAction("Payment", new { id = order.Id });
         }
 
-        // GET: Trang thông báo mua thành công (Kèm QR Code)
+        // --- CÁC HÀM XỬ LÝ THANH TOÁN SEPAY & GIAO DIỆN ---
+
+        // 1. GET: Trang hiển thị mã QR (Chờ quét)
+        public IActionResult Payment(int id)
+        {
+            var order = _context.Orders.Find(id);
+            // Nếu không có đơn hoặc đơn đã thanh toán rồi thì đá về trang chủ
+            if (order == null || order.PaymentStatus != "Unpaid") return RedirectToAction("Index", "Home");
+
+            return View(order);
+        }
+
+        // 2. API nhỏ để giao diện liên tục hỏi thăm trạng thái thanh toán
+        [HttpGet]
+        public IActionResult CheckPaymentStatus(int id)
+        {
+            var order = _context.Orders.Find(id);
+            if (order == null) return NotFound();
+
+            // Trả về dữ liệu dạng JSON cho JavaScript đọc
+            return Json(new { status = order.PaymentStatus });
+        }
+
+        // 3. GET: Trang thông báo mua thành công (Chỉ hiện khi đã thanh toán)
         public IActionResult OrderSuccess(int id)
         {
-            // Lấy đơn hàng vừa đặt lên để lấy số tiền cọc
             var order = _context.Orders.Find(id);
             if (order == null) return RedirectToAction("Index", "Home");
 
-            return View(order); // Truyền Model Order sang View
+            return View(order);
         }
     }
 }
