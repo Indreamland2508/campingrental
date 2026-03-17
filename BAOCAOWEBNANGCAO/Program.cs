@@ -70,19 +70,21 @@ app.MapRazorPages(); // Để chạy các trang Login/Register mặc định
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await DbSeeder.SeedDefaultData(services);
-}
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<CampingDbContext>();
-        context.Database.Migrate(); // Tự động cập nhật cấu trúc database trên Render
+
+        // 1. TẠO BẢNG TRƯỚC (Bắt buộc phải chạy đầu tiên)
+        context.Database.Migrate();
+
+        // 2. ĐỔ DỮ LIỆU VÀO SAU (Khi bảng đã tồn tại chắc chắn)
+        await DbSeeder.SeedDefaultData(services);
     }
     catch (Exception ex)
     {
-        // Log lỗi nếu cần
+        // Có thể in ra console để dễ debug trên Render
+        Console.WriteLine("Lỗi khi khởi tạo Database: " + ex.Message);
     }
 }
+
 app.Run();
