@@ -1,171 +1,380 @@
 ﻿@model IEnumerable<BAOCAOWEBNANGCAO.Models.Product>
-@using System.Net
 @{
-    ViewData["Title"] = "Hệ sinh thái Camping";
+    ViewData["Title"] = "Hệ sinh thái CampingRental";
     string currentCat = ViewBag.CurrentCategory as string ?? "";
-
-    string bannerBgClass = "bg-default";
-    string bannerImg = "/images/products/hesinhthai.jpg";
-
-    if (currentCat == "Lều cắm trại") { bannerBgClass = "bg-tent"; bannerImg = "/images/products/leu.jpg"; }
-    else if (currentCat == "Dụng cụ nấu ăn") { bannerBgClass = "bg-cook"; bannerImg = "/images/products/bep.jpg"; }
-    else if (currentCat == "Phương tiện di chuyển") { bannerBgClass = "bg-move"; bannerImg = "/images/products/xe.jpg"; }
-    else if (currentCat == "Phụ kiện dã ngoại") { bannerBgClass = "bg-acc"; bannerImg = "/images/products/ban.jpg"; }
 }
 
 <style>
     /* BỘ MÀU CHUẨN MINIMALIST */
     :root {
-        --forest-dark: #1a3a28;
+        --forest-dark: #1a4d3a;
+        --border-color: #e1e4e8;
     }
 
     .font-serif {
         font-family: 'Playfair Display', 'Times New Roman', serif;
     }
 
-    /* 1. HỆ MÀU BANNER TỐI GIẢN - ĐỔI THÀNH ĐƠN SẮC THAY VÌ GRADIENT RỰC RỠ */
-    .bg-default {
-        background: var(--forest-dark);
+    .font-monospace {
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
-    .bg-tent {
-        background: #2b3a2a;
-    }
-
-    .bg-cook {
-        background: #3a2b2b;
-    }
-
-    .bg-move {
-        background: #1f2e34;
-    }
-
-    .bg-acc {
-        background: #2f3a44;
-    }
-
-    .page-header {
-        color: white;
-        border-radius: 30px; /* Bo tròn vừa phải */
-        padding: 80px 60px;
-        margin-bottom: 50px;
+    /* 1. BANNER TOÀN CẢNH (EDGE-TO-EDGE) GIỐNG HỆT 2.JPG */
+    .full-width-banner {
+        width: 100vw;
         position: relative;
-        overflow: hidden;
-        min-height: 400px;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        height: 75vh;
+        /* THAY LINK ẢNH DƯỚI ĐÂY BẰNG ẢNH RỪNG THÔNG CỦA BẠN */
+        background-image: url('/images/IMG/camtrai.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        margin-bottom: 0; /* Bỏ margin-bottom cũ */
+        margin-top: -16px;
+    }
+
+    /* 2. === PHẦN GIỚI THIỆU MỚI (CHÂU MUỐN THÊM) === */
+    /* === PHẦN GIỚI THIỆU LƯỚI 4 ẢNH (CHUẨN THIẾT KẾ) === */
+    .intro-section {
+        background-color: #ffffff;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        padding-top: 80px;
+        padding-bottom: 80px;
+        margin-bottom: 50px;
+    }
+
+    .intro-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 15px;
         display: flex;
         align-items: center;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        gap: 60px; /* Khoảng cách giữa cụm ảnh và chữ */
     }
 
-        /* Thêm overlay pattern nhẹ để banner đỡ trống */
-        .page-header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-            opacity: 0.05;
-            z-index: 0;
+    /* BỘ KHUNG 4 ẢNH SO LE */
+    .intro-images-wrapper {
+        flex: 0 0 45%;
+        display: flex;
+        gap: 20px;
+    }
+
+    .image-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 50%;
+    }
+
+    /* Đẩy cột thứ 2 xuống một chút để tạo độ so le */
+    .col-right {
+        margin-top: 40px;
+    }
+
+    .intro-img {
+        width: 100%;
+        border-radius: 20px; /* Bo góc lớn giống thiết kế */
+        object-fit: cover;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    /* Chỉnh chiều cao từng ảnh để ra hiệu ứng ngẫu nhiên */
+    .img-1 {
+        height: 240px;
+    }
+
+    .img-2 {
+        height: 320px;
+    }
+
+    .img-3 {
+        height: 280px;
+    }
+
+    .img-4 {
+        height: 300px;
+    }
+
+    /* NỘI DUNG CHỮ BÊN PHẢI */
+    .intro-text-wrapper {
+        flex: 1;
+        padding-left: 20px;
+    }
+
+    .intro-subtitle-top {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 15px;
+    }
+
+    .intro-huge-title {
+        font-size: 6.5rem; /* Chữ khổng lồ */
+        font-weight: 800;
+        color: var(--forest-dark);
+        line-height: 0.85; /* Ép dòng sát nhau */
+        letter-spacing: -2px; /* Khoảng cách chữ hẹp lại */
+        margin-bottom: 30px;
+    }
+
+    .intro-desc-text {
+        font-size: 0.95rem;
+        color: #495057;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        max-width: 90%;
+    }
+
+    .btn-view-products {
+        display: inline-block;
+        background-color: #9ca3af; /* Nền xám như ảnh */
+        color: #111;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 12px 30px;
+        border-radius: 12px;
+        text-decoration: none;
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+
+        .btn-view-products:hover {
+            background-color: #6b7280;
+            color: #fff;
         }
 
-    .banner-illustration {
-        max-height: 320px;
-        object-fit: cover;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        animation: floating 5s ease-in-out infinite;
-        position: relative;
-        z-index: 1;
-    }
-
-    @@keyframes floating {
-        0%
+    /* RESPONSIVE */
+    @@media (max-width: 992px) {
+        .intro-container
 
     {
-        transform: translateY(0px);
+        flex-direction: column;
     }
 
-    50% {
-        transform: translateY(-10px);
+    .intro-images-wrapper {
+        width: 100%;
     }
 
-    100% {
-        transform: translateY(0px);
+    .intro-huge-title {
+        font-size: 4rem;
+    }
+
+    .intro-text-wrapper {
+        padding-left: 0;
+        margin-top: 30px;
     }
 
     }
-
-    /* 2. THANH DANH MỤC STICKY SIÊU MẢNH */
-    .sticky-filter-container {
-        position: sticky;
-        top: 75px;
-        z-index: 100;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(15px);
-        padding: 25px 0 15px 0;
-        border-bottom: 1px solid #eef2ef;
+    /* TIÊU ĐỀ PHẦN GIỚI THIỆU */
+    .about-section-title-wrapper {
+        text-align: center;
         margin-bottom: 50px;
     }
 
-    .filter-luxury {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none;
+    .about-section-main-title {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--forest-dark);
+        margin: 0;
     }
 
-        .filter-luxury::-webkit-scrollbar {
-            display: none;
-        }
+    /* BỐ CỤC 2 CỘT CHO NỘI DUNG */
+    .about-camping-text {
+        flex: 1;
+        padding-right: 20px;
+    }
 
-    .filter-link {
-        color: #9ca3af;
+    .about-camping-image-col {
+        flex: 0 0 45%; /* Chiều rộng cột ảnh */
+    }
+
+    /* CHI TIẾT TEXT */
+    .about-section-subtitle {
+        color: var(--forest-dark);
+        font-size: 1.1rem;
         font-weight: 600;
-        text-decoration: none;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        transition: 0.3s;
-        position: relative;
-        padding-bottom: 10px;
+        margin-bottom: 10px;
+        display: block;
     }
 
-        .filter-link:hover {
-            color: var(--forest-dark);
+    .about-section-desc {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #495057;
+        margin-bottom: 30px;
+    }
+
+    /* DANH SÁCH TÍNH NĂNG */
+    .about-features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .about-features-list li {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            color: #495057;
         }
 
-        .filter-link.active {
-            color: var(--forest-dark);
-        }
-
-            .filter-link.active::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 100%;
-                height: 2px;
-                background: var(--forest-dark);
+            .about-features-list li::before {
+                content: "";
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                background-color: var(--forest-dark);
+                border-radius: 50%;
+                margin-right: 15px;
+                flex-shrink: 0;
             }
 
-    /* 3. HIỆU ỨNG HIỆN DẦN (SCROLL REVEAL) */
-    .product-reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ẢNH PHẦN GIỚI THIỆU */
+    .about-camping-img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 15px;
     }
 
-        .product-reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+    /* 3. LAYOUT 2 CỘT (SIDEBAR & LƯỚI SẢN PHẨM) */
+    .product-page-container {
+        display: flex;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 15px;
+        gap: 40px;
+    }
+
+    /* SIDEBAR (MENU BÊN TRÁI) */
+    .sidebar {
+        flex: 0 0 260px;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+    }
+
+    .category-title-header {
+        background-color: var(--forest-dark);
+        padding: 20px;
+        color: #fff;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .category-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .category-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .category-item {
+        display: block;
+        padding: 16px 25px;
+        text-decoration: none;
+        color: #495057;
+        font-size: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+        .category-item:last-child {
+            border-bottom: none;
         }
 
-    /* 4. CARD SẢN PHẨM LUXURY ĐỒNG BỘ TRANG CHỦ */
+        .category-item:hover {
+            background-color: #e9ecef;
+            color: var(--forest-dark);
+        }
+
+        .category-item.active {
+            background-color: #e5e7eb;
+            color: var(--forest-dark);
+            font-weight: bold;
+            border-left: 4px solid var(--forest-dark);
+            padding-left: 21px;
+        }
+
+    /* MAIN CONTENT AREA */
+    .main-content {
+        flex: 1;
+    }
+
+    /* TOOLBAR (BỘ LỌC) */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 30px;
+    }
+
+    .toolbar-left, .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .toolbar-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    .price-input {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        width: 100px;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .btn-search-icon {
+        background: none;
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: #6c757d;
+        cursor: pointer;
+    }
+
+    .sort-btn {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        padding: 8px 15px;
+        border-radius: 8px;
+        color: #495057;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+        .sort-btn.active {
+            background-color: #e5e7eb;
+            font-weight: bold;
+            color: #212529;
+        }
+
+    /* CARD SẢN PHẨM LUXURY (CỦA BẠN) */
     .product-luxury-card {
         border: none !important;
         background: transparent;
@@ -178,7 +387,7 @@
     .img-luxury-frame {
         background-color: #f9fafb;
         border: 1px solid #f3f4f6;
-        border-radius: 25px; /* Bo tròn lớn như trang chủ */
+        border-radius: 25px;
         aspect-ratio: 1 / 1;
         overflow: hidden;
         display: flex;
@@ -198,7 +407,7 @@
     .product-luxury-card:hover .img-luxury-frame {
         background-color: #ffffff;
         border-color: var(--forest-dark);
-        box-shadow: 0 20px 40px rgba(26, 58, 40, 0.06);
+        box-shadow: 0 15px 30px rgba(26, 77, 58, 0.1);
     }
 
     .product-luxury-card:hover img {
@@ -206,25 +415,25 @@
     }
 
     .product-info-minimal {
-        padding-top: 20px;
-        text-align: center; /* Đưa text ra giữa cho sang */
+        padding-top: 15px;
+        text-align: center;
     }
 
     .luxury-cat-name {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #9ca3af;
-        margin-bottom: 8px;
+        letter-spacing: 1px;
+        color: #6c757d;
+        margin-bottom: 5px;
         display: block;
     }
 
     .luxury-title {
-        font-family: 'Playfair Display', serif; /* Font Serif cho tiêu đề sản phẩm */
+        font-family: 'Playfair Display', serif;
         font-size: 1.1rem;
         font-weight: 700;
-        color: var(--forest-dark);
-        margin-bottom: 10px;
+        color: #212529;
+        margin-bottom: 8px;
         display: block;
         line-height: 1.4;
         height: 3rem;
@@ -232,16 +441,15 @@
     }
 
     .luxury-price {
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        color: #111827;
+        color: var(--forest-dark);
     }
 
-    /* Nút trái tim nhỏ nhắn */
     .wishlist-btn {
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 15px;
+        right: 15px;
         color: #9ca3af;
         font-size: 1.2rem;
         z-index: 5;
@@ -260,77 +468,175 @@
             color: #dc3545;
             transform: scale(1.1);
         }
+
+    /* HIỆU ỨNG HIỆN DẦN */
+    .product-reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease-out;
+    }
+
+        .product-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* RESPONSIVE */
+    @@media (max-width: 992px) {
+        .product-page-container
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        flex: none;
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+
+    .category-list {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .category-item {
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .full-width-banner {
+        height: 50vh;
+    }
+
+    .about-camping-content {
+        flex-direction: column;
+    }
+
+    .about-camping-image-col {
+        width: 100%;
+    }
+
+    .about-section-main-title {
+        font-size: 2.2rem;
+    }
+
+    }
 </style>
 
-<div class="container py-5">
-    <div class="page-header @bannerBgClass">
-        <div class="row w-100 align-items-center position-relative z-1">
-            <div class="col-lg-7 text-start ps-lg-5">
-                <span class="badge bg-white text-dark rounded-pill px-4 py-2 mb-4 fw-bold font-monospace" style="letter-spacing: 1px;">DỰ ÁN CHÂU & TRƯỜNG</span>
-                <h1 class="display-3 fw-bold mb-4 font-serif">
-                    @(string.IsNullOrEmpty(currentCat) ? "Hệ Sinh Thái Dã Ngoại" :
-                                        currentCat == "Lều cắm trại" ? "Ngôi Nhà Giữa Đại Ngàn" :
-                                        currentCat == "Dụng cụ nấu ăn" ? "Bếp Lửa Hồng Xa Xứ" :
-                                        currentCat == "Phương tiện di chuyển" ? "Vượt Mọi Địa Hình" : "Tinh Tế Từng Chi Tiết")
-                </h1>
-                <p class="fs-5 text-white-50 fw-light">Cung cấp giải pháp trọn vẹn cho phong cách sống ngoài trời đẳng cấp.</p>
+<div class="full-width-banner"></div>
+
+<section class="intro-section">
+    <div class="intro-container">
+
+        <div class="intro-images-wrapper">
+            <div class="image-column col-left">
+                <img src="/images/IMG/leu1.jpg" class="intro-img img-1" alt="Camping 1">
+                <img src="/images//IMG/leu2.jpg" class="intro-img img-2" alt="Camping 2">
             </div>
-            <div class="col-lg-5 text-center d-none d-lg-block">
-                <img src="@bannerImg" class="img-fluid banner-illustration" alt="Banner">
+            <div class="image-column col-right">
+                <img src="/images/IMG/leu3.jpg" class="intro-img img-3" alt="Camping 3">
+                <img src="/images/IMG/camping.jpg" class="intro-img img-4" alt="Camping 4">
             </div>
         </div>
-    </div>
 
-    <div class="sticky-filter-container">
-        <div class="filter-luxury">
-            <a asp-action="ProductList" asp-route-category="" class="filter-link @(string.IsNullOrEmpty(currentCat) ? "active" : "")">Tất cả</a>
+        <div class="intro-text-wrapper">
+            <div class="intro-subtitle-top">Dịch vụ cho thuê lều trại và phụ kiện dã ngoại chuyên nghiệp.</div>
+
+            <h1 class="intro-huge-title font-serif">Camping<br>Rental</h1>
+
+            <p class="intro-desc-text">Khám phá vẻ đẹp nguyên sơ của thiên nhiên cùng những trang bị cắm trại chất lượng nhất. Từ những buổi chiều hoàng hôn trên núi đến đêm ngàn sao rực rỡ.</p>
+            <p class="intro-desc-text">Camping Rental sẽ đồng hành cùng bạn tạo nên những kỷ niệm khó quên, mang sự tiện nghi đến bất cứ nơi đâu bạn dừng chân.</p>
+
+            <a href="#" class="btn-view-products">Xem sản phẩm ↓</a>
+        </div>
+
+    </div>
+</section>
+
+<div class="product-page-container pb-5">
+
+    <aside class="sidebar">
+        <div class="category-title-header">
+            <h3 class="category-title font-serif">Danh mục</h3>
+        </div>
+        <ul class="category-list">
+            <li>
+                <a asp-action="ProductList" asp-route-category="" class="category-item @(string.IsNullOrEmpty(currentCat) ? "active" : "")">
+                    Tất cả
+                </a>
+            </li>
             @if (ViewBag.Categories != null)
             {
                 foreach (var cat in ViewBag.Categories)
                 {
-                    <a asp-action="ProductList" asp-route-category="@cat.Name" class="filter-link @(currentCat == cat.Name ? "active" : "")">@cat.Name</a>
+                    <li>
+                        <a asp-action="ProductList" asp-route-category="@cat.Name" class="category-item @(currentCat == cat.Name ? "active" : "")">
+                            @cat.Name
+                        </a>
+                    </li>
                 }
             }
-        </div>
-    </div>
+        </ul>
+    </aside>
 
-    <div class="row g-5">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var item in Model)
+    <main class="main-content">
+
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <span class="toolbar-label">Giá</span>
+                <input type="number" class="price-input" placeholder="Từ đ">
+                <span class="text-muted">-</span>
+                <input type="number" class="price-input" placeholder="Đến đ">
+                <button class="btn-search-icon"><i class="bi bi-search"></i></button>
+            </div>
+            <div class="toolbar-right">
+                <button class="sort-btn active">Cao đến thấp</button>
+                <button class="sort-btn">Thấp đến cao</button>
+                <span class="ms-3 fw-bold text-muted">&lt; 1 / 3 &gt;</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
             {
-                <div class="col-lg-3 col-md-4 col-sm-6 product-reveal">
-                    <a asp-action="Details" asp-route-id="@item.Id" class="product-luxury-card">
-                        <div class="img-luxury-frame">
-                            <div class="wishlist-btn"><i class="bi bi-heart"></i></div>
-                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
-                                 alt="@item.Name">
-                        </div>
-                        <div class="product-info-minimal">
-                            <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
-                            <span class="luxury-title">@item.Name</span>
-                            <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
-                        </div>
-                    </a>
+                foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 product-reveal">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="product-luxury-card">
+                            <div class="img-luxury-frame">
+                                <div class="wishlist-btn"><i class="bi bi-heart"></i></div>
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                                     alt="@item.Name">
+                            </div>
+                            <div class="product-info-minimal">
+                                <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
+                                <span class="luxury-title">@item.Name</span>
+                                <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <h4 class="text-muted font-serif fst-italic">Không tìm thấy sản phẩm nào trong danh mục này.</h4>
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12 text-center py-5">
-                <h4 class="text-muted font-serif fst-italic">Không tìm thấy sản phẩm nào trong danh mục này.</h4>
-            </div>
-        }
-    </div>
+        </div>
+
+    </main>
 </div>
 
 <script>
-    // JS XỬ LÝ HIỆU ỨNG HIỆN DẦN KHI CUỘN CHUỘT
     document.addEventListener("DOMContentLoaded", function() {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    // Thêm delay nhỏ cho từng thẻ để tạo hiệu ứng lượn sóng (cascade)
                     setTimeout(() => {
                         entry.target.classList.add('active');
                     }, index * 50);
