@@ -1,0 +1,92 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Combo
+
+@{
+    ViewData["Title"] = "Thêm Mới Combo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Đổi thành Layout Admin thực tế của bạn
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-success fw-bold">Thêm Mới Gói Combo</h2>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="row g-4">
+
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold mb-3 border-bottom pb-2">Thông tin gói</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Tên Combo <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="Vd: Combo Tân Binh..." required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label fw-bold">Giá thuê trọn gói (VNĐ) <span class="text-danger">*</span></label>
+                            <input asp-for="Price" type="number" class="form-control" placeholder="Vd: 450000" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Badge" class="form-label fw-bold">Nhãn dán (Tùy chọn)</label>
+                            <input asp-for="Badge" class="form-control" placeholder="Vd: Best Seller, Cao cấp, Giảm 20%..." />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ảnh đại diện Combo</label>
+                            <input type="file" name="ImageUpload" class="form-control" accept="image/*" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Mô tả ngắn</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Gói này dành cho ai..."></textarea>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" asp-for="IsActive" checked>
+                            <label class="form-check-label" asp-for="IsActive">Hiển thị trên trang chủ</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="card-title fw-bold mb-3 border-bottom pb-2">
+                            Chọn đồ vào Combo <span class="text-danger">*</span>
+                        </h5>
+                        <p class="small text-muted">Tick vào các sản phẩm bạn muốn khách thuê trong gói này:</p>
+
+                        <div class="flex-grow-1" style="max-height: 450px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 8px; padding: 15px; background-color: #f8f9fa;">
+
+                            @if (ViewBag.Products != null)
+                            {
+                                foreach (var product in (List<BAOCAOWEBNANGCAO.Models.Product>)ViewBag.Products)
+                                {
+                                    <div class="form-check mb-2 custom-checkbox-wrapper">
+                                        <input class="form-check-input" type="checkbox" name="SelectedProductIds" value="@product.Id" id="prod_@product.Id" style="cursor: pointer;">
+                                        <label class="form-check-label d-block" for="prod_@product.Id" style="cursor: pointer;">
+                                            <strong class="text-dark">@product.Name</strong> <br />
+                                            <span class="text-success small">@product.PricePerDay.ToString("N0") đ/ngày</span>
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-danger">Chưa có sản phẩm nào trong kho!</p>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success px-5 py-2 fw-bold shadow-sm"><i class="fas fa-save me-2"></i> LƯU COMBO</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2 py-2">Hủy bỏ</a>
+        </div>
+    </form>
+</div>

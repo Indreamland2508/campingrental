@@ -126,6 +126,11 @@
                 <a asp-controller="Accounts" asp-action="Index" class="@(currentController == "Accounts" && currentAction == "Index" ? "active" : "")">
                     <i class="bi bi-people"></i> Tài khoản
                 </a>
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-controller="Combos" asp-action="Index">
+                        <i class="bi bi-box-seam me-2"></i> Quản lý Combo
+                    </a>
+                </li>
             }
 
             <a asp-controller="Orders" asp-action="Index" class="@(currentController == "Orders" ? "active" : "")">

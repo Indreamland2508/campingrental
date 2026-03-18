@@ -17,26 +17,76 @@
         font-family: 'Playfair Display', 'Times New Roman', serif;
     }
 
-    /* 1. HERO SECTION (TỐI GIẢN & SANG TRỌNG) */
+    /* 1. HERO SECTION (ẢNH TRÀN VIỀN, CHỮ CHÈN LÊN TRÊN GIỐNG TRANG SẢN PHẨM) */
     .minimal-hero-section {
-        background-color: var(--elegant-bg);
-        padding: 80px 0;
-        border-bottom: 1px solid #f0f0f0;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        height: 85vh; /* Chiều cao chiếm 85% màn hình */
+        /* THAY LINK ẢNH DƯỚI ĐÂY BẰNG ẢNH BẠN MUỐN (Có thể dùng lại ảnh trang sản phẩm) */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('/images/IMG/dungtrai.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: center; /* Căn giữa nội dung theo chiều dọc */
+        justify-content: center; /* Căn giữa nội dung theo chiều ngang */
+        text-align: center;
+        margin-top: -16px; /* Kéo nhẹ lên cho sát với thanh Navbar */
+        margin-bottom: 0;
+    }
+
+    .hero-content-wrapper {
+        color: white;
+        max-width: 800px;
+        padding: 0 20px;
+        z-index: 1;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); /* Shadow để chữ nổi bần bật trên nền ảnh */
     }
 
     .hero-title {
-        font-size: 4.5rem;
+        font-size: 5rem;
         line-height: 1.1;
-        color: var(--forest-dark);
-        margin-bottom: 20px;
+        font-weight: 700;
+        color: white; /* Đổi màu chữ thành trắng */
+        margin-bottom: 25px;
+        letter-spacing: -1px;
     }
 
-    .hero-image-wrapper {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        position: relative;
+    .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 40px;
+        line-height: 1.6;
     }
+
+    /* Đổi màu nút bấm trên nền tối */
+    .btn-elegant-hero {
+        background-color: white;
+        color: var(--forest-dark);
+        border: none;
+        padding: 16px 45px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-radius: 50rem;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        font-size: 1rem;
+        display: inline-block;
+        text-decoration: none;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+        .btn-elegant-hero:hover {
+            background-color: var(--forest-light);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(25, 135, 84, 0.3);
+        }
 
     /* Nút bấm đồng bộ toàn trang */
     .btn-elegant {
@@ -114,7 +164,158 @@
         font-size: 0.7rem;
     }
 
-    /* 3. STATS & ABOUT (ĐỒNG BỘ FONT) */
+    /* 3. COMBO SECTION (GIẢI PHÁP TRỌN GÓI) */
+    .combo-section-wrapper {
+        padding: 90px 0;
+        background-color: #fcfcfc; /* Nền xám cực nhạt để làm nổi bật card trắng */
+    }
+
+    .combo-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 25px; /* Bo góc lớn đồng bộ */
+        overflow: hidden;
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+        .combo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(26, 77, 58, 0.08);
+            border-color: var(--forest-dark);
+        }
+
+    .combo-img-wrapper {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .combo-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+    .combo-card:hover .combo-img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    .combo-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: var(--forest-dark);
+        color: white;
+        padding: 6px 15px;
+        border-radius: 50rem;
+        font-size: 0.8rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        z-index: 2;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+        .combo-badge.hot {
+            background-color: #dc3545; /* Màu đỏ cho combo hot */
+        }
+
+    .combo-content {
+        padding: 35px 30px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .combo-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 10px;
+    }
+
+    .combo-desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .combo-items {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+        flex: 1;
+    }
+
+        .combo-items li {
+            font-size: 0.95rem;
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+            .combo-items li i {
+                color: var(--forest-light, #198754);
+                margin-right: 12px;
+                font-size: 1.2rem;
+                margin-top: 1px;
+            }
+
+    .combo-footer {
+        border-top: 1px solid #f0f0f0;
+        padding-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .combo-price-wrap {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .combo-price-label {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 3px;
+        font-weight: bold;
+    }
+
+    .combo-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--forest-dark);
+    }
+
+    .btn-combo {
+        background-color: var(--forest-dark);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 50rem;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn-combo:hover {
+            background-color: #15321e;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    /* 4. STATS & ABOUT (ĐỒNG BỘ FONT) */
     .stats-box {
         background: white;
         border-radius: 20px;
@@ -168,7 +369,7 @@
     }
 
 
-    /* 4. TOTAL MINIMALIST REVIEW BOX & FORM (ĐÃ FIX LỖI TÀNG HÌNH) */
+    /* 5. TOTAL MINIMALIST REVIEW BOX & FORM (ĐÃ FIX LỖI TÀNG HÌNH) */
     .total-minimal-review-wrapper {
         padding: 100px 0;
         margin-top: 50px;
@@ -258,20 +459,16 @@
 </style>
 
 <div class="minimal-hero-section">
-    <div class="container">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-5">
-                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-4 font-monospace">HOT SUMMER 2026</span>
-                <h1 class="hero-title font-serif">Khám phá<br><i class="text-success">Thiên Nhiên.</i></h1>
-                <p class="text-muted fs-5 mb-5 lh-lg">Dịch vụ cho thuê lều trại chất lượng cao, mang đến trải nghiệm dã ngoại hoàn hảo và đẳng cấp nhất tại Hà Nội.</p>
-                <a href="/Home/ProductList" class="btn-elegant shadow-sm">Bắt đầu hành trình</a>
-            </div>
-            <div class="col-lg-7">
-                <div class="hero-image-wrapper">
-                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2070&auto=format&fit=crop" class="img-fluid w-100" style="object-fit: cover; height: 500px;" alt="Luxury Camping">
-                </div>
-            </div>
-        </div>
+    <div class="hero-content-wrapper">
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-4 font-monospace" style="text-shadow: none;">HOT SUMMER 2026</span>
+
+        <h1 class="hero-title font-serif">Khám phá<br><i class="text-white" style="font-style: italic;">Thiên Nhiên.</i></h1>
+
+        <p class="hero-subtitle">
+            Dịch vụ cho thuê lều trại chất lượng cao, mang đến trải nghiệm dã ngoại hoàn hảo và đẳng cấp nhất tại Hà Nội.
+        </p>
+
+        <a href="/Home/ProductList" class="btn-elegant-hero">Bắt đầu hành trình</a>
     </div>
 </div>
 
@@ -322,6 +519,103 @@
                 }
             </div>
             <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</div>
+
+<div class="combo-section-wrapper">
+    <div class="container">
+        <div class="row align-items-end mb-5">
+            <div class="col-md-8 text-center text-md-start">
+                <h2 class="section-heading font-serif">Giải pháp <i class="text-success" style="font-style: italic;">Trọn Gói.</i></h2>
+                <p class="text-muted fs-5">Lần đầu đi cắm trại? Hãy để chúng tôi chuẩn bị mọi thứ từ A-Z cho bạn.</p>
+            </div>
+            <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                <a href="/Home/ProductList" class="btn-elegant shadow-sm" style="padding: 12px 25px;">
+                    TỰ CHỌN ĐỒ LẺ
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="combo-card">
+                    <div class="combo-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=2070&auto=format&fit=crop" alt="Combo Cơ Bản">
+                    </div>
+                    <div class="combo-content">
+                        <h3 class="combo-title font-serif">Combo Tân Binh</h3>
+                        <p class="combo-desc">Gói tiện lợi dành cho 2-4 người lần đầu đi cắm trại, chỉ bao gồm chỗ ngủ cơ bản.</p>
+                        <ul class="combo-items">
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Lều chống nước 4 người</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Tấm bạt lót đáy lều</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 02 Tấm cách nhiệt ngủ</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Đèn quạt tích điện treo lều</li>
+                        </ul>
+                        <div class="combo-footer">
+                            <div class="combo-price-wrap">
+                                <span class="combo-price-label">Gói thuê 24h</span>
+                                <span class="combo-price">250.000₫</span>
+                            </div>
+                            <button class="btn-combo btn-add-combo" data-product-ids="1,2,5,7">Thêm Giỏ Hàng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="combo-card">
+                    <div class="combo-badge hot">Best Seller</div>
+                    <div class="combo-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=2068&auto=format&fit=crop" alt="Combo Bếp Nút">
+                    </div>
+                    <div class="combo-content">
+                        <h3 class="combo-title font-serif">Combo Bếp Trưởng</h3>
+                        <p class="combo-desc">Trọn bộ dụng cụ dành cho team đam mê nấu nướng và chill ăn uống ngoài trời.</p>
+                        <ul class="combo-items">
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Bếp nướng BBQ dã ngoại</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Bếp ga mini + 1 bình ga</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Bộ nồi chảo dã ngoại (4 món)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Bàn nhôm cuộn + 4 ghế xếp</li>
+                        </ul>
+                        <div class="combo-footer">
+                            <div class="combo-price-wrap">
+                                <span class="combo-price-label">Gói thuê 24h</span>
+                                <span class="combo-price">450.000₫</span>
+                            </div>
+                            <button class="btn-combo btn-add-combo" data-product-ids="10,12,15,18">Thêm Giỏ Hàng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="combo-card">
+                    <div class="combo-badge">Cao Cấp</div>
+                    <div class="combo-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1596328546171-77e37b5fefea?q=80&w=2070&auto=format&fit=crop" alt="Combo Glamping">
+                    </div>
+                    <div class="combo-content">
+                        <h3 class="combo-title font-serif">Combo Glamping</h3>
+                        <p class="combo-desc">Mang cả phòng ngủ khách sạn ra giữa thiên nhiên với lều mông cổ khổng lồ.</p>
+                        <ul class="combo-items">
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Lều chuông Naturehike siêu lớn</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 02 Đệm hơi tự bơm siêu êm</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Dây đèn LED trang trí vintage</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 01 Trạm sạc dự phòng 220V</li>
+                        </ul>
+                        <div class="combo-footer">
+                            <div class="combo-price-wrap">
+                                <span class="combo-price-label">Gói thuê 24h</span>
+                                <span class="combo-price">850.000₫</span>
+                            </div>
+                            <button class="btn-combo btn-add-combo" data-product-ids="20,22,25,28">Thêm Giỏ Hàng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -444,6 +738,7 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Khởi tạo slider cho phần trending
         var swiper = new Swiper(".trending-swiper", {
             slidesPerView: 1,
             spaceBetween: 30,
@@ -455,6 +750,61 @@
                 1024: { slidesPerView: 3 },
                 1200: { slidesPerView: 4 },
             },
+        });
+
+        // HÀM JS XỬ LÝ NÚT "THÊM GIỎ HÀNG" CHO COMBO
+        const btnAddCombos = document.querySelectorAll('.btn-add-combo');
+
+        btnAddCombos.forEach(button => {
+            button.addEventListener('click', function() {
+                // Đổi text thành đang tải để khách biết
+                const originalText = this.innerText;
+                this.innerText = "Đang thêm...";
+                this.disabled = true;
+
+                // Lấy chuỗi ID từ data-product-ids (ví dụ: "1,2,5,7")
+                const productIdsString = this.getAttribute('data-product-ids');
+                const productIds = productIdsString.split(',');
+
+                // Mảng chứa các Promise (mỗi món hàng thêm vào là 1 request AJAX)
+                let requests = [];
+
+                productIds.forEach(id => {
+                    // Cần tạo 1 request POST đến API hoặc Action thêm vào giỏ hàng của bạn
+                    // LƯU Ý: Đường dẫn "/Cart/AddToCart" này phải TRÙNG với Action của bạn trong CartController
+                    let request = fetch('/Cart/AddToCart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        // Gửi kèm ID sản phẩm và số lượng = 1
+                        body: new URLSearchParams({
+                            'productId': id.trim(),
+                            'quantity': 1
+                        })
+                    });
+                    requests.push(request);
+                });
+
+                // Chờ tất cả đồ trong combo được nhét vào giỏ xong
+                Promise.all(requests)
+                    .then(responses => {
+                        // Báo thành công và đổi lại nút
+                        this.innerText = "Đã thêm ✓";
+                        this.style.backgroundColor = "#198754"; // Chuyển sang màu xanh lá
+
+                        // Nếu trang của Châu có icon giỏ hàng hiển thị số lượng ở Navbar,
+                        // Châu có thể viết code JS cập nhật con số đó ở đây hoặc reload lại trang.
+                        setTimeout(() => {
+                             window.location.href = '/Cart/Index'; // Chuyển thẳng tới giỏ hàng xem luôn
+                        }, 1000);
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi thêm combo:', error);
+                        this.innerText = "Lỗi!";
+                        this.style.backgroundColor = "#dc3545"; // Đỏ báo lỗi
+                    });
+            });
         });
     });
 </script>
