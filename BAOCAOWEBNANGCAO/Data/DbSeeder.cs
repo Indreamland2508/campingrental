@@ -75,7 +75,7 @@ namespace BAOCAOWEBNANGCAO.Data
         new Product {
             Name = "BỘ BÀN GHẾ DÃ NGOẠI VINTAGE KHUNG NHÔM - TRẮNG",
             Description = "Bộ bàn ghế phong cách vintage trang nhã...",
-            PricePerDay = 120000, Quantity = 5, ImageUrl = "/images/products/BỘ BÀN GHẾ DÃ NGOẠI VINTAGE KHUNG NHÔM - TRẮNG.jpg", CategoryId = 3
+            PricePerDay = 120000, Quantity = 5, ImageUrl = "/images/products/BỘ BÀN GHẾ DÃ NGOẠI VINTAGE KHUNG NHÔM - TRẮNG.jpg", CategoryId = 3
         },
         new Product {
             Name = "GHẾ GẤP DÃ NGOẠI VINTAGE KHUNG SẮT TAY GỖ NATUREHIKE",
@@ -85,14 +85,14 @@ namespace BAOCAOWEBNANGCAO.Data
         new Product {
             Name = "GHẾ XẾP DÃ NGOẠI THƯ GIÃN NATUREHIKE NH18X004-Y",
             Description = "Ghế xếp dã ngoại thiết kế chắc chắn thoải mái...",
-            PricePerDay = 35000, Quantity = 20, ImageUrl = "/images/products/GHẾ XẾP DÃ NGOẠI THƯ GIÃN NATUREHIKE NH18X004-Y.jpg", CategoryId = 3
+            PricePerDay = 35000, Quantity = 20, ImageUrl = "/images/products/GHẾ XẾP DÃ NGOẠI THƯ GIÃN NATUREHIKE NH18X004 - Y.jpg", CategoryId = 3
         },
 
         // --- NHÓM BẾP & NƯỚNG ---
         new Product {
             Name = "BẾP CỦI DÃ NGOẠI GẤP GỌN NATUREHIKE NH20SK001",
             Description = "Bếp củi dã ngoại gấp gọn tiện lợi...",
-            PricePerDay = 40000, Quantity = 15, ImageUrl = "/images/products/BẾP CỦI DÃ NGOẠI GẤP GỌN NATUREHIKE NH20SK001.jpg", CategoryId = 2
+            PricePerDay = 40000, Quantity = 15, ImageUrl = "/images/products/naturehike-h-l-a-ng-di-ng-l-a-t-ch-y-gi-c-m-tr-jpg-720x720-2.png", CategoryId = 2
         },
         new Product {
             Name = "BẾP ĐỨNG NƯỚNG THAN INOX TO CAO CẤP DÀNH CHO 12-15 NGƯỜI",
