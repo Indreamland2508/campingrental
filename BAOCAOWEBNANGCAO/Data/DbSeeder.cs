@@ -64,7 +64,7 @@ namespace BAOCAOWEBNANGCAO.Data
         },
         new Product {
             Name = "BÀN NHÔM CUỘN GẤP GỌN CẮM TRẠI NATUREHIKE CNK2300JU010",
-            Description = "Bàn nhôm cuộn gấp gọn chuyên dụng...",
+            Description = "Bàn nhôm cuộn gấp gọn chuyên dụng cho hoạt động cắm trại và dã ngoại. Thiết kế mặt bàn dạng cuộn giúp dễ dàng tháo lắp và cất giữ trong balo hoặc cốp xe. Khung nhôm bền bỉ, chịu lực tốt, thích hợp sử dụng cho các chuyến camping, picnic hoặc trekking.",
             PricePerDay = 40000, Quantity = 15, ImageUrl = "/images/products/BÀN NHÔM CUỘN GẤP GỌN CẮM TRẠI NATUREHIKE CNK2300JU010.jpg", CategoryId = 3
         },
         new Product {

@@ -9,6 +9,8 @@ using BAOCAOWEBNANGCAO.Data;
 using BAOCAOWEBNANGCAO.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
+using System.IO;
+
 namespace BAOCAOWEBNANGCAO.Controllers
 {
     [Authorize(Roles = "Admin,Staff")]
@@ -85,7 +87,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // GET: Products/Edit/5
-        [HttpGet] // Đảm bảo hàm này nhận GET để hiện giao diện
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -98,9 +100,10 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // POST: Products/Edit/5
+        // ĐÃ THÊM: int page = 1, string search = ""
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? imageFile, int page = 1, string search = "")
         {
             if (id != product.Id) return NotFound();
 
@@ -123,11 +126,12 @@ namespace BAOCAOWEBNANGCAO.Controllers
                         // Cập nhật đường dẫn ảnh mới
                         product.ImageUrl = "/images/products/" + fileName;
                     }
-                    // Nếu imageFile null, ImageUrl cũ từ hidden input trong View sẽ được giữ lại nhờ Bind
 
                     _context.Update(product);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    // ĐÃ SỬA: Điều hướng về đúng trang và từ khóa tìm kiếm
+                    return RedirectToAction(nameof(Index), new { page = page, search = search });
                 }
                 catch (Exception ex)
                 {
@@ -139,9 +143,10 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // POST: Products/Delete/5
+        // ĐÃ THÊM: int page = 1, string search = ""
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int page = 1, string search = "")
         {
             var product = await _context.Products.FindAsync(id);
             if (product != null)
@@ -149,7 +154,9 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+
+            // ĐÃ SỬA: Điều hướng về đúng trang và từ khóa tìm kiếm
+            return RedirectToAction(nameof(Index), new { page = page, search = search });
         }
 
         // GET: Products/Details/5

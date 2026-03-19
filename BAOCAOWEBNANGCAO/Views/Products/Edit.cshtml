@@ -83,7 +83,8 @@
 
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="ImageUrl" />
-
+                        <input type="hidden" name="page" value="@Context.Request.Query["page"]" />
+                        <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
                         <div class="row">
                             <div class="col-md-12 mb-4">
                                 <label asp-for="Name" class="form-label">Tên sản phẩm</label>
