@@ -1,16 +1,21 @@
 ﻿@model BAOCAOWEBNANGCAO.Models.Combo
 
 @{
-    ViewData["Title"] = "Thêm Mới Combo";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Đổi thành Layout Admin thực tế của bạn
+    ViewData["Title"] = "Chỉnh Sửa Combo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // Lấy ra danh sách các món đồ ĐANG CÓ trong Combo này (Kèm theo SỐ LƯỢNG)
+    var currentComboDetails = Model.ComboDetails?.ToDictionary(cd => cd.ProductId, cd => cd.Quantity) ?? new Dictionary<int, int>();
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-success fw-bold">Thêm Mới Gói Combo</h2>
+    <h2 class="mb-4 text-success fw-bold">Chỉnh Sửa Combo: @Model.Name</h2>
 
-    <form asp-action="Create" enctype="multipart/form-data">
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ImageUrl" />
+
         <div class="row g-4">
-
             <div class="col-md-7">
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
@@ -18,32 +23,38 @@
 
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-bold">Tên Combo <span class="text-danger">*</span></label>
-                            <input asp-for="Name" class="form-control" placeholder="Vd: Combo Tân Binh..." required />
+                            <input asp-for="Name" class="form-control" required />
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Price" class="form-label fw-bold">Giá thuê trọn gói (VNĐ) <span class="text-danger">*</span></label>
-                            <input asp-for="Price" type="number" id="ComboPrice" class="form-control fw-bold text-danger" placeholder="0" required />
+                            <input asp-for="Price" type="number" id="ComboPrice" class="form-control fw-bold text-danger" required />
                             <small class="text-muted fst-italic">Giá này tự động cộng dồn khi bạn chọn đồ bên phải. Bạn có thể sửa lại nếu muốn bán rẻ hơn.</small>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Badge" class="form-label fw-bold">Nhãn dán (Tùy chọn)</label>
-                            <input asp-for="Badge" class="form-control" placeholder="Vd: Best Seller, Cao cấp, Giảm 20%..." />
+                            <input asp-for="Badge" class="form-control" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Ảnh đại diện Combo</label>
+                            <label class="form-label fw-bold">Ảnh đại diện mới (Bỏ trống nếu không muốn đổi)</label>
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.ImageUrl" alt="Ảnh hiện tại" class="rounded shadow-sm" style="max-height: 100px; object-fit: cover;" />
+                                </div>
+                            }
                             <input type="file" name="ImageUpload" class="form-control" accept="image/*" />
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Description" class="form-label fw-bold">Mô tả ngắn</label>
-                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Gói này dành cho ai..."></textarea>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                         </div>
 
                         <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" asp-for="IsActive" checked>
+                            <input class="form-check-input" type="checkbox" asp-for="IsActive">
                             <label class="form-check-label" asp-for="IsActive">Hiển thị trên trang chủ</label>
                         </div>
                     </div>
@@ -59,43 +70,39 @@
                         <p class="small text-muted mb-3">Tick chọn sản phẩm và nhập số lượng tương ứng:</p>
 
                         <div class="flex-grow-1" style="max-height: 550px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
-
                             @if (ViewBag.Products != null)
                             {
                                 foreach (var product in (List<BAOCAOWEBNANGCAO.Models.Product>)ViewBag.Products)
                                 {
+                                    bool isChecked = currentComboDetails.ContainsKey(product.Id);
+                                    int qty = isChecked ? currentComboDetails[product.Id] : 1;
+
                                     <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white shadow-sm">
 
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input product-checkbox" type="checkbox" name="SelectedProductIds" value="@product.Id" id="prod_@product.Id" data-price="@product.PricePerDay" style="cursor: pointer;">
+                                            <input class="form-check-input product-checkbox" type="checkbox" name="SelectedProductIds" value="@product.Id" id="prod_@product.Id" data-price="@product.PricePerDay" @(isChecked ? "checked" : "") style="cursor: pointer;">
                                             <label class="form-check-label" for="prod_@product.Id" style="cursor: pointer; line-height: 1.2;">
                                                 <strong class="text-dark" style="font-size: 0.9rem;">@product.Name</strong> <br />
                                                 <span class="text-success small fw-bold">@product.PricePerDay.ToString("N0") đ</span>
                                             </label>
                                         </div>
 
-                                        <div class="qty-control ms-2" style="display: none;">
-                                            <input type="number" name="Quantities_@product.Id" class="form-control form-control-sm product-qty text-center" value="1" min="1" style="width: 65px; font-weight: bold;">
+                                        <div class="qty-control ms-2" style="@(isChecked ? "" : "display: none;")">
+                                            <input type="number" name="Quantities_@product.Id" class="form-control form-control-sm product-qty text-center" value="@qty" min="1" style="width: 65px; font-weight: bold;">
                                         </div>
 
                                     </div>
                                 }
                             }
-                            else
-                            {
-                                <p class="text-danger">Chưa có sản phẩm nào trong kho!</p>
-                            }
-
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="mt-4">
-            <button type="submit" class="btn btn-success px-5 py-2 fw-bold shadow-sm"><i class="bi bi-save me-2"></i> LƯU COMBO</button>
-            <a asp-action="Index" class="btn btn-outline-secondary ms-2 py-2">Hủy bỏ</a>
+            <button type="submit" class="btn btn-success px-5 py-2 fw-bold shadow-sm"><i class="bi bi-save me-2"></i> CẬP NHẬT</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2 py-2">Quay lại</a>
         </div>
     </form>
 </div>
@@ -120,7 +127,7 @@
                         total += (price * qty);
                     }
                 });
-                // Cập nhật ô input Giá tiền
+                // Cập nhật ô input Giá tiền (Không có dấu phẩy để tránh lỗi khi Submit form)
                 priceInput.value = total;
             }
 

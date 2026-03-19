@@ -20,9 +20,10 @@ namespace BAOCAOWEBNANGCAO.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // 1. Lấy danh sách sản phẩm
             var products = await _context.Products.Include(p => p.Category).ToListAsync();
 
-            // Lấy Top 6 sản phẩm Trending
+            // 2. Lấy Top 6 sản phẩm Trending (Logic cũ của bạn rất hay, giữ nguyên!)
             var trendingProducts = await _context.OrderDetails
                 .GroupBy(od => od.ProductId)
                 .OrderByDescending(g => g.Count())
@@ -35,15 +36,27 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 trendingProducts = products.Take(6).ToList();
             }
 
+            // 3. Lấy Feedback của khách hàng
             var feedbacks = await _context.Feedbacks
                 .Where(f => f.IsApproved)
                 .OrderByDescending(f => f.CreatedAt)
                 .Take(3)
                 .ToListAsync();
 
+            // 4. LẤY DANH SÁCH COMBO (Mới thêm)
+            var activeCombos = await _context.Combos
+                .Include(c => c.ComboDetails) // Kéo theo chi tiết
+                .ThenInclude(cd => cd.Product) // Kéo theo món đồ để lấy tên
+                .Where(c => c.IsActive == true) // Chỉ lấy combo đang bật
+                .Take(3) // Lấy tối đa 3 combo
+                .ToListAsync();
+
+            // 5. Gom tất cả đồ nghề ném ra ViewBag cho View sử dụng
             ViewBag.TrendingProducts = trendingProducts;
             ViewBag.Feedbacks = feedbacks;
+            ViewBag.Combos = activeCombos;
 
+            // 6. Chỉ có ĐÚNG 1 lệnh return ở cuối cùng này thôi nhé!
             return View(products);
         }
 

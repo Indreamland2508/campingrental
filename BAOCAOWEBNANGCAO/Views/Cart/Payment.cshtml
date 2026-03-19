@@ -4,14 +4,31 @@
     ViewData["Title"] = "Thanh toán đơn hàng";
 }
 
-<div class="container mt-5 text-center mb-5">
-    <h2 class="text-primary fw-bold">Thanh toán tiền cọc</h2>
-    <p class="fs-5">Mã đơn hàng: <strong>#@Model.Id</strong></p>
+<style>
+    /* Bổ sung font và màu đồng bộ nếu Layout chưa tự nhận */
+    .font-serif {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+    }
 
-    <div class="card mx-auto shadow-lg border-0 mt-4" style="max-width: 500px; border-radius: 15px;">
-        <div class="card-body p-4">
-            <h4 class="card-title fw-bold mb-3">Quét mã QR để thanh toán</h4>
-            <p class="text-muted mb-4">Vui lòng dùng App Ngân hàng quét mã QR dưới đây. Trình duyệt sẽ <strong class="text-success">tự động chuyển trang</strong> ngay khi nhận được tiền cọc.</p>
+    .text-forest {
+        color: #1a3a28 !important;
+    }
+
+    .border-forest {
+        border-color: #1a3a28 !important;
+    }
+</style>
+
+<div class="container mt-5 text-center mb-5">
+    <h2 class="font-serif fw-bold text-forest mb-2">Thanh toán tiền cọc.</h2>
+    <p class="fs-5 text-muted">Mã đơn hàng: <strong class="text-forest">#@Model.Id</strong></p>
+
+    <div class="card mx-auto shadow-lg border-0 mt-4" style="max-width: 500px; border-radius: 20px; overflow: hidden;">
+        <div class="card-body p-4 p-md-5">
+            <h4 class="card-title font-serif fw-bold mb-3 text-forest">Quét mã QR để thanh toán</h4>
+            <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                Vui lòng dùng App Ngân hàng quét mã QR dưới đây. Trình duyệt sẽ <strong class="text-success">tự động chuyển trang</strong> ngay khi nhận được tiền cọc.
+            </p>
 
             @{
                 string bankId = "MB"; // Thay bằng NH của bạn
@@ -22,21 +39,29 @@
                 string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact.png?amount={amountToPay}&addInfo={transferContent}&accountName={accountName}";
             }
 
-            <img src="@qrUrl" alt="Mã QR" class="img-fluid border rounded p-2 mb-3 shadow-sm" style="max-width: 250px;" />
-
-            <div class="d-flex justify-content-center align-items-center mb-3">
-                <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
-                <span class="text-primary fw-bold">Đang chờ thanh toán...</span>
+            <div class="bg-light p-3 rounded-4 mb-4 d-inline-block border border-light shadow-sm">
+                <img src="@qrUrl" alt="Mã QR" class="img-fluid rounded" style="max-width: 250px;" />
             </div>
 
-            <div class="alert alert-light text-start border" style="background-color: #f8f9fa;">
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="text-muted">Cần cọc (50%):</span><strong class="text-danger fs-5">@amountToPay.ToString("N0") VNĐ</strong>
+            <div class="d-flex justify-content-center align-items-center mb-4 pb-4 border-bottom">
+                <div class="spinner-border text-success spinner-border-sm me-2" role="status"></div>
+                <span class="text-success fw-bold" style="letter-spacing: 0.5px;">Hệ thống đang chờ thanh toán...</span>
+            </div>
+
+            <div class="alert text-start border-0 shadow-sm" style="background-color: #fcfcfc; border-left: 4px solid #1a3a28 !important;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 1px;">Cần cọc (50%)</span>
+                    <strong class="text-danger fs-5">@amountToPay.ToString("N0") VNĐ</strong>
                 </div>
-                <div class="d-flex justify-content-between mt-2">
-                    <span class="text-muted">Nội dung CK:</span><strong class="text-primary fs-4 bg-light px-2 border border-primary rounded">@transferContent</strong>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 1px;">Nội dung CK</span>
+                    <strong class="text-forest fs-4 bg-white px-3 py-1 border border-forest rounded shadow-sm">@transferContent</strong>
                 </div>
             </div>
+
+            <p class="small text-muted mt-3 mb-0 fst-italic">
+                <i class="bi bi-info-circle me-1"></i> Vui lòng nhập đúng nội dung chuyển khoản để hệ thống duyệt tự động.
+            </p>
         </div>
     </div>
 </div>

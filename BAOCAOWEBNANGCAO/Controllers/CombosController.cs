@@ -40,9 +40,18 @@ namespace BAOCAOWEBNANGCAO.Controllers
         // 3. POST: Xử lý khi nhân viên bấm "Lưu Combo"
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Combo combo, int[] SelectedProductIds, IFormFile? ImageUpload)
+        public async Task<IActionResult> Create(Combo combo, int[] SelectedProductIds, IFormCollection form, IFormFile? ImageUpload)
         {
-            if (ModelState.IsValid)
+            // BỎ QUA KIỂM TRA MODELSTATE NGUYÊN BẢN (TRÁNH LỖI NGẦM)
+            // Thay vào đó, ta kiểm tra thủ công các trường quan trọng nhất
+            if (string.IsNullOrEmpty(combo.Name))
+            {
+                ModelState.AddModelError("Name", "Tên Combo là bắt buộc.");
+                ViewBag.Products = _context.Products.ToList();
+                return View(combo);
+            }
+
+            try
             {
                 // A. Xử lý lưu ảnh Combo
                 if (ImageUpload != null && ImageUpload.Length > 0)
@@ -57,34 +66,169 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     {
                         await ImageUpload.CopyToAsync(fileStream);
                     }
-                    combo.ImageUrl = "/images/combos/" + uniqueFileName; // Lưu đường dẫn vào DB
+                    combo.ImageUrl = "/images/combos/" + uniqueFileName;
                 }
 
-                // B. Lưu thông tin Combo vào DB trước để lấy được cái ID của nó
-                _context.Add(combo);
+                // B. LƯU COMBO VÀO DATABASE (Lấy ID)
+                _context.Combos.Add(combo);
                 await _context.SaveChangesAsync();
 
-                // C. Xử lý lưu các món đồ (Sản phẩm) mà nhân viên đã tick chọn vào Combo
+                // C. LƯU CÁC SẢN PHẨM (ĐỒ LỀ) VÀO COMBO ĐÓ
                 if (SelectedProductIds != null && SelectedProductIds.Length > 0)
                 {
                     foreach (var productId in SelectedProductIds)
                     {
+                        int quantity = 1;
+                        // Tìm số lượng tương ứng với ID sản phẩm này
+                        if (int.TryParse(form[$"Quantities_{productId}"], out int parsedQty))
+                        {
+                            quantity = parsedQty > 0 ? parsedQty : 1;
+                        }
+
                         var comboDetail = new ComboDetail
                         {
-                            ComboId = combo.Id, // Nối với ID Combo vừa tạo
-                            ProductId = productId, // Nối với ID Sản phẩm được tick
-                            Quantity = 1 // Tạm thời để mặc định mỗi món 1 cái
+                            ComboId = combo.Id,
+                            ProductId = productId,
+                            Quantity = quantity // Đưa số lượng vừa hứng được vào DB
                         };
                         _context.ComboDetails.Add(comboDetail);
                     }
-                    await _context.SaveChangesAsync(); // Lưu tất cả chi tiết vào DB
                 }
 
-                return RedirectToAction(nameof(Index)); // Quay về trang danh sách
+                // Thành công thì nhảy về trang danh sách
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Nếu có lỗi lúc lưu vào DB (ví dụ rớt mạng), in ra màn hình hoặc log
+                Console.WriteLine("LỖI KHI LƯU COMBO: " + ex.Message);
+                ModelState.AddModelError("", "Đã xảy ra lỗi khi lưu vào Database. Vui lòng thử lại.");
+            }
+
+            // Nếu thất bại (xuống tới đây), bắt buộc phải nạp lại danh sách Products cho View
+            ViewBag.Products = _context.Products.ToList();
+            return View(combo);
+        }
+        // ==========================================
+        // 4. GET: Form Chỉnh sửa Combo
+        // ==========================================
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            // Kéo Combo lên, nhớ Include thêm ComboDetails để biết nó đang chứa món đồ nào
+            var combo = await _context.Combos
+                .Include(c => c.ComboDetails)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (combo == null) return NotFound();
+
+            // Kéo danh sách đồ nghề ra để làm Checkbox
+            ViewBag.Products = _context.Products.ToList();
+            return View(combo);
+        }
+
+        // 5. POST: Xử lý khi bấm "Cập nhật Combo"
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // CHÚ Ý CHỖ NÀY: Thêm IFormCollection form để "hứng" số lượng
+        public async Task<IActionResult> Edit(int id, Combo comboData, int[] SelectedProductIds, IFormCollection form, IFormFile? ImageUpload)
+        {
+            if (id != comboData.Id) return NotFound();
+
+            var comboToUpdate = await _context.Combos
+                .Include(c => c.ComboDetails)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (comboToUpdate == null) return NotFound();
+
+            if (string.IsNullOrEmpty(comboData.Name))
+            {
+                ModelState.AddModelError("Name", "Tên Combo là bắt buộc.");
+                ViewBag.Products = _context.Products.ToList();
+                return View(comboData);
+            }
+
+            try
+            {
+                comboToUpdate.Name = comboData.Name;
+                comboToUpdate.Price = comboData.Price;
+                comboToUpdate.Badge = comboData.Badge;
+                comboToUpdate.Description = comboData.Description;
+                comboToUpdate.IsActive = comboData.IsActive;
+
+                if (ImageUpload != null && ImageUpload.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "combos");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + ImageUpload.FileName;
+                    using (var fileStream = new FileStream(Path.Combine(uploadsFolder, uniqueFileName), FileMode.Create))
+                    {
+                        await ImageUpload.CopyToAsync(fileStream);
+                    }
+                    comboToUpdate.ImageUrl = "/images/combos/" + uniqueFileName;
+                }
+
+                // Xóa chi tiết cũ đi
+                _context.ComboDetails.RemoveRange(comboToUpdate.ComboDetails);
+
+                // Thêm chi tiết mới kèm theo SỐ LƯỢNG
+                if (SelectedProductIds != null && SelectedProductIds.Length > 0)
+                {
+                    foreach (var productId in SelectedProductIds)
+                    {
+                        int quantity = 1; // Mặc định là 1
+
+                        // Cố gắng tìm ô nhập số lượng Quantities_ID từ View gửi lên
+                        if (int.TryParse(form[$"Quantities_{productId}"], out int parsedQty))
+                        {
+                            quantity = parsedQty > 0 ? parsedQty : 1;
+                        }
+
+                        _context.ComboDetails.Add(new ComboDetail
+                        {
+                            ComboId = comboToUpdate.Id,
+                            ProductId = productId,
+                            Quantity = quantity // Đã lưu số lượng thực tế
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Cập nhật gói Combo thành công!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("LỖI SỬA COMBO: " + ex.Message);
+                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi lưu vào Database.";
             }
 
             ViewBag.Products = _context.Products.ToList();
-            return View(combo);
+            return View(comboData);
+        }
+
+        // ==========================================
+        // 6. POST: Xử lý Xóa Combo
+        // ==========================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var combo = await _context.Combos
+                .Include(c => c.ComboDetails) // Kéo theo chi tiết để xóa sạch không để rác
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (combo != null)
+            {
+                // Xóa chi tiết trước (đồ bên trong), xóa cái giỏ (combo) sau
+                _context.ComboDetails.RemoveRange(combo.ComboDetails);
+                _context.Combos.Remove(combo);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
