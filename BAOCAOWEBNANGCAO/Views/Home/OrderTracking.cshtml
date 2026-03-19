@@ -1,0 +1,150 @@
+﻿@model BAOCAOWEBNANGCAO.Models.Order
+
+@{
+    ViewData["Title"] = "Tra cứu đơn hàng";
+}
+
+<style>
+    .font-serif { font-family: 'Playfair Display', 'Times New Roman', serif; }
+    .text-forest { color: #1a3a28 !important; }
+    .bg-forest { background-color: #1a3a28 !important; }
+    .btn-elegant {
+        background-color: #1a3a28; color: white; border: none; padding: 12px 30px;
+        font-weight: bold; letter-spacing: 1px; border-radius: 50rem; transition: all 0.3s;
+    }
+    .btn-elegant:hover { background-color: #15321e; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(26, 58, 40, 0.15); color: white; }
+    .tracking-card { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+</style>
+
+<div class="container mt-5 mb-5 pb-5">
+    <div class="text-center mb-5">
+        <h1 class="font-serif fw-bold text-forest">Tra Cứu Đơn Hàng.</h1>
+        <p class="text-muted">Kiểm tra trạng thái thiết bị cắm trại bạn đã đặt thuê.</p>
+    </div>
+
+    @if (Model == null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="tracking-card bg-white p-4 p-md-5">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger border-0 bg-danger text-white rounded-3 shadow-sm py-2 px-3 mb-4">
+                            <i class="bi bi-exclamation-circle me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-action="OrderTracking" method="post">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">Mã đơn hàng</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 fw-bold text-muted">#</span>
+                                <input type="number" name="orderId" class="form-control border-start-0 ps-0 bg-light" placeholder="Ví dụ: 9" required style="box-shadow: none;">
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">Số điện thoại đặt hàng</label>
+                            <input type="text" name="phone" class="form-control bg-light" placeholder="0982..." required style="box-shadow: none;">
+                        </div>
+
+                        <button type="submit" class="btn-elegant w-100">
+                            <i class="bi bi-search me-2"></i> KIỂM TRA ĐƠN
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    else
+    {
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="tracking-card bg-white p-4 p-md-5 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 bg-forest" style="height: 6px;"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Đơn đặt trước</span>
+                            <h3 class="text-forest font-serif fw-bold mb-0">#@Model.Id</h3>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Trạng thái</span>
+                            @if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Chờ cọc / Chờ duyệt</span>
+                            }
+                            else if (Model.Status == "Deposited" || Model.Status == "Approved")
+                            {
+                                <span class="badge bg-primary rounded-pill px-3 py-2">Đã cọc - Chờ giao</span>
+                            }
+                            else if (Model.Status == "Completed")
+                            {
+                                <span class="badge bg-success rounded-pill px-3 py-2">Đã hoàn thành</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">@Model.Status</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">Thông tin người nhận</h6>
+                            <strong class="text-dark d-block">@Model.CustomerName</strong>
+                            <span class="text-secondary">@Model.CustomerPhone</span>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <h6 class="text-muted text-uppercase small fw-bold mb-2">Ngày đặt hàng</h6>
+                            <strong class="text-dark">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                        </div>
+                    </div>
+
+                    <h6 class="text-forest fw-bold border-bottom pb-2 mb-3 mt-4">Danh sách thiết bị thuê</h6>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-borderless align-middle">
+                            <tbody class="border-top border-bottom">
+                                @if (Model.OrderDetails != null)
+                                {
+                                    foreach (var detail in Model.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td class="ps-0 py-3">
+                                                <strong class="text-dark">@detail.Product.Name</strong>
+                                            </td>
+                                            <td class="text-center text-muted">x @detail.Quantity</td>
+                                            <td class="text-end pe-0 fw-bold text-success">@detail.PricePerUnit.ToString("N0") ₫</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-light p-4 rounded-3 text-end">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tổng tiền thuê:</span>
+                            <strong class="text-dark">@Model.TotalAmount.ToString("N0") ₫</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Đã đặt cọc:</span>
+                            <strong class="text-primary">@Model.DepositAmount.ToString("N0") ₫</strong>
+                        </div>
+                        <hr class="my-2 border-secondary opacity-25" />
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="text-forest fw-bold text-uppercase" style="letter-spacing: 1px;">Cần thanh toán:</span>
+                            <strong class="text-danger fs-4">@Model.RemainingAmount.ToString("N0") ₫</strong>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <a href="/Home/OrderTracking" class="btn btn-outline-secondary rounded-pill px-4">Tra cứu đơn khác</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

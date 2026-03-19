@@ -61,28 +61,70 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // --- GỘP CHUNG PRODUCTLIST ĐỂ TRÁNH XUNG ĐỘT ---
-        public async Task<IActionResult> ProductList(string category, string searchString)
+        // GET: /Home/ProductList
+        public async Task<IActionResult> ProductList(int? categoryId, decimal? minPrice, decimal? maxPrice, string sortOrder, int page = 1)
         {
+            int pageSize = 9; // Số lượng lều/đồ hiển thị trên 1 trang (Châu tự chỉnh nhé)
+
+            // 1. Lấy toàn bộ sản phẩm lên để chuẩn bị "sàng lọc"
             var query = _context.Products.Include(p => p.Category).AsQueryable();
 
-            // 1. Lọc theo danh mục
-            if (!string.IsNullOrEmpty(category))
+            // 2. Lọc theo Danh mục (Nếu khách có click vào Menu bên trái)
+            if (categoryId.HasValue && categoryId > 0)
             {
-                query = query.Where(p => p.Category.Name == category);
+                query = query.Where(p => p.CategoryId == categoryId);
             }
 
-            // 2. Lọc theo từ khóa (Sửa lỗi tìm gì cũng ra tất cả)
-            if (!string.IsNullOrEmpty(searchString))
+            // 3. Lọc theo Khoảng giá (Khi khách nhập Từ... Đến...)
+            if (minPrice.HasValue)
             {
-                searchString = searchString.Trim().ToLower();
-                query = query.Where(p => p.Name.ToLower().Contains(searchString));
+                query = query.Where(p => p.PricePerDay >= minPrice.Value);
+            }
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.PricePerDay <= maxPrice.Value);
             }
 
+            // 4. Sắp xếp giá (Cao đến Thấp / Thấp đến Cao)
+            switch (sortOrder)
+            {
+                case "desc":
+                    query = query.OrderByDescending(p => p.PricePerDay);
+                    break;
+                case "asc":
+                    query = query.OrderBy(p => p.PricePerDay);
+                    break;
+                default:
+                    query = query.OrderByDescending(p => p.Id); // Mặc định: Sản phẩm mới nhất lên đầu
+                    break;
+            }
+
+            // 5. Phân trang (Trang 1, 2, 3...)
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            // Ép số trang không được vượt quá giới hạn
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 6. Lưu lại các trạng thái hiện tại để đẩy ra View (nhằm giữ nguyên ô Text đang gõ)
+            ViewBag.CurrentCategory = categoryId;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.SortOrder = sortOrder;
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages == 0 ? 1 : totalPages;
+
+            // Gửi cả danh sách Category ra để hiển thị cái cột bên trái
             ViewBag.Categories = await _context.Categories.ToListAsync();
-            ViewBag.CurrentCategory = category;
-            ViewBag.SearchString = searchString; // Để giữ lại chữ trong ô tìm kiếm
 
-            return View(await query.ToListAsync());
+            return View(products);
         }
 
         // --- HÀM LẤY GỢI Ý NHANH (API CHO AUTOCOMPLETE) ---
@@ -140,6 +182,40 @@ namespace BAOCAOWEBNANGCAO.Controllers
             TempData["SuccessMessage"] = "Cảm ơn bạn! Đánh giá đang chờ Châu xét duyệt.";
 
             return RedirectToAction("Index");
+        }
+        // ==========================================
+        // TRA CỨU ĐƠN HÀNG DÀNH CHO KHÁCH KHÔNG CẦN LOGIN
+        // ==========================================
+
+        [HttpGet]
+        public IActionResult OrderTracking()
+        {
+            return View(); // Chỉ hiện cái Form nhập liệu
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OrderTracking(int? orderId, string phone)
+        {
+            if (orderId == null || string.IsNullOrEmpty(phone))
+            {
+                ViewBag.Error = "Vui lòng nhập đầy đủ Mã đơn hàng và Số điện thoại.";
+                return View();
+            }
+
+            // Truy vấn đơn hàng: Phải khớp CẢ ID LẪN SỐ ĐIỆN THOẠI mới cho xem
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product) // Kéo theo món đồ để hiển thị tên
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerPhone == phone.Trim());
+
+            if (order == null)
+            {
+                ViewBag.Error = "Không tìm thấy đơn hàng! Vui lòng kiểm tra lại Mã đơn hoặc Số điện thoại.";
+                return View();
+            }
+
+            // Nếu tìm thấy, ném nguyên cái đơn hàng ra View để hiển thị
+            return View(order);
         }
     }
 }

@@ -535,7 +535,7 @@
         <div class="intro-images-wrapper">
             <div class="image-column col-left">
                 <img src="/images/IMG/leu1.jpg" class="intro-img img-1" alt="Camping 1">
-                <img src="/images//IMG/leu2.jpg" class="intro-img img-2" alt="Camping 2">
+                <img src="/images/IMG/leu2.jpg" class="intro-img img-2" alt="Camping 2">
             </div>
             <div class="image-column col-right">
                 <img src="/images/IMG/leu3.jpg" class="intro-img img-3" alt="Camping 3">
@@ -551,13 +551,13 @@
             <p class="intro-desc-text">Khám phá vẻ đẹp nguyên sơ của thiên nhiên cùng những trang bị cắm trại chất lượng nhất. Từ những buổi chiều hoàng hôn trên núi đến đêm ngàn sao rực rỡ.</p>
             <p class="intro-desc-text">Camping Rental sẽ đồng hành cùng bạn tạo nên những kỷ niệm khó quên, mang sự tiện nghi đến bất cứ nơi đâu bạn dừng chân.</p>
 
-            <a href="#" class="btn-view-products">Xem sản phẩm ↓</a>
+            <a href="javascript:void(0)" onclick="document.getElementById('product-section').scrollIntoView({behavior: 'smooth'})" class="btn-view-products">Xem sản phẩm ↓</a>
         </div>
 
     </div>
 </section>
 
-<div class="product-page-container pb-5">
+<div class="product-page-container pb-5" id="product-section">
 
     <aside class="sidebar">
         <div class="category-title-header">
@@ -585,66 +585,177 @@
 
     <main class="main-content">
 
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <span class="toolbar-label">Giá</span>
-                <input type="number" class="price-input" placeholder="Từ đ">
-                <span class="text-muted">-</span>
-                <input type="number" class="price-input" placeholder="Đến đ">
-                <button class="btn-search-icon"><i class="bi bi-search"></i></button>
-            </div>
-            <div class="toolbar-right">
-                <button class="sort-btn active">Cao đến thấp</button>
-                <button class="sort-btn">Thấp đến cao</button>
-                <span class="ms-3 fw-bold text-muted">&lt; 1 / 3 &gt;</span>
-            </div>
-        </div>
+        <div id="product-update-zone" style="transition: opacity 0.3s ease;">
 
-        <div class="row g-4">
-            @if (Model != null && Model.Any())
-            {
-                foreach (var item in Model)
+            <form id="filterForm" method="get" asp-action="ProductList" asp-controller="Home" class="mb-4 pb-3 border-bottom">
+
+                <input type="hidden" name="categoryId" value="@ViewBag.CurrentCategory" />
+                <input type="hidden" name="sortOrder" id="sortOrderInput" value="@ViewBag.SortOrder" />
+                <input type="hidden" name="page" id="pageInput" value="@ViewBag.CurrentPage" />
+
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 fw-bold text-muted small text-uppercase">Giá</span>
+                        <input type="number" name="minPrice" class="form-control form-control-sm text-center shadow-sm border-light me-2" style="width: 90px; border-radius: 10px;" value="@ViewBag.MinPrice" placeholder="Min" />
+                        <span class="me-2 text-muted">-</span>
+                        <input type="number" name="maxPrice" class="form-control form-control-sm text-center shadow-sm border-light me-2" style="width: 90px; border-radius: 10px;" value="@ViewBag.MaxPrice" placeholder="Max" />
+                        <button type="submit" class="btn btn-sm btn-light border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="bi bi-search text-success"></i>
+                        </button>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 gap-md-4">
+
+                        <div class="btn-group shadow-sm" role="group">
+                            <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "desc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="desc" style="border-radius: 10px 0 0 10px;">
+                                Cao đến thấp
+                            </button>
+                            <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "asc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="asc" style="border-radius: 0 10px 10px 0;">
+                                Thấp đến cao
+                            </button>
+                        </div>
+
+                        <div class="d-flex align-items-center bg-light border rounded-pill px-2 py-1 shadow-sm">
+                            <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage <= 1 ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage - 1)">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+
+                            <span class="mx-2 fw-bold small" style="letter-spacing: 1px;">
+                                @ViewBag.CurrentPage / @ViewBag.TotalPages
+                            </span>
+
+                            <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage + 1)">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+            <div class="row g-4" id="product-list-container">
+                @if (Model != null && Model.Any())
                 {
-                    <div class="col-lg-4 col-md-6 product-reveal">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="product-luxury-card">
-                            <div class="img-luxury-frame">
-                                <div class="wishlist-btn"><i class="bi bi-heart"></i></div>
-                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
-                                     alt="@item.Name">
-                            </div>
-                            <div class="product-info-minimal">
-                                <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
-                                <span class="luxury-title">@item.Name</span>
-                                <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
-                            </div>
-                        </a>
+                    foreach (var item in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 product-reveal">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="product-luxury-card">
+                                <div class="img-luxury-frame">
+                                    <div class="wishlist-btn"><i class="bi bi-heart"></i></div>
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                                         alt="@item.Name">
+                                </div>
+                                <div class="product-info-minimal">
+                                    <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
+                                    <span class="luxury-title">@item.Name</span>
+                                    <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-5">
+                        <h4 class="text-muted font-serif fst-italic">Không tìm thấy sản phẩm nào phù hợp.</h4>
                     </div>
                 }
-            }
-            else
-            {
-                <div class="col-12 text-center py-5">
-                    <h4 class="text-muted font-serif fst-italic">Không tìm thấy sản phẩm nào trong danh mục này.</h4>
-                </div>
-            }
-        </div>
+            </div>
 
+        </div>
     </main>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('active');
-                    }, index * 50);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
+@section Scripts {
+    <script>
+        $(document).ready(function () {
 
-        document.querySelectorAll('.product-reveal').forEach(el => observer.observe(el));
-    });
-</script>
+            // ==========================================
+            // HÀM 1: KHỞI TẠO HIỆU ỨNG HIỆN DẦN SẢN PHẨM
+            // ==========================================
+            function initObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.classList.add('active');
+                            }, index * 50); // Mỗi sản phẩm hiện cách nhau 50ms tạo hiệu ứng lượn sóng
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.product-reveal').forEach(el => observer.observe(el));
+            }
+
+            // Chạy hiệu ứng lần đầu khi trang load
+            initObserver();
+
+            // ==========================================
+            // HÀM 2: GỌI AJAX KHI BẤM CHUYỂN TRANG / LỌC
+            // ==========================================
+            function loadProducts() {
+                const form = $('#filterForm');
+                const url = form.attr('action') + '?' + form.serialize();
+
+                // Làm mờ để báo hiệu đang tải
+                $('#product-update-zone').css('opacity', '0.4');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (response) {
+                        // Trích xuất "ruột" mới từ kết quả trả về
+                        const newContent = $(response).find('#product-update-zone').html();
+
+                        // Đắp ruột mới vào và trả lại độ sáng
+                        $('#product-update-zone').html(newContent);
+                        $('#product-update-zone').css('opacity', '1');
+
+                        // Đổi URL trên thanh trình duyệt
+                        window.history.pushState({path: url}, '', url);
+
+                        // Trượt nhẹ lên đầu thanh công cụ
+                        const y = $('#product-section').offset().top - 80;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+
+                        // QUAN TRỌNG: Khởi tạo lại hiệu ứng hiện dần cho các sản phẩm mới
+                        initObserver();
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại!");
+                        $('#product-update-zone').css('opacity', '1');
+                    }
+                });
+            }
+
+            // ==========================================
+            // GẮN SỰ KIỆN CHO CÁC NÚT (AJAX)
+            // ==========================================
+
+            // 1. Nút sắp xếp (Cao đến thấp...)
+            $(document).on('click', '.btn-sort', function (e) {
+                e.preventDefault();
+                $('#sortOrderInput').val($(this).data('sort'));
+                $('#pageInput').val(1);
+                loadProducts();
+            });
+
+            // 2. Nút phân trang ( < > )
+            $(document).on('click', '.btn-page:not(.disabled)', function (e) {
+                e.preventDefault();
+                $('#pageInput').val($(this).data('page'));
+                loadProducts();
+            });
+
+            // 3. Form lọc khoảng giá (bấm nút kính lúp)
+            $(document).on('submit', '#filterForm', function (e) {
+                e.preventDefault();
+                $('#pageInput').val(1);
+                loadProducts();
+            });
+
+        });
+    </script>
+}
