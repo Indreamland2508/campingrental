@@ -311,7 +311,7 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="ProductList">Sản phẩm</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#">Địa điểm</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="DiaDiem">Địa điểm</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="CamNang">Cẩm nang</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="FAQ">Hỏi đáp</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="OrderTracking">Tra cứu đơn hàng</a></li>
@@ -382,8 +382,8 @@
                     <h6 class="fw-bold mb-4 text-uppercase">Khám phá</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-3"><a asp-action="ProductList" class="text-decoration-none text-muted hover-white">Danh sách Lều</a></li>
-                        <li class="mb-3"><a href="#" class="text-decoration-none text-muted hover-white">Địa điểm dã ngoại</a></li>
-                        <li class="mb-3"><a href="#" class="text-decoration-none text-muted hover-white">Cẩm nang & Kinh nghiệm</a></li>
+                        <li class="mb-3"><a asp-action="DiaDiem" class="text-decoration-none text-muted hover-white">Địa điểm dã ngoại</a></li>
+                        <li class="mb-3"><a asp-action="CamNang" class="text-decoration-none text-muted hover-white">Cẩm nang & Kinh nghiệm</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-6">

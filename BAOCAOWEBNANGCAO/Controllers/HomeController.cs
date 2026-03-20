@@ -227,5 +227,10 @@ namespace BAOCAOWEBNANGCAO.Controllers
         {
             return View();
         }
+        // GET: /Home/DiaDiem
+        public IActionResult DiaDiem()
+        {
+            return View();
+        }
     }
 }

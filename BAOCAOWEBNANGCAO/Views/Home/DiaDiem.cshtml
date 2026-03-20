@@ -1,0 +1,258 @@
+﻿@{
+    ViewData["Title"] = "Tọa độ dã ngoại";
+}
+
+<style>
+    :root {
+        --forest-dark: #1a4d3a;
+        --border-color: #e1e4e8;
+    }
+
+    .font-serif {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+    }
+
+    .location-header {
+        padding: 60px 0 40px 0;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .location-main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--forest-dark);
+        margin-bottom: 15px;
+    }
+
+    /* BẢN ĐỒ THỰC TẾ */
+    .map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        height: 500px;
+        position: relative;
+    }
+
+    /* THÔNG TIN BÊN CẠNH BẢN ĐỒ */
+    .location-info-card {
+        background-color: #f9fafb;
+        border-radius: 20px;
+        padding: 40px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .loc-badge {
+        display: inline-block;
+        padding: 6px 15px;
+        background-color: rgba(26, 77, 58, 0.1);
+        color: var(--forest-dark);
+        border-radius: 50rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .loc-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #111;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .loc-detail-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .loc-detail-icon {
+        color: var(--forest-dark);
+        font-size: 1.2rem;
+        margin-right: 15px;
+        margin-top: 2px;
+    }
+
+    /* DANH SÁCH CÁC ĐỊA ĐIỂM KHÁC */
+    .other-loc-card {
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 4/5;
+        display: block;
+        text-decoration: none !important;
+    }
+
+    .other-loc-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .other-loc-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 30px 20px 20px 20px;
+        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+        color: white;
+    }
+
+    .other-loc-card:hover .other-loc-img {
+        transform: scale(1.08);
+    }
+
+    .other-loc-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* HIỆU ỨNG HIỆN DẦN */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.7s ease-out;
+    }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    @@media (max-width: 992px) {
+        .map-container
+
+    {
+        height: 350px;
+        margin-bottom: 30px;
+    }
+
+    .location-info-card {
+        padding: 30px 20px;
+    }
+
+    }
+</style>
+
+<div class="location-header fade-up">
+    <div class="container">
+        <h1 class="location-main-title font-serif">Tọa Độ Khám Phá</h1>
+        <p class="text-muted fs-5">Những địa điểm cắm trại tuyệt đẹp xung quanh Hà Nội do Camping Rental chọn lọc.</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <div class="row mb-5 pb-4 fade-up" style="transition-delay: 0.2s;">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <div class="map-container">
+                <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                        src="https://maps.google.com/maps?q=Hồ%20Đồng%20Đỏ,%20Sóc%20Sơn,%20Hà%20Nội&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                        style="border:0;" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="location-info-card">
+                <div><span class="loc-badge">Điểm đến nổi bật tuần này</span></div>
+                <h2 class="loc-title font-serif">Hồ Đồng Đỏ, Sóc Sơn</h2>
+
+                <div class="loc-detail-item mt-3">
+                    <i class="bi bi-geo-alt-fill loc-detail-icon"></i>
+                    <div>
+                        <strong class="d-block text-dark">Vị trí</strong>
+                        <span class="text-muted">Minh Trí, Sóc Sơn, Hà Nội (Cách trung tâm HN ~40km)</span>
+                    </div>
+                </div>
+
+                <div class="loc-detail-item">
+                    <i class="bi bi-compass loc-detail-icon"></i>
+                    <div>
+                        <strong class="d-block text-dark">Địa hình & Cảnh quan</strong>
+                        <span class="text-muted">Hồ nước ngọt rộng lớn bao quanh bởi rừng thông nguyên sinh. Phù hợp chèo SUP và nướng BBQ ven hồ.</span>
+                    </div>
+                </div>
+
+                <div class="loc-detail-item">
+                    <i class="bi bi-backpack loc-detail-icon"></i>
+                    <div>
+                        <strong class="d-block text-dark">Trang bị đề xuất từ Camping Rental</strong>
+                        <span class="text-muted">Lều 4-6 người chống nước, Bếp nướng BBQ inox, Bàn ghế xếp gọn, Đèn bão retro.</span>
+                    </div>
+                </div>
+
+                <a href="/Home/ProductList" class="btn btn-dark rounded-pill py-3 px-4 mt-4 text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.9rem;">
+                    Chuẩn bị đồ ngay <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 pt-4">
+        <div class="col-12 mb-4 fade-up">
+            <h3 class="font-serif fw-bold text-dark">Các tọa độ cực "chill" khác</h3>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 fade-up" style="transition-delay: 0.1s;">
+            <a href="#" class="other-loc-card shadow-sm">
+                <img src="/images/IMG/leu2.jpg" class="other-loc-img" alt="Đồng Mô">
+                <div class="other-loc-overlay">
+                    <h3 class="other-loc-title">Sơn Tinh Camp, Đồng Mô</h3>
+                    <span class="text-light small"><i class="bi bi-car-front"></i> 45 phút lái xe</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 fade-up" style="transition-delay: 0.2s;">
+            <a href="#" class="other-loc-card shadow-sm">
+                <img src="/images/IMG/leu4.jpg" class="other-loc-img" alt="Hàm Lợn">
+                <div class="other-loc-overlay">
+                    <h3 class="other-loc-title">Núi Hàm Lợn, Sóc Sơn</h3>
+                    <span class="text-light small"><i class="bi bi-car-front"></i> 1 giờ lái xe</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 fade-up" style="transition-delay: 0.3s;">
+            <a href="#" class="other-loc-card shadow-sm">
+                <img src="/images/IMG/camtrai.jpg" class="other-loc-img" alt="Ba Vì">
+                <div class="other-loc-overlay">
+                    <h3 class="other-loc-title">Vườn Quốc Gia Ba Vì</h3>
+                    <span class="text-light small"><i class="bi bi-car-front"></i> 1.5 giờ lái xe</span>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.fade-up').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+}
