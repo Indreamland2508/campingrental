@@ -3,11 +3,10 @@
 @{
     ViewData["Title"] = "Quản lý sản phẩm";
     Layout = "_AdminLayout";
-}
-@{
-    var lowStock = Model.Where(p => p.Quantity <= 3 && p.Quantity > 0).ToList();
-}
 
+    // Ép kiểu dữ liệu lấy từ ViewBag ra để dùng
+    var lowStock = ViewBag.LowStockProducts as List<BAOCAOWEBNANGCAO.Models.Product> ?? new List<BAOCAOWEBNANGCAO.Models.Product>();
+}
 <style>
     /* Giữ phong cách bảng hiện đại */
     .table-modern thead th {

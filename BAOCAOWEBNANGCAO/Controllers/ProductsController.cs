@@ -31,7 +31,9 @@ namespace BAOCAOWEBNANGCAO.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(p => p.Name.Contains(search));
+                // Ép cả 2 vế về chữ thường (ToLower) để so sánh không trượt phát nào
+                var keyword = search.ToLower();
+                query = query.Where(p => p.Name.ToLower().Contains(keyword));
             }
 
             int totalItems = await query.CountAsync();
@@ -45,6 +47,9 @@ namespace BAOCAOWEBNANGCAO.Controllers
             ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             ViewBag.Search = search;
             ViewBag.TotalItems = totalItems;
+            ViewBag.LowStockProducts = await _context.Products
+                .Where(p => p.Quantity <= 3 && p.Quantity > 0)
+                .ToListAsync();
 
             return View(products);
         }
