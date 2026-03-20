@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<BAOCAOWEBNANGCAO.Models.Product>
 @{
     ViewData["Title"] = "Hệ sinh thái CampingRental";
-    string currentCat = ViewBag.CurrentCategory as string ?? "";
+    // Sửa thành kiểu int? để khớp với ID của danh mục
+    int? currentCatId = ViewBag.CurrentCategory as int?;
 }
 
 <style>
@@ -565,7 +566,7 @@
         </div>
         <ul class="category-list">
             <li>
-                <a asp-action="ProductList" asp-route-category="" class="category-item @(string.IsNullOrEmpty(currentCat) ? "active" : "")">
+                <a asp-action="ProductList" asp-route-categoryId="" data-category-id="" class="category-item category-ajax-link @(currentCatId == null ? "active" : "")">
                     Tất cả
                 </a>
             </li>
@@ -574,7 +575,7 @@
                 foreach (var cat in ViewBag.Categories)
                 {
                     <li>
-                        <a asp-action="ProductList" asp-route-category="@cat.Name" class="category-item @(currentCat == cat.Name ? "active" : "")">
+                        <a asp-action="ProductList" asp-route-categoryId="@cat.Id" data-category-id="@cat.Id" class="category-item category-ajax-link @(currentCatId == cat.Id ? "active" : "")">
                             @cat.Name
                         </a>
                     </li>
@@ -755,7 +756,24 @@
                 $('#pageInput').val(1);
                 loadProducts();
             });
+            // 4
+            $(document).on('click', '.category-ajax-link', function (e) {
+                e.preventDefault(); // Ngăn trình duyệt tải lại trang (chống giật lên đầu)
 
+                // Tự động đổi hiệu ứng in đậm sang mục vừa bấm
+                $('.category-ajax-link').removeClass('active');
+                $(this).addClass('active');
+
+                // Lấy mã danh mục (Id) nhét vào ô input ẩn của Form
+                const catId = $(this).data('category-id');
+                $('input[name="categoryId"]').val(catId);
+
+                // Khi đổi danh mục thì phải quay về trang số 1
+                $('#pageInput').val(1);
+
+                // Kích hoạt thần chú AJAX
+                loadProducts();
+            });
         });
     </script>
 }

@@ -217,5 +217,15 @@ namespace BAOCAOWEBNANGCAO.Controllers
             // Nếu tìm thấy, ném nguyên cái đơn hàng ra View để hiển thị
             return View(order);
         }
+        // GET: /Home/FAQ
+        public IActionResult FAQ()
+        {
+            return View();
+        }
+        // GET: /Home/CamNang
+        public IActionResult CamNang()
+        {
+            return View();
+        }
     }
 }

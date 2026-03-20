@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "Về Chúng Tôi & Hỏi Đáp";
+}
+
+<style>
+    /* BỘ CSS CHUẨN PHONG CÁCH TẠP CHÍ (EDITORIAL STYLE) */
+    :root {
+        --text-dark: #111111;
+        --text-muted: #555555;
+    }
+
+    body {
+        background-color: #ffffff;
+    }
+
+    /* Tiêu đề khổng lồ in nghiêng góc trái */
+    .hero-huge-title {
+        font-size: 5.5rem;
+        font-weight: 900;
+        font-style: italic;
+        color: var(--text-dark);
+        line-height: 0.9;
+        text-transform: uppercase;
+        letter-spacing: -2px;
+        margin: 0;
+    }
+
+    /* Tiêu đề các section */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Chữ nội dung dạng bài báo */
+    .editorial-text {
+        font-size: 1rem;
+        color: var(--text-muted);
+        line-height: 1.8;
+        font-weight: 400;
+    }
+
+    /* Ảnh góc vuông, sắc nét */
+    .img-editorial {
+        width: 100%;
+        object-fit: cover;
+        display: block;
+        /* Loại bỏ border-radius để giống hệt ảnh mẫu thời trang */
+        border-radius: 0;
+    }
+
+    .spacing-section {
+        padding: 100px 0;
+    }
+
+    /* Custom Accordion cho FAQ (Đường kẻ mỏng, không viền ngoài) */
+    .editorial-accordion .accordion-item {
+        border: none;
+        background: transparent;
+        border-bottom: 1px solid #e0e0e0;
+        border-radius: 0 !important;
+    }
+
+    .editorial-accordion .accordion-button {
+        background-color: transparent !important;
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 25px 0;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+        .editorial-accordion .accordion-button:not(.collapsed) {
+            color: #000;
+        }
+
+    .editorial-accordion .accordion-body {
+        padding: 0 0 30px 0;
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    /* Căn chỉnh Mobile */
+    @@media (max-width: 992px) {
+        .hero-huge-title
+
+    {
+        font-size: 4rem;
+        margin-bottom: 2rem;
+    }
+
+    .spacing-section {
+        padding: 60px 0;
+    }
+
+    }
+</style>
+
+<div class="container mt-5">
+
+    <div class="row align-items-end mb-5">
+        <div class="col-lg-4 mb-4 mb-lg-0 pb-lg-5">
+            <h1 class="hero-huge-title">VỀ<br>CHÚNG<br>TÔI</h1>
+        </div>
+        <div class="col-lg-8">
+            <img src="/images/IMG/camtrai.jpg" alt="Camping Landscape" class="img-editorial" style="height: 60vh;">
+        </div>
+    </div>
+
+    <div class="row justify-content-center spacing-section">
+        <div class="col-lg-7 text-center">
+            <h2 class="section-title text-capitalize" style="font-size: 2rem;">Camping Rental.</h2>
+            <p class="editorial-text">
+                Giữa nhịp sống hối hả của Hà Nội, đôi khi chúng ta quên mất cảm giác được hít thở bầu không khí trong lành, hay đơn giản là ngồi quây quần bên đống lửa dưới bầu trời đầy sao. Đó là lý do dự án của Hoàng Châu và Xuân Trường ra đời, nhằm thay đổi cách mọi người trải nghiệm dã ngoại.
+            </p>
+        </div>
+    </div>
+
+    <div class="row align-items-center spacing-section">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <img src="/images/AU/anh1.jpg" alt="Brand History" class="img-editorial" style="height: 500px;">
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+            <h3 class="section-title">Câu chuyện của chúng tôi</h3>
+            <p class="editorial-text mb-4">
+                Là những sinh viên Đại học Điện Lực (EPU) đam mê dịch chuyển, chúng tôi hiểu rằng rào cản lớn nhất của những chuyến cắm trại tự túc là việc chuẩn bị đồ đạc cồng kềnh, đắt đỏ và thiếu kinh nghiệm lựa chọn thiết bị.
+            </p>
+            <p class="editorial-text">
+                Ngày nay, Camping Rental đã phát triển thành một nền tảng cung cấp giải pháp cho thuê thiết bị dã ngoại trọn gói. Chúng tôi tự hào mang đến những sản phẩm chất lượng cao, giúp kết nối con người với thiên nhiên, văn hóa và những cộng đồng đam mê xê dịch.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center spacing-section pb-4">
+        <div class="col-lg-8 text-center">
+            <h3 class="section-title">Lời cam kết</h3>
+            <p class="editorial-text mb-5">
+                Bạn chỉ việc lên đồ và xách balo lên, mọi thiết bị chất lượng nhất hãy để chúng tôi lo. Để giúp bạn chuẩn bị tốt nhất cho chuyến đi, dưới đây là những giải đáp cho các câu hỏi thường gặp.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-5 pb-5">
+        <div class="col-lg-9">
+            <div class="accordion editorial-accordion" id="campingFaq">
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Thủ tục thuê lều tại Camping Rental cần những gì?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#campingFaq">
+                        <div class="accordion-body">
+                            Rất đơn giản! Bạn chỉ cần đặt hàng trực tiếp trên website, sau đó thanh toán chuyển khoản trước <strong>50% tổng giá trị đơn hàng</strong> (tiền cọc). Khi nhận đồ, bạn thanh toán nốt 50% còn lại và để lại một loại giấy tờ tùy thân (CCCD/CMND hoặc Bằng lái xe) để làm tin trong suốt quá trình thuê.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Thời gian tính "1 ngày thuê" được quy định như thế nào?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#campingFaq">
+                        <div class="accordion-body">
+                            Chúng tôi tính 1 ngày thuê là <strong>24 tiếng</strong> kể từ lúc bạn nhận đồ. Ví dụ: Bạn lấy lều lúc 14h00 chiều thứ Bảy và trả lều trước 14h00 chiều Chủ Nhật, chúng tôi chỉ tính phí 1 ngày.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Lều và các thiết bị khi thuê có sạch sẽ không? Có dễ lắp ráp không?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#campingFaq">
+                        <div class="accordion-body">
+                            Camping Rental cam kết 100% thiết bị đều được vệ sinh, khử mùi và kiểm tra kỹ lưỡng sau mỗi chuyến đi. Đối với lều trại, chúng tôi lựa chọn các dòng lều tự bung hoặc có khung thông minh cực kỳ dễ dựng. Sẽ có video hướng dẫn chi tiết gửi kèm cho bạn.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Tôi làm rách lều hoặc mất đồ thì đền bù như thế nào?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#campingFaq">
+                        <div class="accordion-body">
+                            Nếu thiết bị bị hư hỏng nhẹ có thể khắc phục được, chúng tôi chỉ thu một khoản phí sửa chữa nhỏ. Trong trường hợp mất đồ hoặc hư hỏng nặng không thể sử dụng, quý khách vui lòng đền bù theo giá trị hiện tại của sản phẩm đó.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 pb-5 mt-4">
+        <div class="col-12">
+            <img src="/images/AU/anh2.jpg" alt="Camping Wide View" class="img-editorial" style="height: 50vh; object-position: center bottom;">
+        </div>
+    </div>
+
+</div>
