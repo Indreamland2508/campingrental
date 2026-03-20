@@ -107,69 +107,75 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // POST: Xử lý đặt hàng & TÍNH TIỀN CỌC
+        // POST: Xử lý đặt hàng & TÍNH TIỀN CỌC (BẢN NÂNG CẤP BẮT LỖI)
+        
         [HttpPost]
         public async Task<IActionResult> Checkout(string customerName, string customerPhone, string customerEmail, string shippingAddress, string? note, DateTime rentalStart, DateTime rentalEnd)
         {
-            var cart = GetCartFromSession();
-            if (cart.Count == 0) return RedirectToAction("Index");
-
-            // 1. Tính số ngày thuê
-            TimeSpan duration = rentalEnd - rentalStart;
-            int rentalDays = duration.Days;
-            if (rentalDays <= 0) rentalDays = 1;
-
-            // 2. Tính tổng tiền
-            decimal cartTotal = cart.Sum(item => item.TotalPrice);
-            decimal finalTotal = cartTotal * rentalDays;
-
-            // 3. TÍNH TIỀN CỌC (50%) VÀ CÒN LẠI
-            decimal deposit = finalTotal / 2;
-            decimal remaining = finalTotal - deposit;
-
-            // 4. Tạo Order với các trường mới
-            var order = new Order
+            try
             {
-                CustomerName = customerName,
-                CustomerPhone = customerPhone,
-                CustomerEmail = customerEmail,
-                ShippingAddress = shippingAddress,
-                Note = note,
-                RentalStartDate = rentalStart,
-                RentalEndDate = rentalEnd,
-                OrderDate = DateTime.UtcNow.AddHours(7),
+                var cart = GetCartFromSession();
 
-                TotalAmount = finalTotal,
-                DepositAmount = deposit,             // Lưu tiền cọc
-                RemainingAmount = remaining,         // Lưu tiền thu lúc nhận lều
-
-                Status = "Pending",                  // Trạng thái giao nhận: Đang chờ
-                PaymentStatus = "Unpaid"             // Trạng thái tiền: Chưa thanh toán cọc
-            };
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            // 5. Lưu chi tiết đơn hàng
-            foreach (var item in cart)
-            {
-                var orderDetail = new OrderDetail
+                // 1. CHỐNG BẤM ĐÚP VÀ MẤT SESSION
+                if (cart == null || cart.Count == 0)
                 {
-                    OrderId = order.Id,
-                    ProductId = item.Product.Id,
-                    Quantity = item.Quantity,
-                    PricePerUnit = item.Product.PricePerDay
+                    return Content("ÚI CHÀ! Giỏ hàng đang trống. Khả năng cao là đơn hàng CỦA BẠN ĐÃ ĐƯỢC ĐẶT THÀNH CÔNG ở cú click trước đó rồi. Bạn hãy vào trang chủ, chọn 'Tra cứu đơn hàng' xem đơn đã được tạo chưa nhé!");
+                }
+
+                TimeSpan duration = rentalEnd - rentalStart;
+                int rentalDays = duration.Days > 0 ? duration.Days : 1;
+
+                decimal cartTotal = cart.Sum(item => item.TotalPrice);
+                decimal finalTotal = cartTotal * rentalDays;
+                decimal deposit = finalTotal / 2;
+                decimal remaining = finalTotal - deposit;
+
+                var order = new Order
+                {
+                    CustomerName = customerName,
+                    CustomerPhone = customerPhone,
+                    CustomerEmail = customerEmail,
+                    ShippingAddress = shippingAddress,
+                    Note = note,
+                    RentalStartDate = rentalStart,
+                    RentalEndDate = rentalEnd,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = finalTotal,
+                    DepositAmount = deposit,
+                    RemainingAmount = remaining,
+                    Status = "Pending",
+                    PaymentStatus = "Unpaid"
                 };
-                _context.OrderDetails.Add(orderDetail);
+
+                // LƯU ĐƠN HÀNG (Nếu Database từ chối Combo, nó sẽ nổ lỗi và nhảy xuống cục Catch bên dưới)
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                foreach (var item in cart)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        OrderId = order.Id,
+                        ProductId = item.Product.Id, // Nếu ProductId lỗi, sẽ bị bắt ngay
+                        Quantity = item.Quantity,
+                        PricePerUnit = item.Product.PricePerDay
+                    };
+                    _context.OrderDetails.Add(orderDetail);
+                }
+                await _context.SaveChangesAsync();
+
+                // Dọn dẹp giỏ hàng
+                HttpContext.Session.Remove(CartSessionKey);
+                HttpContext.Session.Remove("CartCount");
+
+                return RedirectToAction("Payment", new { id = order.Id });
             }
-
-            await _context.SaveChangesAsync();
-
-            // Xóa giỏ hàng sau khi đặt thành công
-            HttpContext.Session.Remove("GioHangCuaToi");
-            HttpContext.Session.Remove("CartCount");
-
-            // 6. CHUYỂN HƯỚNG SANG TRANG THANH TOÁN QR
-            return RedirectToAction("Payment", new { id = order.Id });
+            catch (Exception ex)
+            {
+                // BẮT LỖI TẠI TRẬN: Sẽ in thẳng lỗi ra màn hình trắng để xem nó kẹt cái gì
+                var errorMsg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return Content("LỖI HỆ THỐNG RỒI CHÂU ƠI! Chi tiết lỗi: " + errorMsg);
+            }
         }
 
         // --- CÁC HÀM XỬ LÝ THANH TOÁN SEPAY & GIAO DIỆN ---

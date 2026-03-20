@@ -304,3 +304,17 @@
         endInput.addEventListener("change", updatePrice);
     });
 </script>
+@section Scripts {
+    <script>
+        // Chống bấm đúp thần chưởng
+        $('form').submit(function (e) {
+            var btn = $(this).find('button[type="submit"]');
+            if (btn.hasClass('disabled')) {
+                e.preventDefault(); // Nếu nút đang mờ thì không cho gửi nữa
+                return false;
+            }
+            // Đổi chữ và làm mờ nút
+            btn.addClass('disabled').html('<span class="spinner-border spinner-border-sm me-2"></span> Đang xử lý...');
+        });
+    </script>
+}
