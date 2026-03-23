@@ -135,7 +135,36 @@
             </p>
         </div>
     </div>
+    <div class="row spacing-section">
+        <div class="col-12 text-center mb-5">
+            <h3 class="section-title">Những người kiến tạo</h3>
+            <p class="editorial-text mx-auto" style="max-width: 600px;">
+                Đằng sau những chuyến đi hoàn hảo là sự tận tâm của những người trẻ khao khát mang thiên nhiên đến gần hơn với mọi người.
+            </p>
+        </div>
 
+        <div class="col-md-6 mb-5 mb-md-0 px-lg-5 text-center fade-up" style="transition-delay: 0.1s;">
+            <div class="overflow-hidden mb-4" style="aspect-ratio: 3/4;">
+                <img src="/images/AU/chau.jpg" alt="Hoàng Châu" class="img-editorial" style="height: 100%; object-position: center top; transition: transform 0.8s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            </div>
+            <h4 class="font-serif fw-bold" style="font-size: 1.8rem;">Nguyễn Hoàng Châu</h4>
+            <span class="d-block text-uppercase fw-bold mb-3" style="color: var(--forest-dark); font-size: 0.85rem; letter-spacing: 2px;">Co-Founder / CEO</span>
+            <p class="editorial-text px-lg-3">
+                Là người định hình phong cách và tiêu chuẩn khắt khe cho từng thiết bị. Châu tin rằng một chiếc lều đẹp không chỉ để ngủ, mà còn là trái tim của mọi bức ảnh cắm trại nghìn like.
+            </p>
+        </div>
+
+        <div class="col-md-6 px-lg-5 text-center fade-up" style="transition-delay: 0.2s;">
+            <div class="overflow-hidden mb-4" style="aspect-ratio: 3/4;">
+                <img src="/images/AU/truong.jpg" alt="Xuân Trường" class="img-editorial" style="height: 100%; object-position: center top; transition: transform 0.8s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            </div>
+            <h4 class="font-serif fw-bold" style="font-size: 1.8rem;">Vũ Xuân Trường</h4>
+            <span class="d-block text-uppercase fw-bold mb-3" style="color: var(--forest-dark); font-size: 0.85rem; letter-spacing: 2px;">Co-Founder / CTO</span>
+            <p class="editorial-text px-lg-3">
+                Trưởng ban "Hậu cần và Công nghệ". Trường đảm nhiệm trọng trách vận hành trơn tru toàn bộ hệ thống website cũng như tối ưu hóa trải nghiệm đặt lều nhanh gọn nhất cho khách hàng.
+            </p>
+        </div>
+    </div>
     <div class="row justify-content-center spacing-section pb-4">
         <div class="col-lg-8 text-center">
             <h3 class="section-title">Lời cam kết</h3>
@@ -212,3 +241,22 @@
     </div>
 
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible'); // Thêm opacity = 1
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Gắn mắt thần quan sát tất cả các thẻ có class fade-up
+            document.querySelectorAll('.fade-up').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+}

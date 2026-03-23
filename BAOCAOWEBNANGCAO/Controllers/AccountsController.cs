@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using System.Text.RegularExpressions;
 namespace BAOCAOWEBNANGCAO.Controllers
 {
     public class AccountsController : Controller
@@ -50,6 +50,21 @@ namespace BAOCAOWEBNANGCAO.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(string email, string password, string phoneNumber)
         {
+            // LỚP BẢO VỆ 1: Chỉ cho phép các đuôi Email chuẩn mực này
+            var strictEmailRegex = @"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|campingrental\.vn|epu\.edu\.vn)$";
+
+            if (string.IsNullOrEmpty(email) || !Regex.IsMatch(email, strictEmailRegex, RegexOptions.IgnoreCase))
+            {
+                ModelState.AddModelError("", "Hệ thống từ chối: Chỉ chấp nhận email từ @gmail.com, @yahoo.com, @outlook.com hoặc email nội bộ.");
+                return View();
+            }
+            // LỚP BẢO VỆ 2: Bắt lỗi Số điện thoại tại Server
+            if (string.IsNullOrEmpty(phoneNumber) || !Regex.IsMatch(phoneNumber, @"^0\d{9}$"))
+            {
+                ModelState.AddModelError("", "Hệ thống từ chối: Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.");
+                return View();
+            }
+
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser
@@ -160,6 +175,13 @@ namespace BAOCAOWEBNANGCAO.Controllers
             if (user == null)
             {
                 return RedirectToAction("Login", "Accounts");
+            }
+
+            // LỚP BẢO VỆ 2 (Cho phần cập nhật hồ sơ cá nhân)
+            if (string.IsNullOrEmpty(phoneNumber) || !Regex.IsMatch(phoneNumber, @"^0\d{9}$"))
+            {
+                TempData["ErrorMessage"] = "Cập nhật thất bại: Số điện thoại không đúng định dạng!";
+                return RedirectToAction(nameof(MyProfile));
             }
 
             user.PhoneNumber = phoneNumber;

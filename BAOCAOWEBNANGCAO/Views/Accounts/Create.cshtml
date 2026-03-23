@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Thêm Nhân Viên Mới";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml"; 
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
@@ -96,7 +96,9 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                                 <input type="email" name="email" class="form-control form-control-with-icon"
-                                       placeholder="ví dụ: nhanvien@camping.com" required />
+                                       pattern="[a-zA-Z0-9._%+-]+@@(gmail\.com|yahoo\.com|outlook\.com|campingrental\.vn|epu\.edu\.vn)$"
+                                       title="Vui lòng nhập đúng nhà cung cấp Email (VD: @@gmail.com, @@campingrental.vn)"
+                                       placeholder="ví dụ: nhanvien@gmail.com" required />
                             </div>
                         </div>
 
@@ -119,7 +121,8 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                                 <input type="text" name="phoneNumber" class="form-control form-control-with-icon"
-                                       placeholder="Nhập số điện thoại liên lạc..." />
+                                       pattern="0[0-9]{9}" maxlength="10" title="Vui lòng nhập đúng 10 số điện thoại, bắt đầu bằng số 0" required
+                                       placeholder="Ví dụ: 0982412005" />
                             </div>
                         </div>
 
