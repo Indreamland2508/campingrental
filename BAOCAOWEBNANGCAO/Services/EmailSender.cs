@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using System; // Nhớ thêm dòng này
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -8,26 +8,24 @@ namespace BAOCAOWEBNANGCAO.Services
 {
     public class EmailSender : IEmailSender
     {
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             try
             {
-                // Thay bằng Email thật và Mã ứng dụng 16 số thật của bạn nhé
-                var fromAddress = "chaun6536@gmail.com";
+                // Thay bằng Username và Password bạn vừa copy trên Mailtrap
+                var mailtrapUsername = "21280a2dee2a67";
+                var mailtrapPassword = "f01e41ff5da4a6";
 
-
-                var appPassword = "kjflxeszzpmidtee";
-
-                var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+                var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
                 {
-                    EnableSsl = true,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress, appPassword)
+                    Credentials = new NetworkCredential(mailtrapUsername, mailtrapPassword),
+                    EnableSsl = true
                 };
 
+                // Email người gửi (Khai báo bừa cũng được vì Mailtrap chấp nhận hết)
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(fromAddress, "Hệ thống Quản trị Camping Rental"),
+                    From = new MailAddress("hethong@campingrental.vn", "Hệ thống Camping Rental"),
                     Subject = subject,
                     Body = htmlMessage,
                     IsBodyHtml = true
@@ -35,18 +33,14 @@ namespace BAOCAOWEBNANGCAO.Services
 
                 mailMessage.To.Add(email);
 
-                await smtpClient.SendMailAsync(mailMessage);
+                client.Send(mailMessage);
             }
             catch (Exception ex)
             {
-                // NẾU RENDER CHẶN, NÓ SẼ NHẢY VÀO ĐÂY THAY VÌ LÀM SẬP WEB
-                // Ghi lỗi ra màn hình Console (log) của Render để mình biết
-                Console.WriteLine("LỖI GỬI MAIL (RENDER CHẶN): " + ex.Message);
-
-                // Trả về Task hoàn thành để hệ thống cứ tưởng là gửi được rồi, 
-                // giúp khách hàng vẫn thấy giao diện chuyển trang mượt mà.
-                await Task.CompletedTask;
+                Console.WriteLine("LỖI GỬI MAIL (MAILTRAP): " + ex.Message);
             }
+
+            return Task.CompletedTask;
         }
     }
 }
