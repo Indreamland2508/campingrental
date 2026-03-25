@@ -1,6 +1,8 @@
 using BAOCAOWEBNANGCAO.Data;
-using Microsoft.EntityFrameworkCore;
+using BAOCAOWEBNANGCAO.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
     options.UseNpgsql(connectionString));
-
+//Gmail
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 // 2. Cấu hình Identity
 // Tìm đoạn AddDbContext và thay thế/kiểm tra đoạn Identity bên dưới:
 
