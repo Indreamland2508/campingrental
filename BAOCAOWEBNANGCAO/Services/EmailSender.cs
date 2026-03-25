@@ -31,7 +31,8 @@ namespace BAOCAOWEBNANGCAO.Services
 
                 // Bắn qua đường lướt web HTTPS (Render KHÔNG THỂ CHẶN)
                 var response = await client.PostAsync(scriptUrl, content);
-
+                var responseString = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("KẾT QUẢ TỪ GOOGLE SCRIPT: " + responseString);
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine("LỖI TỪ GOOGLE SCRIPT: " + await response.Content.ReadAsStringAsync());
