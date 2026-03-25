@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
 using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BAOCAOWEBNANGCAO.Services
@@ -13,42 +13,33 @@ namespace BAOCAOWEBNANGCAO.Services
         {
             try
             {
-                // 1. Điền địa chỉ Gmail thật của bạn
-                var senderEmail = "chaun6536@gmail.com";
+                // DÁN CÁI LINK SCRIPT MÀ BẠN VỪA COPY Ở BƯỚC 1 VÀO ĐÂY
+                var scriptUrl = "https://script.google.com/macros/s/AKfycbxw91rFj1M1KHaR4ox8vOMG3zqEVBs6cQBeVb9NyGNhpzaOS67SvsP966sJ8n4E-RaaNw/exec";
 
-                // 2. Điền MẬT KHẨU ỨNG DỤNG (16 CHỮ CÁI) lấy từ tài khoản Google
-                // LƯU Ý: Tuyệt đối KHÔNG DÙNG mật khẩu đăng nhập Gmail bình thường!
-                var appPassword = "kjflxeszzpmidtee";
+                using var client = new HttpClient();
 
-                // Đóng gói bức thư bằng MimeKit
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("Hệ thống Camping Rental", senderEmail));
-                message.To.Add(new MailboxAddress("Thành viên Camping", email));
-                message.Subject = subject;
+                // Đóng gói bức thư
+                var payload = new
+                {
+                    to = email,
+                    subject = subject,
+                    htmlBody = htmlMessage
+                };
 
-                var bodyBuilder = new BodyBuilder { HtmlBody = htmlMessage };
-                message.Body = bodyBuilder.ToMessageBody();
+                var jsonPayload = JsonSerializer.Serialize(payload);
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-                // Dùng MailKit để kết nối an toàn với Google
-                using var client = new SmtpClient();
+                // Bắn qua đường lướt web HTTPS (Render KHÔNG THỂ CHẶN)
+                var response = await client.PostAsync(scriptUrl, content);
 
-                // Bỏ qua kiểm tra chứng chỉ SSL khắt khe của Render
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-                // Kết nối cổng 587 chuẩn TLS
-                await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-
-                // Đăng nhập bằng Mật khẩu ứng dụng 16 số
-                await client.AuthenticateAsync(senderEmail, appPassword);
-
-                // Gửi thư đi và ngắt kết nối
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("LỖI TỪ GOOGLE SCRIPT: " + await response.Content.ReadAsStringAsync());
+                }
             }
             catch (Exception ex)
             {
-                // Ghi lỗi ra hệ thống để biết nếu Google chặn
-                Console.WriteLine("LỖI GỬI MAIL (MAILKIT): " + ex.Message);
+                Console.WriteLine("LỖI GỬI MAIL (HTTP): " + ex.Message);
             }
         }
     }
