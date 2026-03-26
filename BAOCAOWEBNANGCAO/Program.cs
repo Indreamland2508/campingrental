@@ -18,7 +18,13 @@ builder.Services.AddDbContext<CampingDbContext>(options =>
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 // 2. Cấu hình Identity
 // Tìm đoạn AddDbContext và thay thế/kiểm tra đoạn Identity bên dưới:
-
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Cấu hình khóa tài khoản (Lockout)
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Bị khóa trong 15 phút
+    options.Lockout.MaxFailedAccessAttempts = 5; // Gõ sai pass 5 lần là ăn ban
+    options.Lockout.AllowedForNewUsers = true; // Áp dụng cho mọi tài khoản mới tạo
+});
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     // CẤU HÌNH QUAN TRỌNG
@@ -89,5 +95,12 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Lỗi khi khởi tạo Database: " + ex.Message);
     }
 }
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    // Thiết lập thời gian sống của Token là 2 giờ (Tự động hết hạn)
+    options.TokenLifespan = TimeSpan.FromHours(2);
 
+    // Mẹo: Giám đốc có thể đổi thành TimeSpan.FromMinutes(15) 
+    // nếu muốn ép bảo mật cao như App Ngân hàng (hết hạn sau 15 phút)
+});
 app.Run();

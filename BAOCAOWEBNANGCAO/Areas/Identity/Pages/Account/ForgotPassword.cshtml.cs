@@ -13,18 +13,20 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-
+using Microsoft.Extensions.Caching.Memory;
 namespace BAOCAOWEBNANGCAO.Areas.Identity.Pages.Account
 {
+
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
-
-        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        private readonly IMemoryCache _cache;
+        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender, IMemoryCache cache)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _cache = cache;
         }
 
         [BindProperty]
@@ -41,6 +43,13 @@ namespace BAOCAOWEBNANGCAO.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
+                var cacheKey = "SpamCheck_" + Input.Email;
+                if (_cache.TryGetValue(cacheKey, out _))
+                {
+                    // Nếu tìm thấy email này trong bộ nhớ 60s, chửi ngay và không cho chạy tiếp
+                    ModelState.AddModelError(string.Empty, "Hệ thống đang xử lý. Vui lòng đợi 60 giây trước khi gửi yêu cầu mới cho email này!");
+                    return Page();
+                }
                 var user = await _userManager.FindByEmailAsync(Input.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
@@ -90,7 +99,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Identity.Pages.Account
                     Input.Email,
                     "[Camping Rental] Khôi phục mật khẩu tài khoản",
                     emailBody);
-
+                _cache.Set(cacheKey, true, TimeSpan.FromSeconds(60));
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
