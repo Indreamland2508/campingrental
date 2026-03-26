@@ -3,6 +3,7 @@ using BAOCAOWEBNANGCAO.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,17 +15,26 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
     options.UseNpgsql(connectionString));
-//Gmail
+
+// Gmail
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-// 2. Cấu hình Identity
-// Tìm đoạn AddDbContext và thay thế/kiểm tra đoạn Identity bên dưới:
+
+// 2. Cấu hình Identity & Bảo mật
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Cấu hình khóa tài khoản (Lockout)
+    // Lớp giáp 1: Khóa tài khoản (Lockout)
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Bị khóa trong 15 phút
     options.Lockout.MaxFailedAccessAttempts = 5; // Gõ sai pass 5 lần là ăn ban
     options.Lockout.AllowedForNewUsers = true; // Áp dụng cho mọi tài khoản mới tạo
 });
+
+// [ĐÃ CHUYỂN LÊN ĐÂY] Ép thời gian hết hạn của Link Quên mật khẩu
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    // Thiết lập thời gian sống của Token là 2 giờ (Tự động hết hạn)
+    options.TokenLifespan = TimeSpan.FromHours(2);
+});
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     // CẤU HÌNH QUAN TRỌNG
@@ -36,6 +46,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddRoles<IdentityRole>() // <--- BẮT BUỘC ĐỂ DÙNG ROLE
 .AddEntityFrameworkStores<CampingDbContext>();
+
 // 3. Thêm dịch vụ MVC
 builder.Services.AddControllersWithViews();
 
@@ -47,7 +58,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// ==========================================================
+// CHỐT SỔ ĐÓNG NẮP LÒ (Tuyệt đối không dùng builder.Services ở dưới dòng này)
 var app = builder.Build();
+// ==========================================================
 
 // --- PHẦN 2: CẤU HÌNH PIPELINE (Sau khi Build) ---
 
@@ -95,12 +109,5 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Lỗi khi khởi tạo Database: " + ex.Message);
     }
 }
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-{
-    // Thiết lập thời gian sống của Token là 2 giờ (Tự động hết hạn)
-    options.TokenLifespan = TimeSpan.FromHours(2);
 
-    // Mẹo: Giám đốc có thể đổi thành TimeSpan.FromMinutes(15) 
-    // nếu muốn ép bảo mật cao như App Ngân hàng (hết hạn sau 15 phút)
-});
 app.Run();
