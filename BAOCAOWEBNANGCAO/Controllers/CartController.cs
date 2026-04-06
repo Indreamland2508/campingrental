@@ -2,6 +2,7 @@
 using BAOCAOWEBNANGCAO.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 
 namespace BAOCAOWEBNANGCAO.Controllers
 {
@@ -139,7 +140,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     Note = note,
                     RentalStartDate = rentalStart,
                     RentalEndDate = rentalEnd,
-                    OrderDate = DateTime.Now,
+                    OrderDate = GetVietnamTime(),
                     TotalAmount = finalTotal,
                     DepositAmount = deposit,
                     RemainingAmount = remaining,
@@ -147,7 +148,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     PaymentStatus = "Unpaid"
                 };
 
-                // LƯU ĐƠN HÀNG (Nếu Database từ chối Combo, nó sẽ nổ lỗi và nhảy xuống cục Catch bên dưới)
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
@@ -208,6 +208,17 @@ namespace BAOCAOWEBNANGCAO.Controllers
             if (order == null) return RedirectToAction("Index", "Home");
 
             return View(order);
+        }
+
+        private DateTime GetVietnamTime()
+        {
+            var utcNow = DateTime.UtcNow;
+            var timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "SE Asia Standard Time"
+                : "Asia/Ho_Chi_Minh";
+
+            var vietnamZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return TimeZoneInfo.ConvertTimeFromUtc(utcNow, vietnamZone);
         }
     }
 }

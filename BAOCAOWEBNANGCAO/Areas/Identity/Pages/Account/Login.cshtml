@@ -7,72 +7,7 @@
     // Layout = null;
 }
 
-<style>
-    body {
-        background: url('/images/IMG/camtrai.jpg') no-repeat center center fixed;
-        background-size: cover;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    /* Lớp phủ đen mờ để làm nổi bật form */
-    .bg-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        z-index: -1;
-    }
-
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 24px;
-        border: none;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        padding: 40px;
-        max-width: 450px;
-        width: 100%;
-        margin: 80px auto;
-    }
-
-    .brand-title {
-        font-family: 'Playfair Display', serif;
-        font-weight: 800;
-        color: #1a4d3a;
-        font-size: 2.5rem;
-    }
-
-    .form-control {
-        border-radius: 12px;
-        padding: 14px 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #e1e4e8;
-    }
-
-        .form-control:focus {
-            border-color: #1a4d3a;
-            box-shadow: 0 0 0 4px rgba(26, 77, 58, 0.1);
-        }
-
-    .btn-login {
-        background: linear-gradient(135deg, #198754 0%, #115c30 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 15px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        transition: all 0.3s;
-    }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(26, 77, 58, 0.3);
-            color: white;
-        }
-</style>
+<link rel="stylesheet" href="~/css/Identity.Login.css" />
 
 <div class="bg-overlay"></div>
 
@@ -98,7 +33,16 @@
                     <label asp-for="Input.Password" class="form-label fw-bold small text-muted text-uppercase m-0">Mật khẩu</label>
                     <a id="forgot-password" asp-page="./ForgotPassword" class="small text-decoration-none" style="color: #1a4d3a; font-weight: 600;">Quên mật khẩu?</a>
                 </div>
-                <input asp-for="Input.Password" class="form-control mt-2" autocomplete="current-password" aria-required="true" placeholder="••••••••" />
+
+                <div class="position-relative mt-2">
+                    <input asp-for="Input.Password" id="passwordInput" class="form-control" autocomplete="current-password" aria-required="true" placeholder="••••••••" style="padding-right: 45px;" />
+                    <button type="button" id="togglePasswordBtn" class="btn-toggle-password" title="Hiển thị mật khẩu">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                        </svg>
+                    </button>
+                </div>
                 <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
 
@@ -118,4 +62,31 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            // SVG icon cho mắt mở và nhắm
+            const eyeOpenSvg = '<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>';
+            const eyeSlashSvg = '<path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755l-.809-.805zm-4.706-4.706L7.126 5.006A2.5 2.5 0 0 1 10.5 8.374l-1.847-1.842zm-2.091 2.092L4.208 6.273A2.5 2.5 0 0 0 7.727 9.792l1.636 1.636a2.5 2.5 0 0 1-2.801-2.804zm8.653 7.828-1-1-10-10-1-1 1.414-1.414 10 10 1.414 1.414-1.414 1.414z"/><path d="M2.316 4.318A13.11 13.11 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l-1.146-1.146A4.954 4.954 0 0 1 8 11.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>';
+
+            togglePasswordBtn.addEventListener('click', function () {
+                // Kiểm tra loại input hiện tại
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Đổi icon và title tương ứng
+                if (type === 'text') {
+                    eyeIcon.innerHTML = eyeSlashSvg;
+                    togglePasswordBtn.setAttribute('title', 'Ẩn mật khẩu');
+                } else {
+                    eyeIcon.innerHTML = eyeOpenSvg;
+                    togglePasswordBtn.setAttribute('title', 'Hiển thị mật khẩu');
+                }
+            });
+        });
+    </script>
 }

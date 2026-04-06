@@ -1,0 +1,84 @@
+body {
+    background-color: #f4f8f5;
+    padding-top: 70px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* --- HEADER KÍNH MỜ --- */
+.admin-header {
+    height: 70px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 260px;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 30px;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+/* --- SIDEBAR XANH RỪNG SÂU --- */
+.sidebar {
+    width: 260px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, #1a3a28 0%, #2e5a40 100%);
+    z-index: 1040;
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+}
+
+.sidebar-brand {
+    padding: 25px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 15px;
+}
+
+.sidebar a {
+    color: #a3c9b3;
+    text-decoration: none;
+    padding: 12px 20px;
+    margin: 4px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+    .sidebar a i {
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+        background-color: rgba(255,255,255,0.15);
+        color: #ffffff;
+        transform: translateX(5px);
+    }
+
+/* --- NỘI DUNG CHÍNH --- */
+.content {
+    margin-left: 260px;
+    padding: 30px;
+    min-height: calc(100vh - 70px);
+}
+
+/* Global Admin Styles */
+.card {
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+}
+
+.btn {
+    border-radius: 50rem !important;
+}

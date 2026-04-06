@@ -1,0 +1,139 @@
+:root {
+    --forest-dark: #1a4d3a;
+    --border-color: #e1e4e8;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+}
+
+.location-header {
+    padding: 60px 0 40px 0;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.location-main-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--forest-dark);
+    margin-bottom: 15px;
+}
+
+/* BẢN ĐỒ THỰC TẾ */
+.map-container {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    height: 500px;
+    position: relative;
+}
+
+/* THÔNG TIN BÊN CẠNH BẢN ĐỒ */
+.location-info-card {
+    background-color: #f9fafb;
+    border-radius: 20px;
+    padding: 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.loc-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    background-color: rgba(26, 77, 58, 0.1);
+    color: var(--forest-dark);
+    border-radius: 50rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.loc-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.loc-detail-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.loc-detail-icon {
+    color: var(--forest-dark);
+    font-size: 1.2rem;
+    margin-right: 15px;
+    margin-top: 2px;
+}
+
+/* DANH SÁCH CÁC ĐỊA ĐIỂM KHÁC */
+.other-loc-card {
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4/5;
+    display: block;
+    text-decoration: none !important;
+}
+
+.other-loc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.other-loc-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 20px 20px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+    color: white;
+}
+
+.other-loc-card:hover .other-loc-img {
+    transform: scale(1.08);
+}
+
+.other-loc-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-family: 'Playfair Display', serif;
+}
+
+/* HIỆU ỨNG HIỆN DẦN */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s ease-out;
+}
+
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+@media (max-width: 992px) {
+    .map-container
+
+{
+    height: 350px;
+    margin-bottom: 30px;
+}
+
+.location-info-card {
+    padding: 30px 20px;
+}
+
+}
