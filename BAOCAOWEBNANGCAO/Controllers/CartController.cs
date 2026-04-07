@@ -138,9 +138,9 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     CustomerEmail = customerEmail,
                     ShippingAddress = shippingAddress,
                     Note = note,
-                    RentalStartDate = rentalStart,
-                    RentalEndDate = rentalEnd,
-                    OrderDate = GetVietnamTime(),
+                    RentalStartDate = rentalStart.ToUniversalTime(),
+                    RentalEndDate = rentalEnd.ToUniversalTime(),
+                    OrderDate = DateTime.UtcNow, // Lưu UTC để database xử lý đúng
                     TotalAmount = finalTotal,
                     DepositAmount = deposit,
                     RemainingAmount = remaining,

@@ -1,0 +1,449 @@
+/* BỘ FONT VÀ MÀU CHỦ ĐẠO MỚI CỦA TOÀN TRANG */
+:root {
+    --forest-dark: #1a3a28;
+    --forest-light: #198754;
+    --elegant-bg: #fcfcfc;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+}
+
+/* 1. HERO SECTION (ẢNH TRÀN VIỀN, CHỮ CHÈN LÊN TRÊN GIỐNG TRANG SẢN PHẨM) */
+.minimal-hero-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 85vh; /* Chiều cao chiếm 85% màn hình */
+    /* THAY LINK ẢNH DƯỚI ĐÂY BẰNG ẢNH BẠN MUỐN (Có thể dùng lại ảnh trang sản phẩm) */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('/images/IMG/dungtrai.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center; /* Căn giữa nội dung theo chiều dọc */
+    justify-content: center; /* Căn giữa nội dung theo chiều ngang */
+    text-align: center;
+    margin-top: -16px; /* Kéo nhẹ lên cho sát với thanh Navbar */
+    margin-bottom: 0;
+}
+
+.hero-content-wrapper {
+    color: white;
+    max-width: 800px;
+    padding: 0 20px;
+    z-index: 1;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); /* Shadow để chữ nổi bần bật trên nền ảnh */
+}
+
+.hero-title {
+    font-size: 5rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: white; /* Đổi màu chữ thành trắng */
+    margin-bottom: 25px;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+/* Đổi màu nút bấm trên nền tối */
+.btn-elegant-hero {
+    background-color: white;
+    color: var(--forest-dark);
+    border: none;
+    padding: 16px 45px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 50rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-size: 1rem;
+    display: inline-block;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-elegant-hero:hover {
+    background-color: var(--forest-light);
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(25, 135, 84, 0.3);
+}
+
+/* Nút bấm đồng bộ toàn trang */
+.btn-elegant {
+    background-color: var(--forest-dark);
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 50rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-elegant:hover {
+    background-color: #15321e;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(26, 58, 40, 0.2);
+    color: white;
+}
+
+/* 2. TRENDING SECTION (SẠCH SẼ, NỔI BẬT SẢN PHẨM) */
+.minimal-trending-wrapper {
+    padding: 80px 0;
+    background-color: #ffffff;
+}
+
+.section-heading {
+    font-size: 3rem;
+    color: var(--forest-dark);
+    margin-bottom: 10px;
+}
+
+.product-card-elegant {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.product-card-elegant:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(26, 58, 40, 0.08);
+    border-color: var(--forest-dark);
+}
+
+.img-trending-container {
+    border-radius: 12px;
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.img-trending-container img {
+    transition: transform 0.8s ease;
+}
+
+.product-card-elegant:hover .img-trending-container img {
+    transform: scale(1.08);
+}
+
+.badge-hot-elegant {
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+}
+
+/* 3. COMBO SECTION (GIẢI PHÁP TRỌN GÓI) */
+.combo-section-wrapper {
+    padding: 90px 0;
+    background-color: #fcfcfc; /* Nền xám cực nhạt để làm nổi bật card trắng */
+}
+
+.combo-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 25px; /* Bo góc lớn đồng bộ */
+    overflow: hidden;
+    transition: all 0.4s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.combo-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(26, 77, 58, 0.08);
+    border-color: var(--forest-dark);
+}
+
+.combo-img-wrapper {
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.combo-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.combo-card:hover .combo-img-wrapper img {
+    transform: scale(1.08);
+}
+
+.combo-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: var(--forest-dark);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 50rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 2;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.combo-badge.hot {
+    background-color: #dc3545; /* Màu đỏ cho combo hot */
+}
+
+.combo-content {
+    padding: 35px 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.combo-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.combo-desc {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.combo-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    flex: 1;
+}
+
+.combo-items li {
+    font-size: 0.95rem;
+    color: #495057;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.combo-items li i {
+    color: var(--forest-light, #198754);
+    margin-right: 12px;
+    font-size: 1.2rem;
+    margin-top: 1px;
+}
+
+.combo-footer {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.combo-price-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.combo-price-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+    font-weight: bold;
+}
+
+.combo-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--forest-dark);
+}
+
+.btn-combo {
+    background-color: var(--forest-dark);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50rem;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-combo:hover {
+    background-color: #15321e;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* 4. STATS & ABOUT (ĐỒNG BỘ FONT) */
+.stats-box {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+    margin-top: -60px;
+    position: relative;
+    z-index: 5;
+}
+
+.stat-item {
+    padding: 40px;
+    text-align: center;
+    border-right: 1px solid #f0f0f0;
+}
+
+.stat-item:last-child {
+    border-right: none;
+}
+
+.stat-number {
+    color: var(--forest-dark);
+    font-weight: 700;
+    font-size: 3rem;
+    display: block;
+}
+
+.img-overlap-container {
+    position: relative;
+    height: 450px;
+}
+
+.img-main {
+    width: 80%;
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+.img-float {
+    width: 55%;
+    border-radius: 20px;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    border: 10px solid white;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    z-index: 2;
+}
+
+/* 5. TOTAL MINIMALIST REVIEW BOX & FORM (ĐÃ FIX LỖI TÀNG HÌNH) */
+.total-minimal-review-wrapper {
+    padding: 100px 0;
+    margin-top: 50px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--forest-dark); /* BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ LÓT NỀN XANH ĐẬM */
+}
+
+.total-minimal-review-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2; /* Tăng độ nét của ảnh lên một chút */
+    z-index: 0;
+    filter: grayscale(100%) blur(3px); /* Giảm độ nhòe đi để nhìn thấy vân cảnh dã ngoại */
+}
+
+.feedback-card-minimal {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 35px;
+    color: white;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.feedback-card-minimal:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.minimal-form .form-control,
+.minimal-form .form-select {
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0;
+    padding: 15px 0;
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 1rem;
+    color: white;
+    transition: border-color 0.3s ease;
+}
+
+.minimal-form .form-control:focus,
+.minimal-form .form-select:focus {
+    border-bottom-color: white;
+    outline: none;
+}
+
+.minimal-form .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.minimal-form .form-select option {
+    color: #000; /* Fix lỗi chữ trắng trên nền trắng ở menu xổ xuống */
+}
+
+.btn-white-elegant {
+    background-color: #ffffff;
+    color: var(--forest-dark);
+    border: none;
+    padding: 16px 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 50rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-white-elegant:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}

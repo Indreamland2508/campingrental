@@ -1,0 +1,9 @@
+.font-serif { font-family: 'Playfair Display', 'Times New Roman', serif; }
+.text-forest { color: #1a3a28 !important; }
+.bg-forest { background-color: #1a3a28 !important; }
+.btn-elegant {
+    background-color: #1a3a28; color: white; border: none; padding: 12px 30px;
+    font-weight: bold; letter-spacing: 1px; border-radius: 50rem; transition: all 0.3s;
+}
+.btn-elegant:hover { background-color: #15321e; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(26, 58, 40, 0.15); color: white; }
+.tracking-card { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }

@@ -1,0 +1,515 @@
+/* BỘ MÀU CHUẨN MINIMALIST */
+:root {
+    --forest-dark: #1a4d3a;
+    --border-color: #e1e4e8;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+}
+
+.font-monospace {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* 1. BANNER TOÀN CẢNH (EDGE-TO-EDGE) GIỐNG HỆT 2.JPG */
+.full-width-banner {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 75vh;
+    /* THAY LINK ẢNH DƯỚI ĐÂY BẰNG ẢNH RỪNG THÔNG CỦA BẠN */
+    background-image: url('/images/IMG/camtrai.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin-bottom: 0; /* Bỏ margin-bottom cũ */
+    margin-top: -16px;
+}
+
+/* 2. === PHẦN GIỚI THIỆU MỚI (CHÂU MUỐN THÊM) === */
+/* === PHẦN GIỚI THIỆU LƯỚI 4 ẢNH (CHUẨN THIẾT KẾ) === */
+.intro-section {
+    background-color: #ffffff;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    margin-bottom: 50px;
+}
+
+.intro-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 60px; /* Khoảng cách giữa cụm ảnh và chữ */
+}
+
+/* BỘ KHUNG 4 ẢNH SO LE */
+.intro-images-wrapper {
+    flex: 0 0 45%;
+    display: flex;
+    gap: 20px;
+}
+
+.image-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 50%;
+}
+
+/* Đẩy cột thứ 2 xuống một chút để tạo độ so le */
+.col-right {
+    margin-top: 40px;
+}
+
+.intro-img {
+    width: 100%;
+    border-radius: 20px; /* Bo góc lớn giống thiết kế */
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Chỉnh chiều cao từng ảnh để ra hiệu ứng ngẫu nhiên */
+.img-1 {
+    height: 240px;
+}
+
+.img-2 {
+    height: 320px;
+}
+
+.img-3 {
+    height: 280px;
+}
+
+.img-4 {
+    height: 300px;
+}
+
+/* NỘI DUNG CHỮ BÊN PHẢI */
+.intro-text-wrapper {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.intro-subtitle-top {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.intro-huge-title {
+    font-size: 6.5rem; /* Chữ khổng lồ */
+    font-weight: 800;
+    color: var(--forest-dark);
+    line-height: 0.85; /* Ép dòng sát nhau */
+    letter-spacing: -2px; /* Khoảng cách chữ hẹp lại */
+    margin-bottom: 30px;
+}
+
+.intro-desc-text {
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    max-width: 90%;
+}
+
+.btn-view-products {
+    display: inline-block;
+    background-color: #9ca3af; /* Nền xám như ảnh */
+    color: #111;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.btn-view-products:hover {
+    background-color: #6b7280;
+    color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .intro-container {
+        flex-direction: column;
+    }
+
+    .intro-images-wrapper {
+        width: 100%;
+    }
+
+    .intro-huge-title {
+        font-size: 4rem;
+    }
+
+    .intro-text-wrapper {
+        padding-left: 0;
+        margin-top: 30px;
+    }
+}
+
+/* TIÊU ĐỀ PHẦN GIỚI THIỆU */
+.about-section-title-wrapper {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.about-section-main-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--forest-dark);
+    margin: 0;
+}
+
+/* BỐ CỤC 2 CỘT CHO NỘI DUNG */
+.about-camping-text {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.about-camping-image-col {
+    flex: 0 0 45%; /* Chiều rộng cột ảnh */
+}
+
+/* CHI TIẾT TEXT */
+.about-section-subtitle {
+    color: var(--forest-dark);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.about-section-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #495057;
+    margin-bottom: 30px;
+}
+
+/* DANH SÁCH TÍNH NĂNG */
+.about-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about-features-list li {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: #495057;
+}
+
+.about-features-list li::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--forest-dark);
+    border-radius: 50%;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+/* ẢNH PHẦN GIỚI THIỆU */
+.about-camping-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+/* 3. LAYOUT 2 CỘT (SIDEBAR & LƯỚI SẢN PHẨM) */
+.product-page-container {
+    display: flex;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
+    gap: 40px;
+}
+
+/* SIDEBAR (MENU BÊN TRÁI) */
+.sidebar {
+    flex: 0 0 260px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.category-title-header {
+    background-color: var(--forest-dark);
+    padding: 20px;
+    color: #fff;
+    border-radius: 15px 15px 0 0;
+}
+
+.category-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+}
+
+.category-item {
+    display: block;
+    padding: 16px 25px;
+    text-decoration: none;
+    color: #495057;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.category-item:hover {
+    background-color: #e9ecef;
+    color: var(--forest-dark);
+}
+
+.category-item.active {
+    background-color: #e5e7eb;
+    color: var(--forest-dark);
+    font-weight: bold;
+    border-left: 4px solid var(--forest-dark);
+    padding-left: 21px;
+}
+
+/* MAIN CONTENT AREA */
+.main-content {
+    flex: 1;
+}
+
+/* TOOLBAR (BỘ LỌC) */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+}
+
+.toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toolbar-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.price-input {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    width: 100px;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.btn-search-icon {
+    background: none;
+    border: 1px solid #ced4da;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.sort-btn {
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    border-radius: 8px;
+    color: #495057;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.sort-btn.active {
+    background-color: #e5e7eb;
+    font-weight: bold;
+    color: #212529;
+}
+
+/* CARD SẢN PHẨM LUXURY (CỦA BẠN) */
+.product-luxury-card {
+    border: none !important;
+    background: transparent;
+    transition: all 0.4s ease;
+    margin-bottom: 40px;
+    text-decoration: none !important;
+    display: block;
+}
+
+.img-luxury-frame {
+    background-color: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 25px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: 0.4s ease;
+}
+
+.img-luxury-frame img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-luxury-card:hover .img-luxury-frame {
+    background-color: #ffffff;
+    border-color: var(--forest-dark);
+    box-shadow: 0 15px 30px rgba(26, 77, 58, 0.1);
+}
+
+.product-luxury-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-info-minimal {
+    padding-top: 15px;
+    text-align: center;
+}
+
+.luxury-cat-name {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6c757d;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.luxury-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 8px;
+    display: block;
+    line-height: 1.4;
+    height: 3rem;
+    overflow: hidden;
+}
+
+.luxury-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--forest-dark);
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #9ca3af;
+    font-size: 1.2rem;
+    z-index: 5;
+    transition: 0.3s;
+    background: white;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.wishlist-btn:hover {
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+/* HIỆU ỨNG HIỆN DẦN */
+.product-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+}
+
+.product-reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .product-page-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        flex: none;
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+
+    .category-list {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .category-item {
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .full-width-banner {
+        height: 50vh;
+    }
+
+    .about-camping-content {
+        flex-direction: column;
+    }
+
+    .about-camping-image-col {
+        width: 100%;
+    }
+
+    .about-section-main-title {
+        font-size: 2.2rem;
+    }
+}

@@ -42,11 +42,11 @@
                     <h5 class="text-secondary border-bottom pb-2">Chi tiết thuê</h5>
                     <dl class="row">
                         <dt class="col-sm-4">Ngày đặt:</dt>
-                        <dd class="col-sm-8">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</dd>
+                        <dd class="col-sm-8">@Model.OrderDate.ToVietnamTime().ToString("dd/MM/yyyy HH:mm")</dd>
 
                         <dt class="col-sm-4">Thời gian thuê:</dt>
                         <dd class="col-sm-8">
-                            @Model.RentalStartDate.ToString("dd/MM") - @Model.RentalEndDate.ToString("dd/MM")
+                            @Model.RentalStartDate.ToVietnamTime().ToString("dd/MM") - @Model.RentalEndDate.ToVietnamTime().ToString("dd/MM")
                         </dd>
 
                         <dt class="col-sm-4">Trạng thái:</dt>

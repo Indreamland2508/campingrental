@@ -5,84 +5,7 @@
     Layout = "_AdminLayout";
 }
 
-<style>
-    /* Card bo góc và đổ bóng nhẹ */
-    .detail-card {
-        border-radius: 24px;
-        border: none;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-        margin-bottom: 1.5rem;
-    }
-
-        /* Tiêu đề các mục */
-        .detail-card .card-header {
-            border-radius: 24px 24px 0 0 !important;
-            border: none;
-            padding: 1.2rem 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-            .detail-card .card-header i {
-                margin-right: 12px;
-                font-size: 1.2rem;
-            }
-
-    /* Custom màu sắc cho các mục */
-    .header-customer {
-        background: #e0f2fe;
-        color: #0369a1;
-    }
-    /* Xanh dương nhạt */
-    .header-rental {
-        background: #fff4e6;
-        color: #d97706;
-    }
-    /* Cam nhạt */
-    .header-products {
-        background: #eaf5ea;
-        color: #157347;
-    }
-    /* Xanh lá nhạt */
-    .header-finance {
-        background: #fef9c3;
-        color: #ca8a04;
-    }
-    /* Vàng nhạt (Mới thêm) */
-
-    /* Bảng sản phẩm */
-    .table-detail thead th {
-        background-color: #f8faf9;
-        color: #4b5563;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        border: none;
-        padding: 1rem;
-    }
-
-    /* Alert thời gian thuê sang trọng */
-    .alert-rental-days {
-        background: linear-gradient(135deg, #198754 0%, #157347 100%);
-        color: white;
-        border: none;
-        border-radius: 15px;
-        font-weight: 700;
-    }
-
-    /* Nút bấm bo tròn viên thuốc */
-    .btn-pill {
-        border-radius: 50rem;
-        padding: 12px 25px;
-        font-weight: 700;
-        transition: all 0.3s;
-    }
-
-        .btn-pill:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-</style>
+<link rel="stylesheet" href="~/css/Orders.Details.css" />
 
 <div class="container-fluid px-4 py-4 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -142,11 +65,11 @@
                     <div class="d-flex justify-content-between mb-3">
                         <div class="text-center p-2 rounded-4 bg-light flex-grow-1 me-2">
                             <label class="extra-small text-muted d-block" style="font-size: 0.7rem;">NGÀY NHẬN</label>
-                            <span class="fw-bold">@Model.RentalStartDate.ToString("dd/MM/yyyy")</span>
+                            <span class="fw-bold">@Model.RentalStartDate.ToVietnamTime().ToString("dd/MM/yyyy")</span>
                         </div>
                         <div class="text-center p-2 rounded-4 bg-light flex-grow-1 ms-2">
                             <label class="extra-small text-muted d-block" style="font-size: 0.7rem;">NGÀY TRẢ</label>
-                            <span class="fw-bold">@Model.RentalEndDate.ToString("dd/MM/yyyy")</span>
+                            <span class="fw-bold">@Model.RentalEndDate.ToVietnamTime().ToString("dd/MM/yyyy")</span>
                         </div>
                     </div>
 

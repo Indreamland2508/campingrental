@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace BAOCAOWEBNANGCAO // Đảm bảo đúng Namespace dự án của Châu
@@ -16,6 +17,17 @@ namespace BAOCAOWEBNANGCAO // Đảm bảo đúng Namespace dự án của Châu
         {
             var value = session.GetString(key);
             return value == null ? default : JsonSerializer.Deserialize<T>(value);
+        }
+
+        // Hàm chuyển đổi DateTime sang giờ Việt Nam
+        public static DateTime ToVietnamTime(this DateTime utcDateTime)
+        {
+            var timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "SE Asia Standard Time"
+                : "Asia/Ho_Chi_Minh";
+
+            var vietnamZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, vietnamZone);
         }
     }
 }

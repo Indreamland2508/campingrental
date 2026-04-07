@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 namespace BAOCAOWEBNANGCAO.Controllers
 {
     [Authorize(Roles = "Admin,Staff")] 
@@ -17,6 +17,21 @@ namespace BAOCAOWEBNANGCAO.Controllers
         {
             _context = context;
         }
+
+        private static TimeZoneInfo GetVietnamTimeZone()
+        {
+            var timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "SE Asia Standard Time"
+                : "Asia/Ho_Chi_Minh";
+
+            return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        }
+
+        private static DateTime ConvertVietnamDateToUtc(DateTime vietnamDate)
+        {
+            return TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(vietnamDate, DateTimeKind.Unspecified), GetVietnamTimeZone());
+        }
+
         public async Task<IActionResult> ManageFeedbacks()
         {
             var feedbacks = await _context.Feedbacks
@@ -66,8 +81,13 @@ namespace BAOCAOWEBNANGCAO.Controllers
             var totalProducts = await _context.Products.CountAsync();
 
             // 4. Đếm tổng số đơn hàng hôm nay
+            var vietnamToday = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GetVietnamTimeZone()).Date;
+            var vietnamTomorrow = vietnamToday.AddDays(1);
+            var todayStartUtc = ConvertVietnamDateToUtc(vietnamToday);
+            var todayEndUtc = ConvertVietnamDateToUtc(vietnamTomorrow);
+
             var todayOrders = await _context.Orders
-                .CountAsync(o => o.OrderDate.Date == DateTime.Today);
+                .CountAsync(o => o.OrderDate >= todayStartUtc && o.OrderDate < todayEndUtc);
 
             // Gửi số liệu sang View bằng ViewBag (cách nhanh nhất)
             ViewBag.TotalRevenue = totalRevenue;
@@ -75,17 +95,22 @@ namespace BAOCAOWEBNANGCAO.Controllers
             ViewBag.TotalProducts = totalProducts;
             ViewBag.TodayOrders = todayOrders;
             // --- PHẦN MỚI: Chuẩn bị dữ liệu cho Biểu đồ (7 ngày qua) ---
-            var sevenDaysAgo = DateTime.Today.AddDays(-6);
+            var sevenDaysAgo = vietnamToday.AddDays(-6);
+            var sevenDaysAgoStartUtc = ConvertVietnamDateToUtc(sevenDaysAgo);
+            var tomorrowStartUtc = ConvertVietnamDateToUtc(vietnamTomorrow);
 
             // Lấy dữ liệu từ Database, nhóm theo Ngày
-            var revenueData = await _context.Orders
-                .Where(o => o.OrderDate >= sevenDaysAgo && (o.Status == "Completed" || o.Status == "Approved"))
-                .GroupBy(o => o.OrderDate.Date)
+            var revenueOrders = await _context.Orders
+                .Where(o => o.OrderDate >= sevenDaysAgoStartUtc && o.OrderDate < tomorrowStartUtc && (o.Status == "Completed" || o.Status == "Approved"))
+                .ToListAsync();
+
+            var revenueData = revenueOrders
+                .GroupBy(o => o.OrderDate.ToVietnamTime().Date)
                 .Select(g => new {
                     Date = g.Key,
                     Revenue = g.Sum(o => o.TotalAmount)
                 })
-                .ToListAsync();
+                .ToList();
 
             // Tạo 2 mảng dữ liệu để gửi sang View (Labels: Ngày, Data: Tiền)
             var labels = new List<string>();
@@ -111,11 +136,12 @@ namespace BAOCAOWEBNANGCAO.Controllers
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            var today = DateTime.Now;
-            var startOfMonth = new DateTime(today.Year, today.Month, 1);
+            var vietnamToday = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GetVietnamTimeZone());
+            var startOfMonth = new DateTime(vietnamToday.Year, vietnamToday.Month, 1);
+            var startOfMonthUtc = ConvertVietnamDateToUtc(startOfMonth);
 
             var currentMonthOrders = await _context.Orders
-                .Where(o => o.OrderDate >= startOfMonth)
+                .Where(o => o.OrderDate >= startOfMonthUtc)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -153,8 +179,8 @@ namespace BAOCAOWEBNANGCAO.Controllers
                         row.ConstantItem(250).AlignRight().Column(column =>
                         {
                             column.Item().Text("BÁO CÁO DOANH THU").FontSize(16).Bold().FontColor(Colors.Black);
-                            column.Item().Text($"Ngày lập: {today:dd/MM/yyyy HH:mm}").FontSize(10);
-                            column.Item().Text($"Kỳ báo cáo: Tháng {today.Month}/{today.Year}").FontSize(10);
+                            column.Item().Text($"Ngày lập: {vietnamToday:dd/MM/yyyy HH:mm}").FontSize(10);
+                            column.Item().Text($"Kỳ báo cáo: Tháng {vietnamToday.Month}/{vietnamToday.Year}").FontSize(10);
                         });
                     });
 
@@ -209,7 +235,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text($"#{order.Id}");
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(order.CustomerName);
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(order.CustomerPhone);
-                                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(order.OrderDate.ToString("dd/MM/yyyy"));
+                                table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(order.OrderDate.ToVietnamTime().ToString("dd/MM/yyyy"));
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).AlignRight().Text($"{order.TotalAmount:N0} đ");
 
                                 // XỬ LÝ TEXT VÀ MÀU CHO CỘT TRẠNG THÁI
@@ -253,7 +279,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
             });
 
             var pdfBytes = document.GeneratePdf();
-            return File(pdfBytes, "application/pdf", $"BaoCao_CampingRental_{today:MMyyyy}.pdf");
+            return File(pdfBytes, "application/pdf", $"BaoCao_CampingRental_{vietnamToday:MMyyyy}.pdf");
         }
     }
 }
