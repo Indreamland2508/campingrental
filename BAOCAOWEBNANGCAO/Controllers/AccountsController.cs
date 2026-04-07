@@ -9,20 +9,18 @@ namespace BAOCAOWEBNANGCAO.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        // THÊM DÒNG NÀY: Quản lý đăng nhập/đăng xuất
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public AccountsController(
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            SignInManager<IdentityUser> signInManager) // THÊM SignInManager VÀO ĐÂY
+            SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _signInManager = signInManager; // GÁN GIÁ TRỊ
+            _signInManager = signInManager;
         }
 
-        // --- HÀM LOGOUT MỚI THÊM VÀO ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -50,7 +48,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(string email, string password, string phoneNumber)
         {
-            // LỚP BẢO VỆ 1: Chỉ cho phép các đuôi Email chuẩn mực này
             var strictEmailRegex = @"^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|campingrental\.vn|epu\.edu\.vn)$";
 
             if (string.IsNullOrEmpty(email) || !Regex.IsMatch(email, strictEmailRegex, RegexOptions.IgnoreCase))
@@ -58,7 +55,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 ModelState.AddModelError("", "Hệ thống từ chối: Chỉ chấp nhận email từ @gmail.com, @yahoo.com, @outlook.com hoặc email nội bộ.");
                 return View();
             }
-            // LỚP BẢO VỆ 2: Bắt lỗi Số điện thoại tại Server
             if (string.IsNullOrEmpty(phoneNumber) || !Regex.IsMatch(phoneNumber, @"^0\d{9}$"))
             {
                 ModelState.AddModelError("", "Hệ thống từ chối: Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.");
@@ -177,7 +173,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 return RedirectToAction("Login", "Accounts");
             }
 
-            // LỚP BẢO VỆ 2 (Cho phần cập nhật hồ sơ cá nhân)
             if (string.IsNullOrEmpty(phoneNumber) || !Regex.IsMatch(phoneNumber, @"^0\d{9}$"))
             {
                 TempData["ErrorMessage"] = "Cập nhật thất bại: Số điện thoại không đúng định dạng!";

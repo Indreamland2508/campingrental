@@ -6,7 +6,6 @@ using BAOCAOWEBNANGCAO.Models;
 
 namespace BAOCAOWEBNANGCAO.Controllers
 {
-    // THÊM DÒNG NÀY Ở ĐÂY: Khóa toàn bộ Controller, chỉ Admin mới vào được
     [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
@@ -29,7 +28,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View();
         }
 
-        // POST: Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category)
@@ -54,7 +52,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(category);
         }
 
-        // POST: Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
@@ -83,7 +80,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(category);
         }
 
-        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

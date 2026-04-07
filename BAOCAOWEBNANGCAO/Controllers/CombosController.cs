@@ -37,13 +37,11 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View();
         }
 
-        // 3. POST: Xử lý khi nhân viên bấm "Lưu Combo"
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Combo combo, int[] SelectedProductIds, IFormCollection form, IFormFile? ImageUpload)
         {
             // BỎ QUA KIỂM TRA MODELSTATE NGUYÊN BẢN (TRÁNH LỖI NGẦM)
-            // Thay vào đó, ta kiểm tra thủ công các trường quan trọng nhất
             if (string.IsNullOrEmpty(combo.Name))
             {
                 ModelState.AddModelError("Name", "Tên Combo là bắt buộc.");
@@ -105,7 +103,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 ModelState.AddModelError("", "Đã xảy ra lỗi khi lưu vào Database. Vui lòng thử lại.");
             }
 
-            // Nếu thất bại (xuống tới đây), bắt buộc phải nạp lại danh sách Products cho View
             ViewBag.Products = _context.Products.ToList();
             return View(combo);
         }
@@ -128,10 +125,8 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(combo);
         }
 
-        // 5. POST: Xử lý khi bấm "Cập nhật Combo"
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // CHÚ Ý CHỖ NÀY: Thêm IFormCollection form để "hứng" số lượng
         public async Task<IActionResult> Edit(int id, Combo comboData, int[] SelectedProductIds, IFormCollection form, IFormFile? ImageUpload)
         {
             if (id != comboData.Id) return NotFound();
@@ -210,7 +205,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
 
         // ==========================================
-        // 6. POST: Xử lý Xóa Combo
         // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]

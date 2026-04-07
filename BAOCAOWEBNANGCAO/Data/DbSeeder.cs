@@ -11,7 +11,6 @@ namespace BAOCAOWEBNANGCAO.Data
             var userManager = service.GetService<UserManager<IdentityUser>>();
             var roleManager = service.GetService<RoleManager<IdentityRole>>();
 
-            // --- PHẦN 1: TẠO ROLE (QUYỀN) ---
 
             // 1. Tạo Role "Admin" (Đã có)
             if (!await roleManager.RoleExistsAsync("Admin"))
@@ -19,13 +18,11 @@ namespace BAOCAOWEBNANGCAO.Data
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            // 2. Tạo Role "Staff" (MỚI THÊM VÀO ĐÂY) <--- QUAN TRỌNG
             if (!await roleManager.RoleExistsAsync("Staff"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Staff"));
             }
 
-            // --- PHẦN 2: TẠO TÀI KHOẢN ADMIN ---
             var adminEmail = "admin@gmail.com";
             var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
 
@@ -45,11 +42,9 @@ namespace BAOCAOWEBNANGCAO.Data
                 await userManager.AddToRoleAsync(newAdmin, "Admin");
             }
 
-            // --- PHẦN 3: TỰ ĐỘNG THÊM SẢN PHẨM MẪU (Giữ lại đoạn này nếu bạn muốn tự sinh lều) ---
             var context = service.GetService<CampingDbContext>();
             if (context != null && !context.Products.Any())
             {
-                // (Đoạn code tạo sản phẩm mẫu bạn có thể dán lại vào đây nếu muốn)
             }
             // Kiểm tra xem bảng Products đã có dữ liệu chưa. Nếu trống thì mới thêm vào.
             if (!context.Products.Any())

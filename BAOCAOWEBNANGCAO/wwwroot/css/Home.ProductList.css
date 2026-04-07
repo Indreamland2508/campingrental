@@ -30,8 +30,6 @@
     margin-top: -16px;
 }
 
-/* 2. === PHẦN GIỚI THIỆU MỚI (CHÂU MUỐN THÊM) === */
-/* === PHẦN GIỚI THIỆU LƯỚI 4 ẢNH (CHUẨN THIẾT KẾ) === */
 .intro-section {
     background-color: #ffffff;
     width: 100vw;
@@ -165,7 +163,6 @@
     }
 }
 
-/* TIÊU ĐỀ PHẦN GIỚI THIỆU */
 .about-section-title-wrapper {
     text-align: center;
     margin-bottom: 50px;
@@ -230,7 +227,6 @@
     flex-shrink: 0;
 }
 
-/* ẢNH PHẦN GIỚI THIỆU */
 .about-camping-img {
     width: 100%;
     height: auto;

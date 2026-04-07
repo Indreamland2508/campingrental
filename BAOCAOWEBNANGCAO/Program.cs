@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
-// --- PHẦN 1: CẤU HÌNH SERVICES (Trước khi Build) ---
 
 // 1. Kết nối Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -28,7 +27,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true; // Áp dụng cho mọi tài khoản mới tạo
 });
 
-// [ĐÃ CHUYỂN LÊN ĐÂY] Ép thời gian hết hạn của Link Quên mật khẩu
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     // Thiết lập thời gian sống của Token là 2 giờ (Tự động hết hạn)
@@ -37,20 +35,18 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    // CẤU HÌNH QUAN TRỌNG
     options.SignIn.RequireConfirmedAccount = false; // Tắt xác thực email để Login được ngay
     options.Password.RequireDigit = false; // Pass dễ (cho test)
     options.Password.RequireNonAlphanumeric = false; // Không cần ký tự đặc biệt
     options.Password.RequireUppercase = false; // Không cần chữ hoa
     options.Password.RequiredLength = 1; // Độ dài tối thiểu
 })
-.AddRoles<IdentityRole>() // <--- BẮT BUỘC ĐỂ DÙNG ROLE
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<CampingDbContext>();
 
 // 3. Thêm dịch vụ MVC
 builder.Services.AddControllersWithViews();
 
-// 4. [MỚI] Thêm dịch vụ Session (Giỏ hàng)
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Giỏ hàng tồn tại trong 30 phút nếu không thao tác
@@ -59,11 +55,9 @@ builder.Services.AddSession(options =>
 });
 
 // ==========================================================
-// CHỐT SỔ ĐÓNG NẮP LÒ (Tuyệt đối không dùng builder.Services ở dưới dòng này)
 var app = builder.Build();
 // ==========================================================
 
-// --- PHẦN 2: CẤU HÌNH PIPELINE (Sau khi Build) ---
 
 if (!app.Environment.IsDevelopment())
 {
@@ -79,7 +73,6 @@ app.UseRouting();
 app.UseAuthentication(); // Xác thực (Ai đó?)
 app.UseAuthorization();  // Phân quyền (Làm gì?)
 
-// 5. [MỚI] Kích hoạt Session (Bắt buộc đặt sau UseRouting và trước MapControllerRoute)
 app.UseSession();
 
 // Định tuyến
@@ -97,7 +90,6 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<CampingDbContext>();
 
-        // 1. TẠO BẢNG TRƯỚC (Bắt buộc phải chạy đầu tiên)
         context.Database.Migrate();
 
         // 2. ĐỔ DỮ LIỆU VÀO SAU (Khi bảng đã tồn tại chắc chắn)

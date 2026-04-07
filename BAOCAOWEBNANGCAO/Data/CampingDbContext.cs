@@ -21,7 +21,7 @@ namespace BAOCAOWEBNANGCAO.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // BẮT BUỘC để Identity hoạt động
+            base.OnModelCreating(modelBuilder);
 
             // Seed dữ liệu mẫu cho Category để test nhanh
             modelBuilder.Entity<Category>().HasData(

@@ -56,10 +56,8 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(order);
         }
 
-        // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // CẬP NHẬT TRƯỜNG BIND ĐỂ ADMIN CÓ THỂ SỬA ĐƯỢC TIỀN CỌC NẾU KHÁCH YÊU CẦU
         public async Task<IActionResult> Edit(int id, [Bind("Id,OrderDate,CustomerName,CustomerPhone,CustomerEmail,ShippingAddress,Note,RentalStartDate,RentalEndDate,TotalAmount,DepositAmount,RemainingAmount,PaymentStatus,Status")] Order order)
         {
             if (id != order.Id) return NotFound();

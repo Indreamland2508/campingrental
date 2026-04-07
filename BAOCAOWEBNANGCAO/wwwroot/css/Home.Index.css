@@ -1,4 +1,3 @@
-/* BỘ FONT VÀ MÀU CHỦ ĐẠO MỚI CỦA TOÀN TRANG */
 :root {
     --forest-dark: #1a3a28;
     --forest-light: #198754;
@@ -366,7 +365,7 @@
     margin-top: 50px;
     position: relative;
     overflow: hidden;
-    background-color: var(--forest-dark); /* BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ LÓT NỀN XANH ĐẬM */
+    background-color: var(--forest-dark);
 }
 
 .total-minimal-review-wrapper::before {

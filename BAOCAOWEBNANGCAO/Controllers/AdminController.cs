@@ -40,20 +40,18 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(feedbacks);
         }
 
-        // Action xử lý Duyệt/Hủy duyệt
         [HttpPost]
         public async Task<IActionResult> ToggleApproval(int id)
         {
             var fb = await _context.Feedbacks.FindAsync(id);
             if (fb != null)
             {
-                fb.IsApproved = !fb.IsApproved; // Đảo ngược trạng thái
+                fb.IsApproved = !fb.IsApproved;
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(ManageFeedbacks));
         }
 
-        // Action xử lý Xóa Feedback rác
         [HttpPost]
         public async Task<IActionResult> DeleteFeedback(int id)
         {
@@ -67,20 +65,15 @@ namespace BAOCAOWEBNANGCAO.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            // 1. Tính tổng doanh thu (chỉ tính đơn đã hoàn thành hoặc đã duyệt)
-            // Lưu ý: Nếu Database chưa có đơn nào thì Sum sẽ trả về 0
             var totalRevenue = await _context.Orders
                 .Where(o => o.Status == "Completed" || o.Status == "Approved")
                 .SumAsync(o => o.TotalAmount);
 
-            // 2. Đếm số đơn hàng chưa duyệt (Pending)
             var pendingOrders = await _context.Orders
                 .CountAsync(o => o.Status == "Pending");
 
-            // 3. Đếm tổng số sản phẩm đang có
             var totalProducts = await _context.Products.CountAsync();
 
-            // 4. Đếm tổng số đơn hàng hôm nay
             var vietnamToday = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, GetVietnamTimeZone()).Date;
             var vietnamTomorrow = vietnamToday.AddDays(1);
             var todayStartUtc = ConvertVietnamDateToUtc(vietnamToday);
@@ -89,30 +82,28 @@ namespace BAOCAOWEBNANGCAO.Controllers
             var todayOrders = await _context.Orders
                 .CountAsync(o => o.OrderDate >= todayStartUtc && o.OrderDate < todayEndUtc);
 
-            // Gửi số liệu sang View bằng ViewBag (cách nhanh nhất)
             ViewBag.TotalRevenue = totalRevenue;
             ViewBag.PendingOrders = pendingOrders;
             ViewBag.TotalProducts = totalProducts;
             ViewBag.TodayOrders = todayOrders;
-            // --- PHẦN MỚI: Chuẩn bị dữ liệu cho Biểu đồ (7 ngày qua) ---
+
             var sevenDaysAgo = vietnamToday.AddDays(-6);
             var sevenDaysAgoStartUtc = ConvertVietnamDateToUtc(sevenDaysAgo);
             var tomorrowStartUtc = ConvertVietnamDateToUtc(vietnamTomorrow);
 
-            // Lấy dữ liệu từ Database, nhóm theo Ngày
             var revenueOrders = await _context.Orders
                 .Where(o => o.OrderDate >= sevenDaysAgoStartUtc && o.OrderDate < tomorrowStartUtc && (o.Status == "Completed" || o.Status == "Approved"))
                 .ToListAsync();
 
             var revenueData = revenueOrders
                 .GroupBy(o => o.OrderDate.ToVietnamTime().Date)
-                .Select(g => new {
+                .Select(g => new
+                {
                     Date = g.Key,
                     Revenue = g.Sum(o => o.TotalAmount)
                 })
                 .ToList();
 
-            // Tạo 2 mảng dữ liệu để gửi sang View (Labels: Ngày, Data: Tiền)
             var labels = new List<string>();
             var data = new List<decimal>();
 
@@ -121,16 +112,14 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 var date = sevenDaysAgo.AddDays(i);
                 var record = revenueData.FirstOrDefault(r => r.Date == date);
 
-                labels.Add(date.ToString("dd/MM")); // Nhãn ngày (VD: 31/01)
-                data.Add(record != null ? record.Revenue : 0); // Nếu ngày đó không bán được thì là 0đ
+                labels.Add(date.ToString("dd/MM"));
+                data.Add(record != null ? record.Revenue : 0);
             }
 
-            // Đóng gói gửi sang View
             ViewBag.ChartLabels = labels;
             ViewBag.ChartData = data;
             return View();
         }
-        [HttpGet]
         [HttpGet]
         public async Task<IActionResult> ExportReport()
         {
@@ -145,10 +134,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
-            // SỬA LẠI LOGIC TÍNH TOÁN (Chỉ cộng tiền khách ĐÃ THỰC SỰ TRẢ)
-            // Nếu khách đã trả đủ (Paid) -> Cộng TotalAmount
-            // Nếu khách mới cọc (Deposited) -> Chỉ cộng DepositAmount
-            // Nếu khách chưa trả (Unpaid) -> Không cộng đồng nào
             var totalRevenue = currentMonthOrders.Sum(o =>
                 o.PaymentStatus == "Paid" ? o.TotalAmount :
                 (o.PaymentStatus == "Deposited" ? o.DepositAmount : 0)
@@ -161,9 +146,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
             {
                 container.Page(page =>
                 {
-                    // Lật ngang khổ giấy (Landscape) để có thêm chỗ hiển thị cột Trạng thái
-                    page.Size(PageSizes.A4.Landscape());
-                    page.Margin(2, Unit.Centimetre);
+
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
 
@@ -209,15 +192,14 @@ namespace BAOCAOWEBNANGCAO.Controllers
 
                         column.Item().Table(table =>
                         {
-                            // THÊM CỘT TRẠNG THÁI VÀ ĐIỀU CHỈNH KÍCH THƯỚC
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.ConstantColumn(50);  // Mã
-                                columns.RelativeColumn();    // Khách hàng
-                                columns.ConstantColumn(100); // SĐT
-                                columns.ConstantColumn(90);  // Ngày đặt
-                                columns.ConstantColumn(100); // Tổng giá trị đơn
-                                columns.ConstantColumn(120); // Trạng thái Thanh toán (MỚI)
+                                columns.ConstantColumn(50);
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(100);
+                                columns.ConstantColumn(90);
+                                columns.ConstantColumn(100);
+                                columns.ConstantColumn(120);
                             });
 
                             table.Header(header =>
@@ -238,7 +220,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(order.OrderDate.ToVietnamTime().ToString("dd/MM/yyyy"));
                                 table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).AlignRight().Text($"{order.TotalAmount:N0} đ");
 
-                                // XỬ LÝ TEXT VÀ MÀU CHO CỘT TRẠNG THÁI
                                 var statusCell = table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(5).AlignCenter();
 
                                 if (order.PaymentStatus == "Paid")
@@ -256,7 +237,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                             }
                         });
 
-                        // Thêm ghi chú nhỏ ở dưới bảng
                         column.Item().PaddingTop(10).Text("* Doanh thu thực nhận = Tiền khách đã cọc + Tiền những đơn đã thanh toán đủ.").FontSize(9).Italic().FontColor(Colors.Grey.Medium);
                     });
 

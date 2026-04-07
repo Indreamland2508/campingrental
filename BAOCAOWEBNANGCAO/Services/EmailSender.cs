@@ -13,7 +13,6 @@ namespace BAOCAOWEBNANGCAO.Services
         {
             try
             {
-                // DÁN CÁI LINK SCRIPT MÀ BẠN VỪA COPY Ở BƯỚC 1 VÀO ĐÂY
                 var scriptUrl = "https://script.google.com/macros/s/AKfycbxw91rFj1M1KHaR4ox8vOMG3zqEVBs6cQBeVb9NyGNhpzaOS67SvsP966sJ8n4E-RaaNw/exec";
 
                 using var client = new HttpClient();

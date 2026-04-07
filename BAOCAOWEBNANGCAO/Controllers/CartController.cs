@@ -24,7 +24,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(cart);
         }
 
-        // POST: Thêm sản phẩm vào giỏ
         [HttpPost]
         public IActionResult AddToCart(int productId, int quantity)
         {
@@ -107,8 +106,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(cart);
         }
 
-        // POST: Xử lý đặt hàng & TÍNH TIỀN CỌC
-        // POST: Xử lý đặt hàng & TÍNH TIỀN CỌC (BẢN NÂNG CẤP BẮT LỖI)
         
         [HttpPost]
         public async Task<IActionResult> Checkout(string customerName, string customerPhone, string customerEmail, string shippingAddress, string? note, DateTime rentalStart, DateTime rentalEnd)

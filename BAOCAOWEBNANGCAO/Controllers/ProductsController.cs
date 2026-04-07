@@ -61,7 +61,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View();
         }
 
-        // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId")] Product product, IFormFile? ImageFile)
@@ -104,8 +103,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // ĐÃ THÊM: int page = 1, string search = ""
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? imageFile, int page = 1, string search = "")
@@ -135,7 +132,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     _context.Update(product);
                     await _context.SaveChangesAsync();
 
-                    // ĐÃ SỬA: Điều hướng về đúng trang và từ khóa tìm kiếm
                     return RedirectToAction(nameof(Index), new { page = page, search = search });
                 }
                 catch (Exception ex)
@@ -147,8 +143,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(product);
         }
 
-        // POST: Products/Delete/5
-        // ĐÃ THÊM: int page = 1, string search = ""
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, int page = 1, string search = "")
@@ -160,7 +154,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // ĐÃ SỬA: Điều hướng về đúng trang và từ khóa tìm kiếm
             return RedirectToAction(nameof(Index), new { page = page, search = search });
         }
 

@@ -43,7 +43,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            // 4. LẤY DANH SÁCH COMBO (Mới thêm)
             var activeCombos = await _context.Combos
                 .Include(c => c.ComboDetails) // Kéo theo chi tiết
                 .ThenInclude(cd => cd.Product) // Kéo theo món đồ để lấy tên
@@ -127,7 +126,6 @@ namespace BAOCAOWEBNANGCAO.Controllers
             return View(products);
         }
 
-        // --- HÀM LẤY GỢI Ý NHANH (API CHO AUTOCOMPLETE) ---
         [HttpGet]
         public async Task<JsonResult> GetSuggestions(string term)
         {
