@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Backup và Restore Dữ liệu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Backup và Restore Dữ liệu</h2>
+            <p class="text-muted mb-0">Sao lưu toàn bộ dữ liệu nghiệp vụ và khôi phục từ file backup JSON.</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+    {
+        <div class="alert alert-info">@ViewBag.StatusMessage</div>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <h5 class="fw-bold mb-3">Sao lưu dữ liệu</h5>
+                <p>Xuất dữ liệu quan trọng của hệ thống sang file JSON để lưu trữ. Bao gồm: danh mục, sản phẩm, combo, đơn hàng, chi tiết đơn, phản hồi.</p>
+                <a asp-controller="Admin" asp-action="ExportBackup" class="btn btn-primary">
+                    <i class="bi bi-download me-2"></i> Tải file backup
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <h5 class="fw-bold mb-3">Khôi phục dữ liệu</h5>
+                <p>Tải file backup định dạng JSON lên để khôi phục dữ liệu. Chú ý: hành động này sẽ xóa dữ liệu hiện tại trước khi phục hồi.</p>
+                <form asp-controller="Admin" asp-action="RestoreBackup" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Chọn file backup (.json)</label>
+                        <input type="file" name="backupFile" class="form-control" accept="application/json" required />
+                    </div>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-upload me-2"></i> Khôi phục dữ liệu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+        <h5 class="fw-bold mb-3">Lưu ý khi sử dụng</h5>
+        <ul>
+            <li>Backup/restore chỉ thực hiện dữ liệu ứng dụng, không bao gồm cấu hình môi trường.</li>
+            <li>Restore sẽ xóa toàn bộ dữ liệu hiện tại của các bảng liên quan trước khi phục hồi.</li>
+            <li>Khoảng thời gian phục hồi phụ thuộc vào kích thước file backup.</li>
+        </ul>
+    </div>
+</div>

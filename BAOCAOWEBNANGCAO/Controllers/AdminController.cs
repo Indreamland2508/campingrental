@@ -1,4 +1,5 @@
 ﻿using BAOCAOWEBNANGCAO.Data;
+using BAOCAOWEBNANGCAO.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 namespace BAOCAOWEBNANGCAO.Controllers
 {
     [Authorize(Roles = "Admin,Staff")] 
@@ -260,6 +262,226 @@ namespace BAOCAOWEBNANGCAO.Controllers
 
             var pdfBytes = document.GeneratePdf();
             return File(pdfBytes, "application/pdf", $"BaoCao_CampingRental_{vietnamToday:MMyyyy}.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult BackupData()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportBackup()
+        {
+            var backupData = new BackupData
+            {
+                CreatedAt = DateTime.UtcNow,
+                Categories = await _context.Categories.Select(c => new CategoryBackup
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description
+                }).ToListAsync(),
+                Products = await _context.Products.Select(p => new ProductBackup
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    PricePerDay = p.PricePerDay,
+                    ImageUrl = p.ImageUrl,
+                    Quantity = p.Quantity,
+                    CategoryId = p.CategoryId
+                }).ToListAsync(),
+                Combos = await _context.Combos.Select(c => new ComboBackup
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Badge = c.Badge,
+                    IsActive = c.IsActive
+                }).ToListAsync(),
+                ComboDetails = await _context.ComboDetails.Select(cd => new ComboDetailBackup
+                {
+                    Id = cd.Id,
+                    ComboId = cd.ComboId,
+                    ProductId = cd.ProductId,
+                    Quantity = cd.Quantity
+                }).ToListAsync(),
+                Orders = await _context.Orders.Select(o => new OrderBackup
+                {
+                    Id = o.Id,
+                    OrderDate = o.OrderDate,
+                    CustomerName = o.CustomerName,
+                    CustomerPhone = o.CustomerPhone,
+                    CustomerEmail = o.CustomerEmail,
+                    ShippingAddress = o.ShippingAddress,
+                    Note = o.Note,
+                    RentalStartDate = o.RentalStartDate,
+                    RentalEndDate = o.RentalEndDate,
+                    TotalAmount = o.TotalAmount,
+                    DepositAmount = o.DepositAmount,
+                    RemainingAmount = o.RemainingAmount,
+                    PaymentStatus = o.PaymentStatus,
+                    Status = o.Status
+                }).ToListAsync(),
+                OrderDetails = await _context.OrderDetails.Select(od => new OrderDetailBackup
+                {
+                    Id = od.Id,
+                    OrderId = od.OrderId,
+                    ProductId = od.ProductId,
+                    Quantity = od.Quantity,
+                    PricePerUnit = od.PricePerUnit
+                }).ToListAsync(),
+                Feedbacks = await _context.Feedbacks.Select(f => new FeedbackBackup
+                {
+                    Id = f.Id,
+                    CustomerName = f.CustomerName,
+                    Content = f.Content,
+                    Rating = f.Rating,
+                    CreatedAt = f.CreatedAt,
+                    IsApproved = f.IsApproved
+                }).ToListAsync()
+            };
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            var json = JsonSerializer.Serialize(backupData, options);
+            var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+            var fileName = $"BackupData_{DateTime.UtcNow:yyyyMMddHHmmss}.json";
+            return File(bytes, "application/json", fileName);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestoreBackup(IFormFile backupFile)
+        {
+            if (backupFile == null || backupFile.Length == 0)
+            {
+                ViewBag.ErrorMessage = "Vui lòng chọn file backup để khôi phục.";
+                return View("BackupData");
+            }
+
+            BackupData? backupData;
+            try
+            {
+                using var stream = backupFile.OpenReadStream();
+                backupData = await JsonSerializer.DeserializeAsync<BackupData>(stream);
+            }
+            catch
+            {
+                ViewBag.ErrorMessage = "Không đọc được file backup. Vui lòng kiểm tra định dạng JSON.";
+                return View("BackupData");
+            }
+
+            if (backupData == null)
+            {
+                ViewBag.ErrorMessage = "Dữ liệu backup không hợp lệ.";
+                return View("BackupData");
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(@"TRUNCATE TABLE ""OrderDetails"", ""Orders"", ""ComboDetails"", ""Combos"", ""Products"", ""Categories"", ""Feedbacks"" RESTART IDENTITY CASCADE;");
+
+                await _context.Categories.AddRangeAsync(backupData.Categories.Select(c => new Category
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description
+                }));
+
+                await _context.Products.AddRangeAsync(backupData.Products.Select(p => new Product
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    PricePerDay = p.PricePerDay,
+                    ImageUrl = p.ImageUrl,
+                    Quantity = p.Quantity,
+                    CategoryId = p.CategoryId
+                }));
+
+                await _context.Combos.AddRangeAsync(backupData.Combos.Select(c => new Combo
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    ImageUrl = c.ImageUrl,
+                    Price = c.Price,
+                    Badge = c.Badge,
+                    IsActive = c.IsActive
+                }));
+
+                await _context.ComboDetails.AddRangeAsync(backupData.ComboDetails.Select(cd => new ComboDetail
+                {
+                    Id = cd.Id,
+                    ComboId = cd.ComboId,
+                    ProductId = cd.ProductId,
+                    Quantity = cd.Quantity
+                }));
+
+                await _context.Orders.AddRangeAsync(backupData.Orders.Select(o => new Order
+                {
+                    Id = o.Id,
+                    OrderDate = o.OrderDate,
+                    CustomerName = o.CustomerName,
+                    CustomerPhone = o.CustomerPhone,
+                    CustomerEmail = o.CustomerEmail,
+                    ShippingAddress = o.ShippingAddress,
+                    Note = o.Note,
+                    RentalStartDate = o.RentalStartDate,
+                    RentalEndDate = o.RentalEndDate,
+                    TotalAmount = o.TotalAmount,
+                    DepositAmount = o.DepositAmount,
+                    RemainingAmount = o.RemainingAmount,
+                    PaymentStatus = o.PaymentStatus,
+                    Status = o.Status
+                }));
+
+                await _context.OrderDetails.AddRangeAsync(backupData.OrderDetails.Select(od => new OrderDetail
+                {
+                    Id = od.Id,
+                    OrderId = od.OrderId,
+                    ProductId = od.ProductId,
+                    Quantity = od.Quantity,
+                    PricePerUnit = od.PricePerUnit
+                }));
+
+                await _context.Feedbacks.AddRangeAsync(backupData.Feedbacks.Select(f => new Feedback
+                {
+                    Id = f.Id,
+                    CustomerName = f.CustomerName,
+                    Content = f.Content,
+                    Rating = f.Rating,
+                    CreatedAt = f.CreatedAt,
+                    IsApproved = f.IsApproved
+                }));
+
+                await _context.SaveChangesAsync();
+
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Categories""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Categories""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Products""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Products""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Combos""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Combos""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""ComboDetails""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""ComboDetails""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Orders""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Orders""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""OrderDetails""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""OrderDetails""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Feedbacks""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Feedbacks""), 0));");
+
+                await transaction.CommitAsync();
+                ViewBag.StatusMessage = "Khôi phục dữ liệu thành công.";
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                ViewBag.ErrorMessage = "Khôi phục thất bại: " + ex.Message;
+            }
+
+            return View("BackupData");
         }
     }
 }

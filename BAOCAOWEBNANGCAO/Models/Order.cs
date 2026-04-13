@@ -10,16 +10,20 @@ namespace BAOCAOWEBNANGCAO.Models
         public DateTime OrderDate { get; set; }
 
         [Required]
+        [StringLength(100, ErrorMessage = "Tên khách hàng không được vượt quá 100 ký tự.")]
         public string CustomerName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
+        [Phone(ErrorMessage = "Số điện thoại không đúng định dạng.")]
         public string CustomerPhone { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Email liên hệ là bắt buộc.")]
+        [EmailAddress(ErrorMessage = "Email không đúng định dạng.")]
         public string CustomerEmail { get; set; }
 
         // --- ĐÃ XÓA CitizenId ---
 
+        [Required(ErrorMessage = "Địa chỉ nhận lều là bắt buộc.")]
         public string ShippingAddress { get; set; } // Trường địa chỉ giao hàng
         public string? Note { get; set; }           // Trường Ghi chú
 

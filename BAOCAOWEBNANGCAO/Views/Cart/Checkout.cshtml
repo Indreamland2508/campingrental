@@ -16,6 +16,7 @@
     </div>
 
     <form asp-action="Checkout" method="post" id="checkoutForm">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
         <div class="row g-5">
 
             <div class="col-lg-7">
@@ -30,26 +31,26 @@
                     <div class="row g-4">
                         <div class="col-12">
                             <label>Họ và tên người thuê <span class="text-danger">*</span></label>
-                            <input type="text" name="customerName" class="form-control" required placeholder="Nhập họ và tên đầy đủ">
+                            <input type="text" name="CustomerName" value="@(ViewBag.CustomerName ?? string.Empty)" class="form-control" required placeholder="Nhập họ và tên đầy đủ">
                         </div>
                         <div class="col-md-6">
                             <label>Số điện thoại <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted border-end-0" style="border-radius: 10px 0 0 10px; border-color: var(--border-color);">+84</span>
-                                <input type="text" name="customerPhone" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" required placeholder="0982...">
+                                <input type="tel" name="CustomerPhone" value="@(ViewBag.CustomerPhone ?? string.Empty)" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" required pattern="[0-9]{9,10}" title="Nhập 9-10 chữ số" placeholder="982...">
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label>Email liên hệ</label>
-                            <input type="email" name="customerEmail" class="form-control" placeholder="Để nhận thông báo đơn hàng">
+                            <label>Email liên hệ <span class="text-danger">*</span></label>
+                            <input type="email" name="CustomerEmail" value="@(ViewBag.CustomerEmail ?? string.Empty)" class="form-control" required placeholder="Để nhận thông báo đơn hàng">
                         </div>
                         <div class="col-12">
                             <label>Địa chỉ nhận lều <span class="text-danger">*</span></label>
-                            <input type="text" name="shippingAddress" class="form-control" required placeholder="Số nhà, Tên đường, Phường/Xã...">
+                            <input type="text" name="ShippingAddress" value="@(ViewBag.ShippingAddress ?? string.Empty)" class="form-control" required placeholder="Số nhà, Tên đường, Phường/Xã...">
                         </div>
                         <div class="col-12">
                             <label>Ghi chú cho chuyến đi</label>
-                            <textarea name="note" class="form-control" rows="3" placeholder="Ví dụ: Giao lều trước 8h sáng, cần tư vấn thêm cách dựng lều..."></textarea>
+                            <textarea name="Note" class="form-control" rows="3" placeholder="Ví dụ: Giao lều trước 8h sáng, cần tư vấn thêm cách dựng lều...">@(ViewBag.Note ?? string.Empty)</textarea>
                         </div>
                     </div>
                 </div>
@@ -60,11 +61,11 @@
                         <div class="row g-3 align-items-end">
                             <div class="col-md-5">
                                 <label>Ngày nhận đồ <span class="text-danger">*</span></label>
-                                <input type="date" name="rentalStart" id="rentalStart" class="form-control bg-white" required value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <input type="date" name="rentalStart" id="rentalStart" class="form-control bg-white" required value="@(ViewBag.RentalStart ?? DateTime.Now.ToString("yyyy-MM-dd"))">
                             </div>
                             <div class="col-md-5">
                                 <label>Ngày trả đồ <span class="text-danger">*</span></label>
-                                <input type="date" name="rentalEnd" id="rentalEnd" class="form-control bg-white" required value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")">
+                                <input type="date" name="rentalEnd" id="rentalEnd" class="form-control bg-white" required value="@(ViewBag.RentalEnd ?? DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"))">
                             </div>
                             <div class="col-md-2 text-md-end text-center mt-3 mt-md-0">
                                 <span class="d-inline-block bg-white border px-3 py-2 rounded-3 fw-bold text-dark shadow-sm" id="dayCountText" style="font-size: 0.9rem;">1 ngày</span>

@@ -108,7 +108,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
 
         
         [HttpPost]
-        public async Task<IActionResult> Checkout(string customerName, string customerPhone, string customerEmail, string shippingAddress, string? note, DateTime rentalStart, DateTime rentalEnd)
+        public async Task<IActionResult> Checkout(Order order, DateTime rentalStart, DateTime rentalEnd)
         {
             try
             {
@@ -120,6 +120,47 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     return Content("ÚI CHÀ! Giỏ hàng đang trống. Khả năng cao là đơn hàng CỦA BẠN ĐÃ ĐƯỢC ĐẶT THÀNH CÔNG ở cú click trước đó rồi. Bạn hãy vào trang chủ, chọn 'Tra cứu đơn hàng' xem đơn đã được tạo chưa nhé!");
                 }
 
+                if (string.IsNullOrWhiteSpace(order.CustomerPhone))
+                {
+                    ModelState.AddModelError("CustomerPhone", "Số điện thoại là bắt buộc.");
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(order.CustomerPhone, "^[0-9]{9,10}$"))
+                {
+                    ModelState.AddModelError("CustomerPhone", "Số điện thoại phải gồm 9-10 chữ số.");
+                }
+
+                if (string.IsNullOrWhiteSpace(order.CustomerEmail))
+                {
+                    ModelState.AddModelError("CustomerEmail", "Email liên hệ là bắt buộc.");
+                }
+                else if (!new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(order.CustomerEmail))
+                {
+                    ModelState.AddModelError("CustomerEmail", "Email không đúng định dạng.");
+                }
+
+                if (string.IsNullOrWhiteSpace(order.ShippingAddress))
+                {
+                    ModelState.AddModelError("ShippingAddress", "Địa chỉ nhận lều là bắt buộc.");
+                }
+
+                if (rentalEnd < rentalStart)
+                {
+                    ModelState.AddModelError("rentalEnd", "Ngày trả phải sau hoặc bằng ngày nhận.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.TotalAmount = cart.Sum(item => item.TotalPrice);
+                    ViewBag.CustomerName = order.CustomerName;
+                    ViewBag.CustomerPhone = order.CustomerPhone;
+                    ViewBag.CustomerEmail = order.CustomerEmail;
+                    ViewBag.ShippingAddress = order.ShippingAddress;
+                    ViewBag.Note = order.Note;
+                    ViewBag.RentalStart = rentalStart.ToString("yyyy-MM-dd");
+                    ViewBag.RentalEnd = rentalEnd.ToString("yyyy-MM-dd");
+                    return View(cart);
+                }
+
                 TimeSpan duration = rentalEnd - rentalStart;
                 int rentalDays = duration.Days > 0 ? duration.Days : 1;
 
@@ -128,13 +169,13 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 decimal deposit = finalTotal / 2;
                 decimal remaining = finalTotal - deposit;
 
-                var order = new Order
+                var orderEntity = new Order
                 {
-                    CustomerName = customerName,
-                    CustomerPhone = customerPhone,
-                    CustomerEmail = customerEmail,
-                    ShippingAddress = shippingAddress,
-                    Note = note,
+                    CustomerName = order.CustomerName,
+                    CustomerPhone = order.CustomerPhone,
+                    CustomerEmail = order.CustomerEmail,
+                    ShippingAddress = order.ShippingAddress,
+                    Note = order.Note,
                     RentalStartDate = rentalStart.ToUniversalTime(),
                     RentalEndDate = rentalEnd.ToUniversalTime(),
                     OrderDate = DateTime.UtcNow, // Lưu UTC để database xử lý đúng
@@ -145,14 +186,14 @@ namespace BAOCAOWEBNANGCAO.Controllers
                     PaymentStatus = "Unpaid"
                 };
 
-                _context.Orders.Add(order);
+                _context.Orders.Add(orderEntity);
                 await _context.SaveChangesAsync();
 
                 foreach (var item in cart)
                 {
                     var orderDetail = new OrderDetail
                     {
-                        OrderId = order.Id,
+                        OrderId = orderEntity.Id,
                         ProductId = item.Product.Id, // Nếu ProductId lỗi, sẽ bị bắt ngay
                         Quantity = item.Quantity,
                         PricePerUnit = item.Product.PricePerDay
@@ -165,7 +206,7 @@ namespace BAOCAOWEBNANGCAO.Controllers
                 HttpContext.Session.Remove(CartSessionKey);
                 HttpContext.Session.Remove("CartCount");
 
-                return RedirectToAction("Payment", new { id = order.Id });
+                return RedirectToAction("Payment", new { id = orderEntity.Id });
             }
             catch (Exception ex)
             {

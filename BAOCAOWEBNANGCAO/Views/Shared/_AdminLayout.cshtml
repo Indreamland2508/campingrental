@@ -49,11 +49,17 @@
             <a asp-controller="Orders" asp-action="Index" class="@(currentController == "Orders" ? "active" : "")">
                 <i class="bi bi-receipt"></i> Đơn thuê
             </a>
-            <a asp-controller="Accounts" asp-action="MyProfile" class="@(currentAction == "MyProfile" ? "active" : "")">
-                <i class="bi bi-person-vcard"></i> Hồ sơ của tôi
-            </a>
             <a asp-controller="Admin" asp-action="ManageFeedbacks" class="@(currentAction == "ManageFeedbacks" ? "active" : "")">
                 <i class="bi bi-chat-left-dots"></i> Duyệt đánh giá
+            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="BackupData" class="@(currentAction == "BackupData" ? "active" : "")">
+                    <i class="bi bi-hdd-stack"></i> Backup dữ liệu
+                </a>
+            }
+            <a asp-controller="Accounts" asp-action="MyProfile" class="@(currentAction == "MyProfile" ? "active" : "")">
+                <i class="bi bi-person-vcard"></i> Hồ sơ của tôi
             </a>
         }
     </div>

@@ -68,6 +68,19 @@
         </div>
     </div>
 
+    <div class="row g-4 mb-5">
+        <div class="col-xl-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                <h5 class="fw-bold">Backup & Restore</h5>
+                <p class="text-muted">Sao lưu toàn bộ dữ liệu chính của hệ thống hoặc khôi phục từ file JSON đã tạo.</p>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Admin" asp-action="BackupData" class="btn btn-success">Mở Backup</a>
+                    <a asp-controller="Admin" asp-action="ExportReport" class="btn btn-outline-primary" target="_blank">Xuất báo cáo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-5">
         <div class="col-12">
             <div class="card border-0 shadow-sm" style="border-radius: 24px;">
