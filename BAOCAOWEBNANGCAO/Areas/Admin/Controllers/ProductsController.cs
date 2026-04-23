@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.IO;
 
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = "Admin,Staff")]
     public class ProductsController : Controller
     {

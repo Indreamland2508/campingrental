@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using BAOCAOWEBNANGCAO.Data;
 using BAOCAOWEBNANGCAO.Models;
 
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {

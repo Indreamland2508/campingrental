@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class AccountsController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;

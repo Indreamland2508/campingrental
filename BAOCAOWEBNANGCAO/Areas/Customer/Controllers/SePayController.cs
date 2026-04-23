@@ -4,8 +4,9 @@ using BAOCAOWEBNANGCAO.Data;
 using BAOCAOWEBNANGCAO.Models;
 using System.Text.RegularExpressions;
 
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     [Route("api/[controller]")]
     [ApiController]
     public class SePayController : ControllerBase

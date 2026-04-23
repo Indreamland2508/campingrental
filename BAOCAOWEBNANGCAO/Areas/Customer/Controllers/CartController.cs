@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
 
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class CartController : Controller
     {
         private readonly CampingDbContext _context;

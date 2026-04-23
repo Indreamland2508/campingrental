@@ -4,9 +4,9 @@ using BAOCAOWEBNANGCAO.Data;
 using BAOCAOWEBNANGCAO.Models;
 using Microsoft.AspNetCore.Hosting;
 
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 {
-    // [Area("Admin")] // Mở comment dòng này nếu Controller này nằm trong thư mục Areas/Admin
+    [Area("Admin")]
     public class CombosController : Controller
     {
         private readonly CampingDbContext _context;

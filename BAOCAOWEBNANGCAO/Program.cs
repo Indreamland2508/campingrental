@@ -76,9 +76,16 @@ app.UseAuthorization();  // Phân quyền (Làm gì?)
 app.UseSession();
 
 // Định tuyến
+// Route cho Areas (Admin & Customer)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+// Route mặc định cho Customer Area
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}",
+    defaults: new { area = "Customer" });
 
 app.MapRazorPages(); // Để chạy các trang Login/Register mặc định
 

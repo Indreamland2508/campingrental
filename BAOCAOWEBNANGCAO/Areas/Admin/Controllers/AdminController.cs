@@ -8,8 +8,9 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-namespace BAOCAOWEBNANGCAO.Controllers
+namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = "Admin,Staff")] 
     public class AdminController : Controller
     {
