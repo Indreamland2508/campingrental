@@ -37,12 +37,12 @@ namespace BAOCAOWEBNANGCAO.Models
         public decimal DepositAmount { get; set; } // Tiền khách cần cọc (VD: 50% TotalAmount)
         public decimal RemainingAmount { get; set; } // Tiền còn lại thu tiền mặt khi giao lều
 
-        public string PaymentStatus { get; set; } // Trạng thái tiền nong: "Unpaid" (Chưa trả), "Deposited" (Đã cọc), "Paid" (Đã thanh toán đủ)
+        public string PaymentStatus { get; set; } = "Unpaid"; // Trạng thái tiền nong: "Unpaid" (Chưa trả), "Deposited" (Đã cọc), "Paid" (Đã thanh toán đủ)
 
         // ------------------------------------------------
 
-        public string Status { get; set; } // Trạng thái giao lều: "Pending", "Delivering", "Completed"
+        public string Status { get; set; } = "Pending"; // Trạng thái giao lều: "Pending", "Delivering", "Completed"
 
-        public List<OrderDetail> OrderDetails { get; set; }
+        public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }

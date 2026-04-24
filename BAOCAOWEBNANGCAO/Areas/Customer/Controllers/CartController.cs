@@ -184,7 +184,8 @@ namespace BAOCAOWEBNANGCAO.Areas.Customer.Controllers
                     DepositAmount = deposit,
                     RemainingAmount = remaining,
                     Status = "Pending",
-                    PaymentStatus = "Unpaid"
+                    PaymentStatus = "Unpaid",
+                    OrderDetails = new List<OrderDetail>() // Khởi tạo collection để tránh lỗi required
                 };
 
                 _context.Orders.Add(orderEntity);
