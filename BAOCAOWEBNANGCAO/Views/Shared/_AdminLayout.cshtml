@@ -67,7 +67,7 @@
     <header class="admin-header">
         <div class="d-flex align-items-center">
             <div class="pe-3 me-3 border-end">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-success text-decoration-none fw-bold small">
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="text-success text-decoration-none fw-bold small">
                     <i class="bi bi-shop me-1"></i> Xem trang khách
                 </a>
             </div>
@@ -76,7 +76,7 @@
                 Xin chào, <span class="text-success fw-bold">@User.Identity?.Name</span>
             </span>
 
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "Customer" })" method="post">
                 <button type="submit" class="btn btn-danger btn-sm px-3 shadow-sm fw-bold">
                     <i class="bi bi-box-arrow-right"></i>
                 </button>
