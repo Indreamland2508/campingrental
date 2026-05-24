@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Thêm Mới Combo";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml"; // Đổi thành Layout Admin thực tế của bạn
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <div class="container mt-4">
@@ -58,13 +58,17 @@
                         </h5>
                         <p class="small text-muted mb-3">Tick chọn sản phẩm và nhập số lượng tương ứng:</p>
 
-                        <div class="flex-grow-1" style="max-height: 550px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
+                        <div class="mb-3">
+                            <input type="text" id="productSearchInput" class="form-control form-control-sm" placeholder="🔍 Tìm kiếm sản phẩm..." style="border-radius: 6px;">
+                        </div>
+
+                        <div id="productListContainer" class="flex-grow-1" style="max-height: 480px; overflow-y: auto; border: 1px solid #e1e4e8; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
 
                             @if (ViewBag.Products != null)
                             {
                                 foreach (var product in (List<BAOCAOWEBNANGCAO.Models.Product>)ViewBag.Products)
                                 {
-                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white shadow-sm">
+                                    <div class="product-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white shadow-sm" data-product-name="@product.Name.ToLower()">
 
                                         <div class="form-check mb-0">
                                             <input class="form-check-input product-checkbox" type="checkbox" name="SelectedProductIds" value="@product.Id" id="prod_@product.Id" data-price="@product.PricePerDay" style="cursor: pointer;">
@@ -100,59 +104,84 @@
     </form>
 </div>
 
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const checkboxes = document.querySelectorAll('.product-checkbox');
-            const priceInput = document.getElementById('ComboPrice');
-            const qtyInputs = document.querySelectorAll('.product-qty');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ===== TÌM KIẾM SẢN PHẨM =====
+        const searchInput = document.getElementById('productSearchInput');
+        const productContainer = document.getElementById('productListContainer');
+        const productItems = document.querySelectorAll('.product-item');
+        
+        console.log('Initializing search...');
+        console.log('Search input found:', !!searchInput);
+        console.log('Product items found:', productItems.length);
 
-            // Hàm tính tổng tiền
-            function calculateTotalPrice() {
-                let total = 0;
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        const price = parseFloat(cb.getAttribute('data-price')) || 0;
-                        const productId = cb.value;
-                        const qtyInput = document.querySelector(`input[name="Quantities_${productId}"]`);
-                        const qty = parseInt(qtyInput.value) || 1;
-
-                        total += (price * qty);
-                    }
-                });
-                // Cập nhật ô input Giá tiền
-                priceInput.value = total;
-            }
-
-            // Bắt sự kiện khi Tick / Bỏ tick Checkbox
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function () {
-                    // Tìm cái ô nhập số lượng bên cạnh nó
-                    const qtyControl = this.closest('.d-flex').querySelector('.qty-control');
-                    const qtyInput = qtyControl.querySelector('input');
-
-                    if (this.checked) {
-                        qtyControl.style.display = 'block'; // Hiện ô số lượng
+        if (searchInput && productItems.length > 0) {
+            searchInput.addEventListener('keyup', function(e) {
+                const searchTerm = this.value.toLowerCase().trim();
+                console.log('Searching for:', searchTerm);
+                
+                let visibleCount = 0;
+                productItems.forEach((item, index) => {
+                    const productName = item.getAttribute('data-product-name') || '';
+                    const isMatch = productName.includes(searchTerm);
+                    
+                    if (searchTerm === '' || isMatch) {
+                        item.style.display = 'flex';
+                        visibleCount++;
                     } else {
-                        qtyControl.style.display = 'none';  // Ẩn ô số lượng
-                        qtyInput.value = 1; // Reset về 1
+                        item.style.display = 'none';
                     }
-
-                    // Tính lại giá
-                    calculateTotalPrice();
                 });
+                console.log('Visible items:', visibleCount);
             });
+        }
 
-            // Bắt sự kiện khi sửa ô số lượng
-            qtyInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    // Nếu người dùng lỡ nhập số âm hoặc xóa trắng, ép về 1
-                    if(this.value < 1 || this.value === '') {
-                        this.value = 1;
-                    }
-                    calculateTotalPrice();
-                });
+        // ===== TÍNH TOÁN GIÁ & QUY LỰ =====
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        const priceInput = document.getElementById('ComboPrice');
+        const qtyInputs = document.querySelectorAll('.product-qty');
+
+        function calculateTotalPrice() {
+            let total = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const price = parseFloat(cb.getAttribute('data-price')) || 0;
+                    const productId = cb.value;
+                    const qtyInput = document.querySelector(`input[name="Quantities_${productId}"]`);
+                    const qty = parseInt(qtyInput.value) || 1;
+                    total += (price * qty);
+                }
+            });
+            priceInput.value = total;
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                const productItem = this.closest('.product-item');
+                const qtyControl = productItem.querySelector('.qty-control');
+                const qtyInput = qtyControl.querySelector('input');
+
+                if (this.checked) {
+                    qtyControl.style.display = 'block';
+                } else {
+                    qtyControl.style.display = 'none';
+                    qtyInput.value = 1;
+                }
+
+                calculateTotalPrice();
             });
         });
-    </script>
+
+        qtyInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if(this.value < 1 || this.value === '') {
+                    this.value = 1;
+                }
+                calculateTotalPrice();
+            });
+        });
+    });
+</script>
+
+@section Scripts {
 }
