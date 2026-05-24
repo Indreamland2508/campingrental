@@ -81,11 +81,11 @@
                                     bool isChecked = currentComboDetails.ContainsKey(product.Id);
                                     int qty = isChecked ? currentComboDetails[product.Id] : 1;
 
-                                    <div class="product-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white shadow-sm" data-product-name="@product.Name.ToLower()">
+                                    <div class="product-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded bg-white shadow-sm">
 
                                         <div class="form-check mb-0">
                                             <input class="form-check-input product-checkbox" type="checkbox" name="SelectedProductIds" value="@product.Id" id="prod_@product.Id" data-price="@product.PricePerDay" @(isChecked ? "checked" : "") style="cursor: pointer;">
-                                            <label class="form-check-label" for="prod_@product.Id" style="cursor: pointer; line-height: 1.2;">
+                                            <label class="form-check-label product-name" for="prod_@product.Id" style="cursor: pointer; line-height: 1.2;" data-full-name="@product.Name">
                                                 <strong class="text-dark" style="font-size: 0.9rem;">@product.Name</strong> <br />
                                                 <span class="text-success small fw-bold">@product.PricePerDay.ToString("N0") đ</span>
                                             </label>
@@ -112,85 +112,107 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // ===== TÌM KIẾM SẢN PHẨM =====
-        const searchInput = document.getElementById('productSearchInput');
-        const productContainer = document.getElementById('productListContainer');
-        const productItems = document.querySelectorAll('.product-item');
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('productSearchInput');
+    const productItems = document.querySelectorAll('.product-item');
+    
+    // Simple function - remove common Vietnamese diacritics
+    function simplifyText(text) {
+        const map = {
+            'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+            'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+            'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+            'đ': 'd',
+            'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+            'ê': 'e', 'ề': 'e', 'ế': 'e', 'ểe': 'e', 'ễ': 'e', 'ệ': 'e',
+            'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+            'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+            'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+            'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+            'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+            'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+            'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
+        };
         
-        console.log('Initializing search...');
-        console.log('Search input found:', !!searchInput);
-        console.log('Product items found:', productItems.length);
-
-        if (searchInput && productItems.length > 0) {
-            searchInput.addEventListener('keyup', function(e) {
-                const searchTerm = this.value.toLowerCase().trim();
-                console.log('Searching for:', searchTerm);
-                
-                let visibleCount = 0;
-                productItems.forEach((item, index) => {
-                    const productName = item.getAttribute('data-product-name') || '';
-                    const isMatch = productName.includes(searchTerm);
-                    
-                    if (searchTerm === '' || isMatch) {
-                        item.style.display = 'flex';
-                        visibleCount++;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                console.log('Visible items:', visibleCount);
-            });
+        let result = text.toLowerCase();
+        for (let key in map) {
+            result = result.replace(new RegExp(key, 'g'), map[key]);
         }
-
-        // ===== TÍNH TOÁN GIÁ & QUY LỰ =====
-        const checkboxes = document.querySelectorAll('.product-checkbox');
-        const priceInput = document.getElementById('ComboPrice');
-        const qtyInputs = document.querySelectorAll('.product-qty');
-
-        function calculateTotalPrice() {
-            let total = 0;
-            checkboxes.forEach(cb => {
-                if (cb.checked) {
-                    const price = parseFloat(cb.getAttribute('data-price')) || 0;
-                    const productId = cb.value;
-                    const qtyInput = document.querySelector(`input[name="Quantities_${productId}"]`);
-                    const qty = parseInt(qtyInput.value) || 1;
-                    total += (price * qty);
+        return result;
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = simplifyText(this.value.trim());
+            
+            productItems.forEach(item => {
+                // Get product name from the strong tag
+                const productNameElement = item.querySelector('strong.text-dark');
+                const productName = productNameElement ? productNameElement.textContent.trim() : '';
+                const simplifiedName = simplifyText(productName);
+                
+                // Show or hide based on match
+                if (!searchTerm || simplifiedName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
                 }
             });
+        });
+    }
+    
+    // ===== PRICE CALCULATION =====
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    const priceInput = document.getElementById('ComboPrice');
+    const qtyInputs = document.querySelectorAll('.product-qty');
+
+    function calculateTotalPrice() {
+        let total = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                const price = parseFloat(cb.getAttribute('data-price')) || 0;
+                const productId = cb.value;
+                const qtyInput = document.querySelector(`input[name="Quantities_${productId}"]`);
+                const qty = parseInt(qtyInput.value) || 1;
+                total += (price * qty);
+            }
+        });
+        if (priceInput) {
             priceInput.value = total;
         }
+    }
 
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', function () {
-                const productItem = this.closest('.product-item');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            const productItem = this.closest('.product-item');
+            if (productItem) {
                 const qtyControl = productItem.querySelector('.qty-control');
-                const qtyInput = qtyControl.querySelector('input');
-
-                if (this.checked) {
-                    qtyControl.style.display = 'block';
-                } else {
-                    qtyControl.style.display = 'none';
-                    qtyInput.value = 1;
+                if (qtyControl) {
+                    const qtyInput = qtyControl.querySelector('input');
+                    if (this.checked) {
+                        qtyControl.style.display = 'block';
+                    } else {
+                        qtyControl.style.display = 'none';
+                        if (qtyInput) qtyInput.value = 1;
+                    }
                 }
-
-                calculateTotalPrice();
-            });
+            }
+            calculateTotalPrice();
         });
-
-        qtyInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if(this.value < 1 || this.value === '') {
-                    this.value = 1;
-                }
-                calculateTotalPrice();
-            });
-        });
-
-        // Tính giá ban đầu
-        calculateTotalPrice();
     });
+
+    qtyInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if(this.value < 1 || this.value === '') {
+                this.value = 1;
+            }
+            calculateTotalPrice();
+        });
+    });
+    
+    // Calculate initial price
+    calculateTotalPrice();
+});
 </script>
 
 @section Scripts {
