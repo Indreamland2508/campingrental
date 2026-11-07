@@ -15,11 +15,11 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="icon" type="image/x-icon" href="~/icon.jpg" />
 
-    <link rel="stylesheet" href="~/css/Shared.Layout.css" />
+    <link rel="stylesheet" href="~/css/Shared.Layout.css" asp-append-version="true" />
 </head>
 <body>
     <div id="searchOverlay" class="search-overlay">
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-camping sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-xxl navbar-camping sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand navbar-brand-elegant d-flex align-items-center" asp-controller="Home" asp-action="Index">
                 <i class="bi bi-tent me-2 fs-2"></i>CAMPING RENTAL
@@ -57,6 +57,7 @@
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="DiaDiem">Địa điểm</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="CamNang">Cẩm nang</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="FAQ">Hỏi đáp</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="RentalPolicy">Chính sách thuê</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" asp-controller="Home" asp-action="OrderTracking">Tra cứu đơn hàng</a></li>
                 </ul>
 
@@ -100,14 +101,16 @@
                         <li class="mb-3"><a asp-action="ProductList" class="text-decoration-none text-muted hover-white">Danh sách Lều</a></li>
                         <li class="mb-3"><a asp-action="DiaDiem" class="text-decoration-none text-muted hover-white">Địa điểm dã ngoại</a></li>
                         <li class="mb-3"><a asp-action="CamNang" class="text-decoration-none text-muted hover-white">Cẩm nang & Kinh nghiệm</a></li>
+                        <li class="mb-3"><a asp-action="RentalPolicy" class="text-decoration-none text-muted hover-white">Chính sách thuê và hủy</a></li>
+                        <li class="mb-3"><a asp-action="PrivacyPolicy" class="text-decoration-none text-muted hover-white">Bảo mật và điều khoản</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <h6 class="fw-bold mb-4 text-uppercase">Liên hệ ngay</h6>
                     <ul class="list-unstyled small text-muted lh-lg">
                         <li class="mb-2"><i class="bi bi-geo-alt text-white me-2"></i> Đại học Điện Lực (EPU), Hà Nội</li>
-                        <li class="mb-2"><i class="bi bi-envelope text-white me-2"></i> contact@campingrental.vn</li>
-                        <li class="mb-2"><i class="bi bi-telephone text-white me-2"></i> 0982.412.005</li>
+                        <li class="mb-2"><i class="bi bi-envelope text-white me-2"></i> <a class="text-muted" href="mailto:chaun6535@gmail.com">chaun6535@gmail.com</a></li>
+                        <li class="mb-2"><i class="bi bi-telephone text-white me-2"></i> <a class="text-muted" href="tel:0982412005">0982.412.005</a></li>
                     </ul>
                 </div>
             </div>

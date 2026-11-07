@@ -1,0 +1,92 @@
+@{
+    ViewData["Title"] = "Chính sách bảo mật và Điều khoản";
+}
+
+<link rel="stylesheet" href="~/css/Home.RentalPolicy.css" asp-append-version="true" />
+
+<div class="rental-policy-page">
+    <header class="rental-policy-hero">
+        <div class="container">
+            <span class="rental-policy-eyebrow">Camping Rental · Quyền riêng tư và sử dụng dịch vụ</span>
+            <h1>Chính sách bảo mật và Điều khoản</h1>
+            <p>Thông tin về dữ liệu chúng tôi thu thập khi bạn đặt thuê thiết bị và các điều kiện sử dụng dịch vụ.</p>
+        </div>
+    </header>
+
+    <div class="container rental-policy-content">
+        <div class="rental-policy-notice">
+            <i class="bi bi-shield-check"></i>
+            <p>Bản đang rà soát pháp lý. Khi gửi đơn, bạn sẽ được yêu cầu xác nhận riêng rằng đã đọc chính sách này và đồng ý xử lý dữ liệu cần thiết cho việc cung cấp dịch vụ. Các mục về địa chỉ đầy đủ, nhà cung cấp lưu trữ và thời hạn lưu cần được xác minh trước khi công khai chính thức.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-building"></i></span>
+                    <h2>Chủ thể chịu trách nhiệm</h2>
+                    <p>Cá nhân vận hành được cung cấp: <strong>Nguyễn Hoàng Châu</strong>. Địa chỉ liên hệ được cung cấp: <strong>Trường Đại học Điện lực</strong>; cần bổ sung địa chỉ bưu chính đầy đủ và xác nhận đây là địa chỉ phù hợp để tiếp nhận yêu cầu của khách hàng.</p>
+                    <p class="mb-0">Email tiếp nhận yêu cầu về dữ liệu cá nhân: <a href="mailto:chaun6535@gmail.com">chaun6535@gmail.com</a>. Thông tin pháp nhân/hộ kinh doanh (nếu có) và tư cách pháp lý của chủ thể kiểm soát dữ liệu cần được xác nhận trước khi đưa chính sách vào sử dụng chính thức.</p>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-person-lines-fill"></i></span>
+                    <h2>Dữ liệu được thu thập</h2>
+                    <p>Khi đặt thuê, hệ thống xử lý họ tên, số điện thoại, email, địa chỉ nhận thiết bị, ghi chú do bạn cung cấp, sản phẩm và lịch thuê, cùng trạng thái đơn hàng và dữ liệu đồng ý chính sách.</p>
+                    <p class="mb-0">Khi thanh toán qua ngân hàng/SePay, hệ thống có thể nhận mã giao dịch, nội dung chuyển khoản, số tiền, thời gian, mã tham chiếu và thông tin tài khoản do webhook cung cấp. Nếu yêu cầu hoàn tiền, thông tin tài khoản nhận tiền được cung cấp qua biểu mẫu đã xác minh và xóa khi hoàn tất theo quy trình hiện tại.</p>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-gear"></i></span>
+                    <h2>Mục đích, căn cứ và bên nhận dữ liệu</h2>
+                    <ul>
+                        <li>Thực hiện yêu cầu đặt thuê, giao nhận và hỗ trợ đơn hàng; liên hệ về OTP, thanh toán, đổi hoặc hủy đơn.</li>
+                        <li>Đối chiếu giao dịch, ngăn ngừa lạm dụng, bảo vệ hệ thống, giải quyết khiếu nại và thực hiện nghĩa vụ pháp lý/kế toán áp dụng.</li>
+                        <li>Dữ liệu được xử lý để thực hiện dịch vụ khách yêu cầu; trường hợp pháp luật yêu cầu hoặc cần sự đồng ý, việc xử lý phải tuân theo căn cứ tương ứng. Căn cứ pháp lý cụ thể cần được chuyên gia rà soát.</li>
+                        <li>Người quản trị/nhân viên được phân quyền; nhà cung cấp Google Apps Script email gateway, SePay, ngân hàng và VietQR (chỉ khi QR được cấu hình) có thể nhận dữ liệu cần thiết cho chức năng của họ.</li>
+                        <li>Nhà cung cấp hosting, cơ sở dữ liệu và vị trí lưu trữ chưa được xác nhận; cần bổ sung trước công khai. Cần rà soát riêng vị trí xử lý dữ liệu và việc chuyển dữ liệu ra nước ngoài nếu có.</li>
+                    </ul>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-clock-history"></i></span>
+                    <h2>Thời hạn lưu trữ và bảo vệ</h2>
+                    <p>Dữ liệu được lưu trong hệ thống quản lý đơn thuê và giới hạn truy cập theo vai trò. Thời hạn cụ thể cho đơn hàng, giao dịch, nhật ký hệ thống và yêu cầu hỗ trợ hiện chưa được xác định; cần được chủ thể vận hành và chuyên gia pháp lý/kế toán chốt trước khi chính sách được công bố chính thức. Sau thời hạn phù hợp, dữ liệu sẽ được xóa hoặc ẩn danh khi có thể.</p>
+                    <p class="mb-0">Không gửi mật khẩu, mã OTP hoặc thông tin tài khoản ngân hàng qua email. Chỉ nhập thông tin nhận hoàn tiền trong biểu mẫu tra cứu đơn đã xác minh.</p>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-person-check"></i></span>
+                    <h2>Quyền của bạn</h2>
+                    <p>Bạn có thể gửi yêu cầu truy cập, chỉnh sửa, cập nhật hoặc xóa dữ liệu; hỏi về hoạt động xử lý hoặc rút lại sự đồng ý đối với hoạt động dựa trên sự đồng ý, trong phạm vi pháp luật cho phép. Để bảo vệ dữ liệu, chúng tôi có thể cần xác minh danh tính/đơn hàng trước khi phản hồi.</p>
+                    <p class="mb-0">Gửi yêu cầu đến <a href="mailto:chaun6535@gmail.com">chaun6535@gmail.com</a>. Việc rút lại sự đồng ý không ảnh hưởng đến hoạt động xử lý đã thực hiện trước đó; dữ liệu cần thiết để thực hiện đơn hoặc nghĩa vụ pháp lý có thể vẫn phải được lưu/xử lý trên căn cứ phù hợp.</p>
+                </section>
+            </div>
+            <div class="col-12">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-file-earmark-text"></i></span>
+                    <h2>Điều khoản sử dụng dịch vụ</h2>
+                    <ul>
+                        <li>Bạn cần cung cấp thông tin chính xác, kiểm tra sản phẩm, thời gian thuê, địa chỉ và khoản cọc trước khi xác nhận.</li>
+                        <li>Đơn và lịch thuê chỉ được xác nhận theo trạng thái hiển thị sau khi hệ thống/nhân viên kiểm tra thanh toán và tồn kho.</li>
+                        <li>Đổi ngày cần nhân viên duyệt. Nếu tổng tiền tăng, khách thanh toán phần cọc bổ sung được thông báo; nếu tổng tiền giảm do rút ngắn lịch, tổng tiền cũ được giữ nguyên theo chính sách thuê.</li>
+                        <li>Yêu cầu hủy, điều kiện hoàn tiền và trách nhiệm khi nhận/trả thiết bị được thực hiện theo <a asp-action="RentalPolicy">Chính sách thuê, hủy và hoàn cọc</a>.</li>
+                        <li>Bạn không sử dụng dịch vụ để cung cấp thông tin giả mạo, gây cản trở hoạt động hoặc thực hiện hành vi trái pháp luật.</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <section class="rental-policy-contact mt-4">
+            <div>
+                <span class="rental-policy-eyebrow">Liên hệ về dữ liệu và đơn hàng</span>
+                <h2 class="h4 mb-1">Nguyễn Hoàng Châu · Camping Rental</h2>
+                <p class="mb-0"><a class="text-white" href="mailto:chaun6535@gmail.com">chaun6535@gmail.com</a> · 0982 412 005</p>
+            </div>
+            <a asp-action="OrderTracking" class="btn btn-light rounded-pill px-4 fw-bold">Tra cứu đơn hàng</a>
+        </section>
+    </div>
+</div>

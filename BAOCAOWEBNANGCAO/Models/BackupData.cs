@@ -12,6 +12,7 @@ namespace BAOCAOWEBNANGCAO.Models
         public List<ComboDetailBackup> ComboDetails { get; set; } = new();
         public List<OrderBackup> Orders { get; set; } = new();
         public List<OrderDetailBackup> OrderDetails { get; set; } = new();
+        public List<SePayTransactionBackup> SePayTransactions { get; set; } = new();
         public List<FeedbackBackup> Feedbacks { get; set; } = new();
     }
 
@@ -31,6 +32,7 @@ namespace BAOCAOWEBNANGCAO.Models
         public string? ImageUrl { get; set; }
         public int Quantity { get; set; }
         public int CategoryId { get; set; }
+        public int? MaxGuests { get; set; }
     }
 
     public class ComboBackup
@@ -55,6 +57,7 @@ namespace BAOCAOWEBNANGCAO.Models
     public class OrderBackup
     {
         public int Id { get; set; }
+        public string PublicOrderCode { get; set; } = string.Empty;
         public DateTime OrderDate { get; set; }
         public string CustomerName { get; set; }
         public string CustomerPhone { get; set; }
@@ -66,8 +69,27 @@ namespace BAOCAOWEBNANGCAO.Models
         public decimal TotalAmount { get; set; }
         public decimal DepositAmount { get; set; }
         public decimal RemainingAmount { get; set; }
+        public decimal AmountPaid { get; set; }
+        public DateTime? ReservationExpiresAt { get; set; }
         public string PaymentStatus { get; set; }
         public string Status { get; set; }
+        public string RefundStatus { get; set; } = "NotRequired";
+        public decimal RefundAmount { get; set; }
+        public DateTime? RefundProcessedAt { get; set; }
+        public string? RefundNotes { get; set; }
+        public DateTime? CancellationRequestedAt { get; set; }
+        public string? CancellationReason { get; set; }
+        public DateTime? CancellationResolvedAt { get; set; }
+        public string? CancellationResolution { get; set; }
+        public DateTime? RentalChangeRequestedAt { get; set; }
+        public DateTime? RequestedRentalStartDate { get; set; }
+        public DateTime? RequestedRentalEndDate { get; set; }
+        public string? RentalChangeReason { get; set; }
+        public DateTime? RentalChangeResolvedAt { get; set; }
+        public string? RentalChangeResolution { get; set; }
+        public DateTime? PrivacyConsentAt { get; set; }
+        public string? PrivacyConsentVersion { get; set; }
+        public DateTime? RentalPolicyAcceptedAt { get; set; }
     }
 
     public class OrderDetailBackup
@@ -77,6 +99,22 @@ namespace BAOCAOWEBNANGCAO.Models
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal PricePerUnit { get; set; }
+    }
+
+    public class SePayTransactionBackup
+    {
+        public int Id { get; set; }
+        public long SePayId { get; set; }
+        public string? Gateway { get; set; }
+        public string? TransactionDate { get; set; }
+        public string? AccountNumber { get; set; }
+        public string? ReferenceCode { get; set; }
+        public string? TransferType { get; set; }
+        public decimal TransferAmount { get; set; }
+        public string? Content { get; set; }
+        public int? OrderId { get; set; }
+        public bool AppliedToOrder { get; set; }
+        public DateTime ReceivedAt { get; set; }
     }
 
     public class FeedbackBackup

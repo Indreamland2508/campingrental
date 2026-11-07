@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Chính sách thuê, hủy và hoàn cọc";
+}
+
+<link rel="stylesheet" href="~/css/Home.RentalPolicy.css" />
+
+<div class="rental-policy-page">
+    <header class="rental-policy-hero">
+        <div class="container">
+            <span class="rental-policy-eyebrow">Camping Rental · Thông tin dành cho khách thuê</span>
+            <h1>Chính sách thuê và đặt chỗ</h1>
+            <p>Vui lòng xem điều kiện thuê, thanh toán và hủy đơn trước khi xác nhận đặt thiết bị.</p>
+        </div>
+    </header>
+
+    <div class="container rental-policy-content">
+        <div class="rental-policy-notice">
+            <i class="bi bi-info-circle-fill"></i>
+            <p>Thông tin trên trang này là căn cứ tham khảo trước khi gửi yêu cầu thuê. Đơn chỉ được giữ chỗ trong thời hạn hiển thị ở bước thanh toán.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <section class="rental-policy-card h-100">
+                    <span class="rental-policy-icon"><i class="bi bi-calendar2-check"></i></span>
+                    <h2>Thời gian thuê và thanh toán</h2>
+                    <p>Giá thuê tính theo ngày. Ngày nhận được tính tiền thuê, ngày trả không tính; nếu nhận và trả trong cùng ngày, hệ thống tính một ngày.</p>
+                    <p class="mb-0">Tiền cọc và số tiền còn lại được hiển thị tại bước đặt thuê. Đơn chưa hoàn tất tiền cọc được giữ trong <strong>30 phút</strong>; khoản đã thanh toán một phần nhưng chưa đủ cọc cũng cần được bổ sung trong thời hạn này.</p>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="rental-policy-card h-100">
+                    <span class="rental-policy-icon"><i class="bi bi-arrow-left-right"></i></span>
+                    <h2>Đổi lịch thuê</h2>
+                    <p>Khách đã xác minh đơn bằng email có thể gửi yêu cầu đổi ngày trên trang tra cứu. Lịch cũ giữ nguyên cho tới khi nhân viên kiểm tra và duyệt yêu cầu.</p>
+                    <p class="mb-0">Nếu lịch mới làm tăng tổng tiền, khách cần thanh toán phần cọc bổ sung theo thông báo. Nếu lịch mới có giá thấp hơn, tổng tiền đơn giữ nguyên; không giảm giá hoặc hoàn phần chênh lệch do rút ngắn lịch.</p>
+                </section>
+            </div>
+            <div class="col-lg-7">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-x-circle"></i></span>
+                    <h2>Hủy đơn và hoàn tiền</h2>
+                    <ul>
+                        <li>Gửi yêu cầu hủy tại <a asp-action="OrderTracking">Tra cứu đơn hàng</a> sau khi xác minh email.</li>
+                        <li>Nhân viên đối chiếu và duyệt; gửi yêu cầu chưa đồng nghĩa đơn đã được hủy.</li>
+                        <li>Yêu cầu gửi trước ngày nhận ít nhất <strong>3 ngày lịch</strong> đủ điều kiện hoàn toàn bộ số tiền đã chuyển sau khi nhân viên duyệt.</li>
+                        <li>Yêu cầu gửi trước ngày nhận dưới 3 ngày lịch không được hoàn.</li>
+                        <li>Tiền hoàn do nhân viên chuyển khoản thủ công; website không tự chuyển tiền.</li>
+                    </ul>
+                </section>
+            </div>
+            <div class="col-lg-5">
+                <section class="rental-policy-card">
+                    <span class="rental-policy-icon"><i class="bi bi-exclamation-triangle"></i></span>
+                    <h2>Trả trễ, hư hỏng hoặc mất thiết bị</h2>
+                    <p class="mb-0">Website hiện chưa có biểu phí công khai cho các trường hợp này. Vui lòng liên hệ nhân viên để xác nhận điều kiện cụ thể trước khi đặt thuê.</p>
+                </section>
+            </div>
+        </div>
+
+        <section class="rental-policy-contact mt-4">
+            <div>
+                <span class="rental-policy-eyebrow">Cần hỗ trợ?</span>
+                <h2 class="h4 mb-1">Chúng tôi sẵn sàng giải đáp</h2>
+                <p class="mb-0">Liên hệ nhân viên trước khi đặt thuê nếu bạn cần xác nhận điều kiện.</p>
+            </div>
+            <a href="tel:0982412005" class="btn btn-light rounded-pill px-4 fw-bold"><i class="bi bi-telephone me-2"></i>0982 412 005</a>
+        </section>
+    </div>
+</div>

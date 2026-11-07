@@ -6,41 +6,53 @@ using Microsoft.EntityFrameworkCore;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false);
 
 // 1. Kết nối Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+if (builder.Environment.IsDevelopment())
+{
+    var hosts = new Npgsql.NpgsqlConnectionStringBuilder(connectionString).Host
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    if (hosts.Length == 0 || hosts.Any(host =>
+            host != "localhost" &&
+            host != "127.0.0.1" &&
+            host != "::1"))
+    {
+        throw new InvalidOperationException(
+            "Development startup requires a PostgreSQL connection hosted on this machine.");
+    }
+}
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Gmail
+builder.Services.AddHttpClient();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-
-// 2. Cấu hình Identity & Bảo mật
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    // Lớp giáp 1: Khóa tài khoản (Lockout)
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Bị khóa trong 15 phút
-    options.Lockout.MaxFailedAccessAttempts = 5; // Gõ sai pass 5 lần là ăn ban
-    options.Lockout.AllowedForNewUsers = true; // Áp dụng cho mọi tài khoản mới tạo
-});
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<OrderReservationService>();
+builder.Services.AddScoped<OrderNotificationService>();
+builder.Services.AddScoped<TurnstileVerificationService>();
+builder.Services.AddHostedService<OrderReservationCleanupService>();
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
-    // Thiết lập thời gian sống của Token là 2 giờ (Tự động hết hạn)
     options.TokenLifespan = TimeSpan.FromHours(2);
 });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // Tắt xác thực email để Login được ngay
-    options.Password.RequireDigit = false; // Pass dễ (cho test)
-    options.Password.RequireNonAlphanumeric = false; // Không cần ký tự đặc biệt
-    options.Password.RequireUppercase = false; // Không cần chữ hoa
-    options.Password.RequiredLength = 1; // Độ dài tối thiểu
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequiredUniqueChars = 4;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<CampingDbContext>();
@@ -90,24 +102,13 @@ app.MapControllerRoute(
 
 app.MapRazorPages(); // Để chạy các trang Login/Register mặc định
 
-// Seeder: Tạo dữ liệu mẫu (Admin)
+// Apply schema changes and seed required data.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<CampingDbContext>();
-
-        context.Database.Migrate();
-
-        // 2. ĐỔ DỮ LIỆU VÀO SAU (Khi bảng đã tồn tại chắc chắn)
-        await DbSeeder.SeedDefaultData(services);
-    }
-    catch (Exception ex)
-    {
-        // Có thể in ra console để dễ debug trên Render
-        Console.WriteLine("Lỗi khi khởi tạo Database: " + ex.Message);
-    }
+    var context = services.GetRequiredService<CampingDbContext>();
+    context.Database.Migrate();
+    await DbSeeder.SeedDefaultData(services);
 }
 
 app.Run();

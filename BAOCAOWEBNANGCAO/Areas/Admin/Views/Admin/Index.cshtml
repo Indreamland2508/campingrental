@@ -68,6 +68,27 @@
         </div>
     </div>
 
+    @if ((int)ViewBag.PendingCancellations > 0 || (int)ViewBag.PendingRentalChanges > 0)
+    {
+        <div class="alert alert-warning border-0 shadow-sm mb-5" role="alert">
+            <h5 class="alert-heading fw-bold"><i class="bi bi-bell-fill me-2"></i>Cần xử lý yêu cầu từ khách</h5>
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                @if ((int)ViewBag.PendingCancellations > 0)
+                {
+                    <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-sm btn-outline-danger">
+                        @ViewBag.PendingCancellations yêu cầu hủy đang chờ
+                    </a>
+                }
+                @if ((int)ViewBag.PendingRentalChanges > 0)
+                {
+                    <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                        @ViewBag.PendingRentalChanges yêu cầu đổi lịch đang chờ
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
     <div class="row mb-5">
         <div class="col-12">
             <div class="card border-0 shadow-sm" style="border-radius: 24px;">

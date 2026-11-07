@@ -13,6 +13,21 @@
         <p class="text-muted small">Kiểm soát giao nhận và thanh toán cọc từ khách hàng</p>
     </div>
 
+    @if ((int)ViewBag.PendingCancellations > 0 || (int)ViewBag.PendingRentalChanges > 0)
+    {
+        <div class="alert alert-warning border-0 shadow-sm d-flex flex-wrap align-items-center gap-2" role="alert">
+            <strong><i class="bi bi-bell-fill me-1"></i>Yêu cầu cần xử lý:</strong>
+            @if ((int)ViewBag.PendingCancellations > 0)
+            {
+                <span class="badge bg-danger">@ViewBag.PendingCancellations yêu cầu hủy</span>
+            }
+            @if ((int)ViewBag.PendingRentalChanges > 0)
+            {
+                <span class="badge bg-primary">@ViewBag.PendingRentalChanges yêu cầu đổi lịch</span>
+            }
+        </div>
+    }
+
     <div class="card border-0 shadow-sm" style="border-radius: 20px;">
         <div class="card-header-forest d-flex align-items-center">
             <i class="bi bi-table me-2"></i>
@@ -35,7 +50,21 @@
                         @foreach (var item in Model.OrderByDescending(o => o.OrderDate))
                         {
                             <tr>
-                                <td class="ps-4 fw-bold text-dark fs-5">#@item.Id</td>
+                                <td class="ps-4 fw-bold text-dark">
+                                    <div class="fs-5">#@item.Id</div>
+                                    @if (item.CancellationRequestedAt != null)
+                                    {
+                                        <span class="badge @(item.CancellationResolvedAt == null ? "bg-danger" : "bg-secondary") mt-1">
+                                            @(item.CancellationResolvedAt == null ? "Chờ duyệt hủy" : "Đã xử lý yêu cầu hủy")
+                                        </span>
+                                    }
+                                    @if (item.RentalChangeRequestedAt != null)
+                                    {
+                                        <span class="badge @(item.RentalChangeResolvedAt == null ? "bg-primary" : "bg-secondary") mt-1">
+                                            @(item.RentalChangeResolvedAt == null ? "Chờ duyệt đổi lịch" : "Đã xử lý yêu cầu đổi lịch")
+                                        </span>
+                                    }
+                                </td>
 
                                 <td>
                                     <div class="fw-bold text-dark">@item.CustomerName</div>
@@ -57,6 +86,10 @@
                                     else if (item.PaymentStatus == "Deposited")
                                     {
                                         <span class="badge-status payment-deposited"><i class="bi bi-shield-lock-fill me-1"></i>Đã cọc</span>
+                                    }
+                                    else if (item.PaymentStatus == "Partial")
+                                    {
+                                        <span class="badge-status payment-unpaid"><i class="bi bi-hourglass-split me-1"></i>Đã nhận một phần</span>
                                     }
                                     else
                                     {

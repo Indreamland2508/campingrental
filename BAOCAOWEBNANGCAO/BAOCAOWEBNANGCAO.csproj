@@ -4,9 +4,10 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateRazorTargetAssemblyInfo>false</GenerateRazorTargetAssemblyInfo>
-	</PropertyGroup>
+	  <UserSecretsId>66e8395e-5d8f-4541-a0d3-531d7d8584ed</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
 	  <Compile Remove="wwwroot - Copy\**" />

@@ -4,7 +4,7 @@
 }
 
 .font-serif {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: var(--font-brand);
 }
 
 /* TIÊU ĐỀ TRANG */
@@ -107,7 +107,7 @@
     color: #212529;
     line-height: 1.3;
     margin-bottom: 10px;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-brand);
     transition: 0.3s;
 }
 

@@ -52,9 +52,12 @@
                                         @item.TotalPrice.ToString("#,##0") đ
                                     </td>
                                     <td class="text-end pe-0">
-                                        <a asp-action="RemoveFromCart" asp-route-productId="@item.Product.Id" class="btn-remove" title="Xóa khỏi giỏ">
-                                            <i class="bi bi-x-lg"></i>
-                                        </a>
+                                        <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                                            <input type="hidden" name="productId" value="@item.Product.Id" />
+                                            <button type="submit" class="btn-remove border-0 bg-transparent" title="Xóa khỏi giỏ">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             }

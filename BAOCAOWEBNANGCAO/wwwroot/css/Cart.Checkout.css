@@ -11,13 +11,13 @@ body {
 }
 
 .font-serif {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: var(--font-brand);
 }
 
 /* Tiêu đề thanh toán */
 .checkout-main-title {
-    font-size: 2.2rem;
-    font-weight: 800;
+    font-size: 1.8rem;
+    font-weight: 700;
     color: var(--forest-dark);
     margin-bottom: 2rem;
     display: inline-block;
@@ -32,12 +32,11 @@ body {
 }
 
 .card-title-section {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-dark);
     margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.01em;
 }
 
 /* Input Fields phong cách Minimalist */
@@ -47,7 +46,7 @@ body {
     padding: 14px 18px;
     background-color: #fafafa;
     transition: all 0.3s;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
     .form-control:focus {
@@ -59,9 +58,8 @@ body {
 label {
     font-weight: 600;
     color: var(--text-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
     margin-bottom: 8px;
 }
 
@@ -107,7 +105,7 @@ label {
     border-radius: 12px;
     padding: 16px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.02em;
     transition: 0.3s;
 }
 

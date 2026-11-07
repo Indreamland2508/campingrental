@@ -5,7 +5,7 @@
 }
 
 .font-serif {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: var(--font-brand);
 }
 
 /* 1. HERO SECTION (ẢNH TRÀN VIỀN, CHỮ CHÈN LÊN TRÊN GIỐNG TRANG SẢN PHẨM) */

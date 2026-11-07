@@ -18,10 +18,23 @@ namespace BAOCAOWEBNANGCAO.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<SePayTransaction> SePayTransactions { get; set; }
+        public DbSet<OrderLookupChallenge> OrderLookupChallenges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SePayTransaction>()
+                .HasIndex(transaction => transaction.SePayId)
+                .IsUnique();
+
+            modelBuilder.Entity<OrderLookupChallenge>()
+                .HasIndex(challenge => new { challenge.OrderId, challenge.Email, challenge.ExpiresAt });
+
+            modelBuilder.Entity<Order>()
+                .HasIndex(order => order.PublicOrderCode)
+                .IsUnique();
 
             // Seed dữ liệu mẫu cho Category để test nhanh
             modelBuilder.Entity<Category>().HasData(

@@ -13,6 +13,8 @@ namespace BAOCAOWEBNANGCAO.Models
         public decimal PricePerDay { get; set; }
         public string? ImageUrl { get; set; }
         public int Quantity { get; set; } // Tồn kho
+        [Range(1, 100)]
+        public int? MaxGuests { get; set; }
 
         public int CategoryId { get; set; }
         public Category? Category { get; set; }

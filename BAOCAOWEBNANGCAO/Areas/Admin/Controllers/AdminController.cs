@@ -1,5 +1,6 @@
 ﻿using BAOCAOWEBNANGCAO.Data;
 using BAOCAOWEBNANGCAO.Models;
+using BAOCAOWEBNANGCAO.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,18 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 
             var pendingOrders = await _context.Orders
                 .CountAsync(o => o.Status == "Pending");
+            var pendingCancellations = await _context.Orders.CountAsync(order =>
+                order.CancellationRequestedAt != null &&
+                order.CancellationResolvedAt == null &&
+                order.Status != "Cancelled" &&
+                order.Status != "Completed" &&
+                order.Status != "Expired");
+            var pendingRentalChanges = await _context.Orders.CountAsync(order =>
+                order.RentalChangeRequestedAt != null &&
+                order.RentalChangeResolvedAt == null &&
+                order.Status != "Cancelled" &&
+                order.Status != "Completed" &&
+                order.Status != "Expired");
 
             var totalProducts = await _context.Products.CountAsync();
 
@@ -87,6 +100,8 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 
             ViewBag.TotalRevenue = totalRevenue;
             ViewBag.PendingOrders = pendingOrders;
+            ViewBag.PendingCancellations = pendingCancellations;
+            ViewBag.PendingRentalChanges = pendingRentalChanges;
             ViewBag.TotalProducts = totalProducts;
             ViewBag.TodayOrders = todayOrders;
 
@@ -137,10 +152,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
-            var totalRevenue = currentMonthOrders.Sum(o =>
-                o.PaymentStatus == "Paid" ? o.TotalAmount :
-                (o.PaymentStatus == "Deposited" ? o.DepositAmount : 0)
-            );
+            var totalRevenue = currentMonthOrders.Sum(o => o.RefundStatus == "Refunded" ? 0m : o.AmountPaid);
 
             var totalOrders = currentMonthOrders.Count;
             var completedOrders = currentMonthOrders.Count(o => o.Status == "Completed");
@@ -159,7 +171,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                         {
                             column.Item().Text("CAMPING RENTAL").FontSize(24).SemiBold().FontColor(Colors.Green.Darken3);
                             column.Item().Text("Đại học Điện Lực (EPU), Hà Nội").FontSize(10).FontColor(Colors.Grey.Medium);
-                            column.Item().Text("Email: contact@campingrental.vn | SĐT: 0982.412.005").FontSize(10).FontColor(Colors.Grey.Medium);
+                            column.Item().Text("Email: chaun6535@gmail.com | SĐT: 0982.412.005").FontSize(10).FontColor(Colors.Grey.Medium);
                         });
 
                         row.ConstantItem(250).AlignRight().Column(column =>
@@ -291,7 +303,8 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     PricePerDay = p.PricePerDay,
                     ImageUrl = p.ImageUrl,
                     Quantity = p.Quantity,
-                    CategoryId = p.CategoryId
+                    CategoryId = p.CategoryId,
+                    MaxGuests = p.MaxGuests
                 }).ToListAsync(),
                 Combos = await _context.Combos.Select(c => new ComboBackup
                 {
@@ -313,6 +326,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                 Orders = await _context.Orders.Select(o => new OrderBackup
                 {
                     Id = o.Id,
+                    PublicOrderCode = o.PublicOrderCode,
                     OrderDate = o.OrderDate,
                     CustomerName = o.CustomerName,
                     CustomerPhone = o.CustomerPhone,
@@ -324,8 +338,27 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     TotalAmount = o.TotalAmount,
                     DepositAmount = o.DepositAmount,
                     RemainingAmount = o.RemainingAmount,
+                    AmountPaid = o.AmountPaid,
+                    ReservationExpiresAt = o.ReservationExpiresAt,
                     PaymentStatus = o.PaymentStatus,
-                    Status = o.Status
+                    Status = o.Status,
+                    RefundStatus = o.RefundStatus,
+                    RefundAmount = o.RefundAmount,
+                    RefundProcessedAt = o.RefundProcessedAt,
+                    RefundNotes = o.RefundNotes,
+                    CancellationRequestedAt = o.CancellationRequestedAt,
+                    CancellationReason = o.CancellationReason,
+                    CancellationResolvedAt = o.CancellationResolvedAt,
+                    CancellationResolution = o.CancellationResolution,
+                    RentalChangeRequestedAt = o.RentalChangeRequestedAt,
+                    RequestedRentalStartDate = o.RequestedRentalStartDate,
+                    RequestedRentalEndDate = o.RequestedRentalEndDate,
+                    RentalChangeReason = o.RentalChangeReason,
+                    RentalChangeResolvedAt = o.RentalChangeResolvedAt,
+                    RentalChangeResolution = o.RentalChangeResolution,
+                    PrivacyConsentAt = o.PrivacyConsentAt,
+                    PrivacyConsentVersion = o.PrivacyConsentVersion,
+                    RentalPolicyAcceptedAt = o.RentalPolicyAcceptedAt
                 }).ToListAsync(),
                 OrderDetails = await _context.OrderDetails.Select(od => new OrderDetailBackup
                 {
@@ -334,6 +367,21 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     ProductId = od.ProductId,
                     Quantity = od.Quantity,
                     PricePerUnit = od.PricePerUnit
+                }).ToListAsync(),
+                SePayTransactions = await _context.SePayTransactions.Select(transaction => new SePayTransactionBackup
+                {
+                    Id = transaction.Id,
+                    SePayId = transaction.SePayId,
+                    Gateway = transaction.Gateway,
+                    TransactionDate = transaction.TransactionDate,
+                    AccountNumber = transaction.AccountNumber,
+                    ReferenceCode = transaction.ReferenceCode,
+                    TransferType = transaction.TransferType,
+                    TransferAmount = transaction.TransferAmount,
+                    Content = transaction.Content,
+                    OrderId = transaction.OrderId,
+                    AppliedToOrder = transaction.AppliedToOrder,
+                    ReceivedAt = transaction.ReceivedAt
                 }).ToListAsync(),
                 Feedbacks = await _context.Feedbacks.Select(f => new FeedbackBackup
                 {
@@ -387,7 +435,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                await _context.Database.ExecuteSqlRawAsync(@"TRUNCATE TABLE ""OrderDetails"", ""Orders"", ""ComboDetails"", ""Combos"", ""Products"", ""Categories"", ""Feedbacks"" RESTART IDENTITY CASCADE;");
+                await _context.Database.ExecuteSqlRawAsync(@"TRUNCATE TABLE ""OrderLookupChallenges"", ""SePayTransactions"", ""OrderDetails"", ""Orders"", ""ComboDetails"", ""Combos"", ""Products"", ""Categories"", ""Feedbacks"" RESTART IDENTITY CASCADE;");
 
                 await _context.Categories.AddRangeAsync(backupData.Categories.Select(c => new Category
                 {
@@ -404,7 +452,8 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     PricePerDay = p.PricePerDay,
                     ImageUrl = p.ImageUrl,
                     Quantity = p.Quantity,
-                    CategoryId = p.CategoryId
+                    CategoryId = p.CategoryId,
+                    MaxGuests = p.MaxGuests
                 }));
 
                 await _context.Combos.AddRangeAsync(backupData.Combos.Select(c => new Combo
@@ -429,6 +478,9 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                 await _context.Orders.AddRangeAsync(backupData.Orders.Select(o => new Order
                 {
                     Id = o.Id,
+                    PublicOrderCode = string.IsNullOrWhiteSpace(o.PublicOrderCode)
+                        ? OrderCodeGenerator.Create()
+                        : o.PublicOrderCode,
                     OrderDate = o.OrderDate,
                     CustomerName = o.CustomerName,
                     CustomerPhone = o.CustomerPhone,
@@ -440,8 +492,33 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     TotalAmount = o.TotalAmount,
                     DepositAmount = o.DepositAmount,
                     RemainingAmount = o.RemainingAmount,
+                    AmountPaid = o.AmountPaid > 0
+                        ? o.AmountPaid
+                        : o.PaymentStatus == "Paid"
+                            ? o.TotalAmount
+                            : o.PaymentStatus == "Deposited"
+                                ? o.DepositAmount
+                                : 0,
+                    ReservationExpiresAt = o.ReservationExpiresAt,
                     PaymentStatus = o.PaymentStatus,
-                    Status = o.Status
+                    Status = o.Status,
+                    RefundStatus = o.RefundStatus ?? "NotRequired",
+                    RefundAmount = o.RefundAmount,
+                    RefundProcessedAt = o.RefundProcessedAt,
+                    RefundNotes = o.RefundNotes,
+                    CancellationRequestedAt = o.CancellationRequestedAt,
+                    CancellationReason = o.CancellationReason,
+                    CancellationResolvedAt = o.CancellationResolvedAt,
+                    CancellationResolution = o.CancellationResolution,
+                    RentalChangeRequestedAt = o.RentalChangeRequestedAt,
+                    RequestedRentalStartDate = o.RequestedRentalStartDate,
+                    RequestedRentalEndDate = o.RequestedRentalEndDate,
+                    RentalChangeReason = o.RentalChangeReason,
+                    RentalChangeResolvedAt = o.RentalChangeResolvedAt,
+                    RentalChangeResolution = o.RentalChangeResolution,
+                    PrivacyConsentAt = o.PrivacyConsentAt,
+                    PrivacyConsentVersion = o.PrivacyConsentVersion,
+                    RentalPolicyAcceptedAt = o.RentalPolicyAcceptedAt
                 }));
 
                 await _context.OrderDetails.AddRangeAsync(backupData.OrderDetails.Select(od => new OrderDetail
@@ -451,6 +528,22 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                     ProductId = od.ProductId,
                     Quantity = od.Quantity,
                     PricePerUnit = od.PricePerUnit
+                }));
+
+                await _context.SePayTransactions.AddRangeAsync(backupData.SePayTransactions.Select(transaction => new SePayTransaction
+                {
+                    Id = transaction.Id,
+                    SePayId = transaction.SePayId,
+                    Gateway = transaction.Gateway,
+                    TransactionDate = transaction.TransactionDate,
+                    AccountNumber = transaction.AccountNumber,
+                    ReferenceCode = transaction.ReferenceCode,
+                    TransferType = transaction.TransferType,
+                    TransferAmount = transaction.TransferAmount,
+                    Content = transaction.Content,
+                    OrderId = transaction.OrderId,
+                    AppliedToOrder = transaction.AppliedToOrder,
+                    ReceivedAt = transaction.ReceivedAt
                 }));
 
                 await _context.Feedbacks.AddRangeAsync(backupData.Feedbacks.Select(f => new Feedback
@@ -471,6 +564,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
                 await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""ComboDetails""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""ComboDetails""), 0));");
                 await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Orders""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Orders""), 0));");
                 await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""OrderDetails""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""OrderDetails""), 0));");
+                await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""SePayTransactions""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""SePayTransactions""), 1), EXISTS (SELECT 1 FROM ""SePayTransactions""));");
                 await _context.Database.ExecuteSqlRawAsync(@"SELECT setval(pg_get_serial_sequence('""Feedbacks""', 'Id'), COALESCE((SELECT MAX(""Id"") FROM ""Feedbacks""), 0));");
 
                 await transaction.CommitAsync();

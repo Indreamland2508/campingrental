@@ -64,7 +64,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId")] Product product, IFormFile? ImageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,MaxGuests")] Product product, IFormFile? ImageFile)
         {
             if (ImageFile != null && ImageFile.Length > 0)
             {
@@ -106,7 +106,7 @@ namespace BAOCAOWEBNANGCAO.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? imageFile, int page = 1, string search = "")
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PricePerDay,Quantity,CategoryId,MaxGuests,ImageUrl")] Product product, IFormFile? imageFile, int page = 1, string search = "")
         {
             if (id != product.Id) return NotFound();
 
