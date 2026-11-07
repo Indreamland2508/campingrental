@@ -1,6 +1,28 @@
 /* MÀU CHỦ ĐẠO */
 :root {
     --forest-dark: #1a3a28;
+    --font-ui: 'Plus Jakarta Sans', sans-serif;
+    --font-brand: 'Playfair Display', Georgia, serif;
+    --font-nav: 'Cormorant Garamond', Georgia, serif;
+}
+
+body {
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.font-serif {
+    font-family: var(--font-brand);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
 /* 1. THANH MENU (NAVBAR) - PHONG CÁCH TỐI GIẢN */
@@ -12,24 +34,50 @@
     padding: 15px 0; /* Tăng khoảng thở */
 }
 
+.navbar-camping > .container {
+    max-width: 100%;
+    padding-left: clamp(16px, 3.5vw, 64px);
+    padding-right: clamp(16px, 3.5vw, 64px);
+}
+
+.navbar-camping .navbar-collapse {
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.navbar-camping .navbar-nav {
+    flex-wrap: nowrap;
+    gap: clamp(2px, 0.3vw, 6px);
+    justify-content: center;
+}
+
+.navbar-camping .navbar-nav .nav-item {
+    flex: 0 0 auto;
+}
+
 .navbar-brand-elegant {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
-    font-weight: 700;
+    font-family: var(--font-brand);
+    font-weight: 600;
     color: var(--forest-dark) !important;
-    letter-spacing: 1px;
-    font-size: 1.8rem;
+    letter-spacing: 0.045em;
+    font-size: clamp(1.15rem, 1.3vw, 1.5rem);
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .nav-link-custom {
-    color: #4b5563 !important; /* Chữ màu xám đậm sang trọng */
-    font-weight: 600;
-    font-size: 0.8rem;
+    font-family: var(--font-nav);
+    color: #3f4b46 !important;
+    font-weight: 700;
+    font-size: 0.92rem;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin: 0 15px;
+    letter-spacing: 0.045em;
+    margin: 0 2px;
+    padding-left: 5px;
+    padding-right: 5px;
     position: relative;
     transition: color 0.3s;
+    white-space: nowrap !important;
 }
 
     .nav-link-custom:hover, .nav-link-custom.active {
@@ -58,8 +106,32 @@
     display: flex;
     align-items: center;
     gap: 22px;
-    min-width: 160px;
+    min-width: 72px;
     justify-content: flex-end;
+}
+
+@media (max-width: 1399.98px) {
+    .navbar-camping > .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .navbar-camping .navbar-nav {
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        gap: 2px;
+    }
+
+    .navbar-camping .nav-link-custom {
+        white-space: nowrap !important;
+        margin: 0;
+        font-size: 0.92rem;
+    }
+
+    .navbar-camping .auth-group {
+        justify-content: flex-start;
+        padding: 8px 0;
+    }
 }
 
 .header-icon {
@@ -107,7 +179,7 @@
     background: transparent;
     outline: none;
     padding: 10px;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-ui);
     color: var(--forest-dark);
 }
 
@@ -153,7 +225,7 @@
 
     .footer-camping h5, .footer-camping h6 {
         color: white;
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-ui);
         letter-spacing: 1px;
     }
 

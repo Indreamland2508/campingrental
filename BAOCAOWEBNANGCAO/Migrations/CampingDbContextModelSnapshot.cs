@@ -172,6 +172,21 @@ namespace BAOCAOWEBNANGCAO.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("CancellationRequestedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CancellationResolution")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CancellationResolvedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<decimal>("DepositAmount")
                         .HasColumnType("numeric");
 
@@ -185,13 +200,74 @@ namespace BAOCAOWEBNANGCAO.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PublicOrderCode")
+                        .IsRequired()
+                        .HasMaxLength(19)
+                        .HasColumnType("character varying(19)");
+
+                    b.Property<DateTime?>("PrivacyConsentAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("PrivacyConsentVersion")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime?>("RefundProcessedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("RefundAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("RefundBankAccountHolder")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RefundBankAccountNumber")
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)");
+
+                    b.Property<string>("RefundBankName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RefundNotes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefundStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("RemainingAmount")
                         .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("ReservationExpiresAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("RentalChangeReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RentalChangeResolution")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RentalChangeRequestedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("RentalChangeResolvedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("RentalPolicyAcceptedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("RentalEndDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("RentalStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("RequestedRentalEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("RequestedRentalStartDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ShippingAddress")
@@ -206,6 +282,9 @@ namespace BAOCAOWEBNANGCAO.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PublicOrderCode")
+                        .IsUnique();
 
                     b.ToTable("Orders");
                 });
@@ -239,6 +318,44 @@ namespace BAOCAOWEBNANGCAO.Migrations
                     b.ToTable("OrderDetails");
                 });
 
+            modelBuilder.Entity("BAOCAOWEBNANGCAO.Models.OrderLookupChallenge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ConsumedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProtectedCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId", "Email", "ExpiresAt");
+
+                    b.ToTable("OrderLookupChallenges");
+                });
+
             modelBuilder.Entity("BAOCAOWEBNANGCAO.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -256,6 +373,9 @@ namespace BAOCAOWEBNANGCAO.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
+                    b.Property<int?>("MaxGuests")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -271,6 +391,55 @@ namespace BAOCAOWEBNANGCAO.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("BAOCAOWEBNANGCAO.Models.SePayTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AppliedToOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Gateway")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ReferenceCode")
+                        .HasColumnType("text");
+
+                    b.Property<long>("SePayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TransactionDate")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TransferAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("TransferType")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SePayId")
+                        .IsUnique();
+
+                    b.ToTable("SePayTransactions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

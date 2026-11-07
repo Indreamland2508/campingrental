@@ -59,6 +59,12 @@
                                 <span asp-validation-for="Quantity" class="text-danger small"></span>
                             </div>
 
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="MaxGuests" class="form-label">Sức chứa tối đa (người)</label>
+                                <input asp-for="MaxGuests" class="form-control" min="1" max="100" placeholder="Chỉ nhập với lều/sản phẩm có sức chứa" />
+                                <span asp-validation-for="MaxGuests" class="text-danger small"></span>
+                            </div>
+
                             <div class="col-12 mb-4">
                                 <label asp-for="CategoryId" class="form-label">Phân loại sản phẩm</label>
                                 <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">

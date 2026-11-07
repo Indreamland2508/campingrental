@@ -1,7 +1,9 @@
-﻿@model BAOCAOWEBNANGCAO.Models.Order
+@model BAOCAOWEBNANGCAO.Models.OrderTrackingViewModel
 
 @{
     ViewData["Title"] = "Tra cứu đơn hàng";
+    var viewModel = Model ?? new BAOCAOWEBNANGCAO.Models.OrderTrackingViewModel();
+    var order = viewModel.Order;
 }
 
 <link rel="stylesheet" href="~/css/Home.OrderTracking.css" />
@@ -12,37 +14,55 @@
         <p class="text-muted">Kiểm tra trạng thái thiết bị cắm trại bạn đã đặt thuê.</p>
     </div>
 
-    @if (Model == null)
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (order == null)
     {
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="tracking-card bg-white p-4 p-md-5">
 
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger border-0 bg-danger text-white rounded-3 shadow-sm py-2 px-3 mb-4">
-                            <i class="bi bi-exclamation-circle me-2"></i> @ViewBag.Error
-                        </div>
-                    }
-
                     <form asp-action="OrderTracking" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        @if (viewModel.Message != null)
+                        {
+                            <div class="alert alert-info">@viewModel.Message</div>
+                        }
                         <div class="mb-4">
                             <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">Mã đơn hàng</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0 fw-bold text-muted">#</span>
-                                <input type="number" name="orderId" class="form-control border-start-0 ps-0 bg-light" placeholder="Ví dụ: 9" required style="box-shadow: none;">
+                                <input type="text" name="publicOrderCode" value="@viewModel.PublicOrderCode" class="form-control bg-light text-uppercase" placeholder="CR-A1B2C3D4E5F60708" maxlength="19" required style="box-shadow: none;">
                             </div>
                         </div>
 
                         <div class="mb-5">
-                            <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">Số điện thoại đặt hàng</label>
-                            <input type="text" name="phone" class="form-control bg-light" placeholder="0982..." required style="box-shadow: none;">
+                            <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">Email đặt hàng</label>
+                            <input type="email" name="email" value="@viewModel.Email" class="form-control bg-light" placeholder="email@example.com" required style="box-shadow: none;">
                         </div>
 
                         <button type="submit" class="btn-elegant w-100">
-                            <i class="bi bi-search me-2"></i> KIỂM TRA ĐƠN
+                            <i class="bi bi-envelope me-2"></i> GỬI MÃ XÁC MINH
                         </button>
                     </form>
+
+                    @if (viewModel.CodeSent)
+                    {
+                        <form asp-action="VerifyOrderTrackingCode" method="post" class="mt-4">
+                            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            <input type="hidden" name="PublicOrderCode" value="@viewModel.PublicOrderCode" />
+                            <input type="hidden" name="Email" value="@viewModel.Email" />
+                            <label class="form-label fw-bold">Mã xác minh qua email</label>
+                            <input type="text" name="Code" class="form-control mb-3" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required />
+                            <button type="submit" class="btn-elegant w-100">XÁC MINH VÀ XEM ĐƠN</button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
@@ -50,6 +70,7 @@
 
     else
     {
+        var currentOrder = order;
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="tracking-card bg-white p-4 p-md-5 position-relative overflow-hidden">
@@ -58,25 +79,37 @@
                     <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
                         <div>
                             <span class="text-muted small text-uppercase fw-bold d-block mb-1">Đơn đặt trước</span>
-                            <h3 class="text-forest font-serif fw-bold mb-0">#@Model.Id</h3>
+                            <h3 class="text-forest font-serif fw-bold mb-0">@currentOrder.PublicOrderCode</h3>
                         </div>
                         <div class="text-end">
                             <span class="text-muted small text-uppercase fw-bold d-block mb-1">Trạng thái</span>
-                            @if (Model.Status == "Pending")
+                            @if (currentOrder.Status == "Expired")
+                            {
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">Hết hạn giữ chỗ</span>
+                            }
+                            else if (currentOrder.Status == "Cancelled")
+                            {
+                                <span class="badge bg-danger rounded-pill px-3 py-2">Đã hủy</span>
+                            }
+                            else if (currentOrder.PaymentStatus == "Partial")
+                            {
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Đã nhận một phần - cần bổ sung cọc</span>
+                            }
+                            else if (currentOrder.PaymentStatus == "Unpaid")
                             {
                                 <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Chờ cọc / Chờ duyệt</span>
                             }
-                            else if (Model.Status == "Deposited" || Model.Status == "Approved")
+                            else if (currentOrder.PaymentStatus == "Deposited" || currentOrder.Status == "Approved")
                             {
                                 <span class="badge bg-primary rounded-pill px-3 py-2">Đã cọc - Chờ giao</span>
                             }
-                            else if (Model.Status == "Completed")
+                            else if (currentOrder.Status == "Completed")
                             {
                                 <span class="badge bg-success rounded-pill px-3 py-2">Đã hoàn thành</span>
                             }
                             else
                             {
-                                <span class="badge bg-secondary rounded-pill px-3 py-2">@Model.Status</span>
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">@currentOrder.Status</span>
                             }
                         </div>
                     </div>
@@ -84,12 +117,12 @@
                     <div class="row mb-4">
                         <div class="col-sm-6 mb-3 mb-sm-0">
                             <h6 class="text-muted text-uppercase small fw-bold mb-2">Thông tin người nhận</h6>
-                            <strong class="text-dark d-block">@Model.CustomerName</strong>
-                            <span class="text-secondary">@Model.CustomerPhone</span>
+                            <strong class="text-dark d-block">@currentOrder.CustomerName</strong>
+                            <span class="text-secondary">@currentOrder.CustomerPhone</span>
                         </div>
                         <div class="col-sm-6 text-sm-end">
                             <h6 class="text-muted text-uppercase small fw-bold mb-2">Ngày đặt hàng</h6>
-                            <strong class="text-dark">@Model.OrderDate.ToVietnamTime().ToString("dd/MM/yyyy HH:mm")</strong>
+                            <strong class="text-dark">@currentOrder.OrderDate.ToVietnamTime().ToString("dd/MM/yyyy HH:mm")</strong>
                         </div>
                     </div>
 
@@ -97,9 +130,9 @@
                     <div class="table-responsive mb-4">
                         <table class="table table-borderless align-middle">
                             <tbody class="border-top border-bottom">
-                                @if (Model.OrderDetails != null)
+                                @if (currentOrder.OrderDetails != null)
                                 {
-                                    foreach (var detail in Model.OrderDetails)
+                                    foreach (var detail in currentOrder.OrderDetails)
                                     {
                                         <tr>
                                             <td class="ps-0 py-3">
@@ -117,18 +150,163 @@
                     <div class="bg-light p-4 rounded-3 text-end">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Tổng tiền thuê:</span>
-                            <strong class="text-dark">@Model.TotalAmount.ToString("N0") ₫</strong>
+                            <strong class="text-dark">@currentOrder.TotalAmount.ToString("N0") ₫</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Đã đặt cọc:</span>
-                            <strong class="text-primary">@Model.DepositAmount.ToString("N0") ₫</strong>
+                            <span class="text-muted">Đã thanh toán:</span>
+                            <strong class="text-primary">@currentOrder.AmountPaid.ToString("N0") ₫</strong>
                         </div>
                         <hr class="my-2 border-secondary opacity-25" />
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <span class="text-forest fw-bold text-uppercase" style="letter-spacing: 1px;">Cần thanh toán:</span>
-                            <strong class="text-danger fs-4">@Model.RemainingAmount.ToString("N0") ₫</strong>
+                            <strong class="text-danger fs-4">@currentOrder.RemainingAmount.ToString("N0") ₫</strong>
                         </div>
                     </div>
+
+                    @if ((currentOrder.PaymentStatus == "Partial" || currentOrder.PaymentStatus == "Unpaid") &&
+                         currentOrder.Status != "Expired" && currentOrder.Status != "Cancelled" &&
+                         currentOrder.DepositAmount > currentOrder.AmountPaid)
+                    {
+                        var additionalDepositAmount = Math.Max(0, currentOrder.DepositAmount - currentOrder.AmountPaid);
+                        var transferContent = $"DH{currentOrder.PublicOrderCode.Replace("-", string.Empty)}";
+                        <div class="alert alert-warning mt-3">
+                            <strong>Cần thanh toán tiền cọc: @additionalDepositAmount.ToString("N0") VNĐ.</strong>
+                            <div>Nội dung chuyển khoản: <strong>@transferContent</strong></div>
+                            <a asp-area="Customer" asp-controller="Cart" asp-action="Payment" asp-route-code="@currentOrder.PublicOrderCode" class="alert-link">Mở mã QR thanh toán bổ sung</a>
+                        </div>
+                    }
+
+                    @if (viewModel.CanRequestCancellation)
+                    {
+                        <p class="small text-muted mt-4">
+                            Theo chính sách, yêu cầu gửi trước ngày nhận ít nhất 3 ngày lịch có thể được hoàn đủ số tiền đã chuyển sau khi nhân viên duyệt; yêu cầu dưới 3 ngày không được hoàn tiền.
+                            <a asp-action="RentalPolicy">Xem chính sách chi tiết</a>.
+                        </p>
+                        <form asp-action="RequestCancellation" method="post" class="mt-4">
+                            <input type="hidden" name="publicOrderCode" value="@currentOrder.PublicOrderCode" />
+                            <label class="form-label fw-bold">Lý do yêu cầu hủy</label>
+                            <textarea name="reason" class="form-control mb-3" maxlength="500" required></textarea>
+                            <button type="submit" class="btn btn-outline-danger rounded-pill px-4">GỬI YÊU CẦU HỦY</button>
+                        </form>
+                    }
+                    else if (currentOrder.CancellationRequestedAt != null && currentOrder.CancellationResolvedAt == null)
+                    {
+                        <div class="alert alert-warning mt-4">Yêu cầu hủy đã được gửi; vui lòng chờ nhân viên xử lý.</div>
+                    }
+                    else if (currentOrder.CancellationResolvedAt != null && currentOrder.Status != "Cancelled")
+                    {
+                        <div class="alert alert-info mt-4">Kết quả xử lý yêu cầu hủy: @currentOrder.CancellationResolution</div>
+                    }
+                    @if (currentOrder.Status == "Cancelled")
+                    {
+                        <div class="alert alert-info mt-4">
+                            <strong>Kết quả xử lý hủy:</strong> @currentOrder.CancellationResolution
+                            <br />Trạng thái hoàn tiền: @currentOrder.RefundStatus
+                            @if (currentOrder.RefundAmount > 0)
+                            {
+                                <br /><span>Số tiền dự kiến hoàn: @currentOrder.RefundAmount.ToString("N0") VNĐ. Nhân viên chuyển khoản thủ công sau khi có thông tin nhận tiền.</span>
+                                @if (currentOrder.RefundStatus == "DetailsRequired" || currentOrder.RefundStatus == "Pending")
+                                {
+                                    <form asp-action="SubmitRefundBankDetails" method="post" class="text-start mt-3">
+                                        <input type="hidden" name="publicOrderCode" value="@currentOrder.PublicOrderCode" />
+                                        <p class="small mb-2">@(currentOrder.RefundStatus == "DetailsRequired" ? "Nhập tài khoản nhận tiền tại đây." : "Có thể cập nhật thông tin tài khoản trước khi nhân viên chuyển khoản.") Không gửi số tài khoản qua email.</p>
+                                        <label class="form-label">Ngân hàng</label>
+                                        <input name="bankName" class="form-control mb-2" maxlength="100" required />
+                                        <label class="form-label">Số tài khoản (6-34 chữ số)</label>
+                                        <input name="accountNumber" class="form-control mb-2" inputmode="numeric" pattern="[0-9]{6,34}" maxlength="34" required />
+                                        <label class="form-label">Tên chủ tài khoản</label>
+                                        <input name="accountHolder" class="form-control mb-2 text-uppercase" maxlength="100" required />
+                                        <button type="submit" class="btn btn-primary btn-sm">GỬI THÔNG TIN NHẬN TIỀN</button>
+                                    </form>
+                                }
+                                else if (currentOrder.RefundStatus == "Pending")
+                                {
+                                    <br /><span>Đã nhận thông tin tài khoản; nhân viên sẽ chuyển khoản và cập nhật mã giao dịch.</span>
+                                }
+                                else if (currentOrder.RefundStatus == "Refunded")
+                                {
+                                    <br /><span>Đã hoàn tiền. Mã giao dịch: @currentOrder.RefundNotes</span>
+                                }
+                            }
+                        </div>
+                    }
+                    else if (currentOrder.Status == "Expired")
+                    {
+                        <div class="alert alert-warning mt-4">
+                            Đơn đã hết thời gian giữ chỗ và không còn hiệu lực. Bạn không thể đổi lịch hoặc gửi yêu cầu hủy cho đơn này; vui lòng tạo đơn mới nếu vẫn muốn thuê.
+                        </div>
+                        @if (currentOrder.RefundAmount > 0)
+                        {
+                            <div class="alert alert-info">
+                                <div>Khoản @currentOrder.RefundAmount.ToString("N0") VNĐ đang chờ xử lý hoàn tiền. Trạng thái: @currentOrder.RefundStatus</div>
+                                @if (currentOrder.RefundStatus == "DetailsRequired" || currentOrder.RefundStatus == "Pending")
+                                {
+                                    <form asp-action="SubmitRefundBankDetails" method="post" class="text-start mt-3">
+                                        <input type="hidden" name="publicOrderCode" value="@currentOrder.PublicOrderCode" />
+                                        <p class="small mb-2">@(currentOrder.RefundStatus == "DetailsRequired" ? "Nhập tài khoản nhận tiền tại đây." : "Có thể cập nhật thông tin tài khoản trước khi nhân viên chuyển khoản.") Không gửi số tài khoản qua email.</p>
+                                        <label class="form-label">Ngân hàng</label>
+                                        <input name="bankName" class="form-control mb-2" maxlength="100" required />
+                                        <label class="form-label">Số tài khoản (6-34 chữ số)</label>
+                                        <input name="accountNumber" class="form-control mb-2" inputmode="numeric" pattern="[0-9]{6,34}" maxlength="34" required />
+                                        <label class="form-label">Tên chủ tài khoản</label>
+                                        <input name="accountHolder" class="form-control mb-2 text-uppercase" maxlength="100" required />
+                                        <button type="submit" class="btn btn-primary btn-sm">GỬI THÔNG TIN NHẬN TIỀN</button>
+                                    </form>
+                                }
+                                else if (currentOrder.RefundStatus == "Pending")
+                                {
+                                    <div>Đã nhận thông tin tài khoản; nhân viên sẽ chuyển khoản và cập nhật mã giao dịch.</div>
+                                }
+                                else if (currentOrder.RefundStatus == "Refunded")
+                                {
+                                    <div>Đã hoàn tiền. Mã giao dịch: @currentOrder.RefundNotes</div>
+                                }
+                            </div>
+                        }
+                    }
+
+                    @if (currentOrder.RentalChangeRequestedAt != null)
+                    {
+                        <div class="alert @(currentOrder.RentalChangeResolvedAt == null ? "alert-warning" : "alert-info") mt-4">
+                            <strong>Yêu cầu đổi lịch:</strong>
+                            @if (currentOrder.RequestedRentalStartDate.HasValue && currentOrder.RequestedRentalEndDate.HasValue)
+                            {
+                                <span>@currentOrder.RequestedRentalStartDate.Value.ToString("dd/MM/yyyy") – @currentOrder.RequestedRentalEndDate.Value.ToString("dd/MM/yyyy")</span>
+                            }
+                            @if (currentOrder.RentalChangeResolvedAt == null)
+                            {
+                                <span> · Đang chờ nhân viên kiểm tra. Lịch hiện tại chưa thay đổi.</span>
+                            }
+                            else
+                            {
+                                <span> · @currentOrder.RentalChangeResolution</span>
+                            }
+                        </div>
+                    }
+
+                    @if (viewModel.CanRequestRentalChange)
+                    {
+                        <div class="border rounded-4 p-3 p-md-4 mt-4">
+                            <h5 class="text-forest fw-bold">Yêu cầu đổi ngày thuê</h5>
+                            <p class="small text-muted">Lịch hiện tại chỉ đổi sau khi nhân viên duyệt và kiểm tra còn thiết bị. Nếu giá lịch mới tăng, bạn cần thanh toán thêm tiền cọc; nếu giá thấp hơn, tổng tiền giữ nguyên.</p>
+                            <form asp-action="RequestRentalChange" method="post">
+                                <input type="hidden" name="publicOrderCode" value="@currentOrder.PublicOrderCode" />
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <label class="form-label">Ngày nhận mới</label>
+                                        <input type="date" name="rentalStart" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" value="@currentOrder.RentalStartDate.ToString("yyyy-MM-dd")" required />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label">Ngày trả mới</label>
+                                        <input type="date" name="rentalEnd" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" value="@currentOrder.RentalEndDate.ToString("yyyy-MM-dd")" required />
+                                    </div>
+                                </div>
+                                <label class="form-label mt-3">Lý do đổi lịch</label>
+                                <textarea name="reason" class="form-control mb-3" maxlength="500" required></textarea>
+                                <button type="submit" class="btn btn-outline-success rounded-pill px-4">GỬI YÊU CẦU ĐỔI LỊCH</button>
+                            </form>
+                        </div>
+                    }
 
                     <div class="mt-5 text-center">
                         <a href="/Home/OrderTracking" class="btn btn-outline-secondary rounded-pill px-4">Tra cứu đơn khác</a>

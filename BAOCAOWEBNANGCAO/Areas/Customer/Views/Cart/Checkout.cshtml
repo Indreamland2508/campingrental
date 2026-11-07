@@ -61,11 +61,11 @@
                         <div class="row g-3 align-items-end">
                             <div class="col-md-5">
                                 <label>Ngày nhận đồ <span class="text-danger">*</span></label>
-                                <input type="date" name="rentalStart" id="rentalStart" class="form-control bg-white" required value="@(ViewBag.RentalStart ?? DateTime.Now.ToString("yyyy-MM-dd"))">
+                                <input type="date" name="rentalStart" id="rentalStart" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control bg-white" required value="@(ViewBag.RentalStart ?? DateTime.Today.ToString("yyyy-MM-dd"))">
                             </div>
                             <div class="col-md-5">
                                 <label>Ngày trả đồ <span class="text-danger">*</span></label>
-                                <input type="date" name="rentalEnd" id="rentalEnd" class="form-control bg-white" required value="@(ViewBag.RentalEnd ?? DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"))">
+                                <input type="date" name="rentalEnd" id="rentalEnd" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control bg-white" required value="@(ViewBag.RentalEnd ?? DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"))">
                             </div>
                             <div class="col-md-2 text-md-end text-center mt-3 mt-md-0">
                                 <span class="d-inline-block bg-white border px-3 py-2 rounded-3 fw-bold text-dark shadow-sm" id="dayCountText" style="font-size: 0.9rem;">1 ngày</span>
@@ -124,13 +124,40 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-checkout-final w-100 text-uppercase d-flex justify-content-between align-items-center shadow-sm">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="acceptRentalPolicy" value="true" id="acceptRentalPolicy" required>
+                        <label class="form-check-label small" for="acceptRentalPolicy">
+                            Tôi đã đọc và đồng ý với <a asp-controller="Home" asp-action="RentalPolicy" target="_blank" rel="noopener">chính sách thuê, hủy và hoàn cọc</a>.
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="acceptPrivacyPolicy" value="true" id="acceptPrivacyPolicy" required>
+                        <label class="form-check-label small" for="acceptPrivacyPolicy">
+                            Tôi đã đọc <a asp-controller="Home" asp-action="PrivacyPolicy" target="_blank" rel="noopener">Chính sách bảo mật và Điều khoản</a> và đồng ý để Camping Rental xử lý thông tin cần thiết cho việc đặt thuê, liên hệ, thanh toán và hỗ trợ đơn hàng.
+                        </label>
+                    </div>
+
+                    @if (string.IsNullOrWhiteSpace(ViewBag.TurnstileSiteKey as string))
+                    {
+                        <div class="alert alert-warning small">CAPTCHA chưa được cấu hình. Vui lòng liên hệ quản trị viên.</div>
+                    }
+                    else
+                    {
+                        <div class="cf-turnstile mb-3" data-sitekey="@ViewBag.TurnstileSiteKey"></div>
+                    }
+
+                    @if (ViewBag.PaymentConfigured == false)
+                    {
+                        <div class="alert alert-warning small">@ViewBag.PaymentConfigurationMessage</div>
+                    }
+
+                    <button type="submit" disabled="@(ViewBag.PaymentConfigured == false ? "disabled" : null)" class="btn btn-checkout-final w-100 d-flex justify-content-between align-items-center shadow-sm">
                         <span>Xác nhận & Thanh toán</span>
                         <i class="bi bi-arrow-right"></i>
                     </button>
 
                     <p class="text-center text-muted mt-3 mb-0" style="font-size: 0.8rem;">
-                        Bằng việc xác nhận, bạn đồng ý với Điều khoản dịch vụ của chúng tôi.
+                        Hỗ trợ: <a href="tel:0982412005">0982 412 005</a>
                     </p>
                 </div>
             </div>
@@ -164,7 +191,7 @@
             dayCountReview.innerText = diffDays;
 
             const total = basePrice * diffDays;
-            const deposit = total / 2;
+            const deposit = Math.round(total / 2);
             const remaining = total - deposit;
 
             finalTotalSpan.innerText = total.toLocaleString('vi-VN') + "₫";
@@ -178,6 +205,10 @@
 </script>
 
 @section Scripts {
+    @if (!string.IsNullOrWhiteSpace(ViewBag.TurnstileSiteKey as string))
+    {
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    }
     <script>
         // Chống bấm đúp thần chưởng
         $('form').submit(function (e) {

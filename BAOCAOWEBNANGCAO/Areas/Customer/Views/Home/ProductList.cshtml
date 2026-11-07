@@ -72,45 +72,59 @@
                 <input type="hidden" name="sortOrder" id="sortOrderInput" value="@ViewBag.SortOrder" />
                 <input type="hidden" name="page" id="pageInput" value="@ViewBag.CurrentPage" />
 
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-
-                    <div class="d-flex align-items-center">
-                        <span class="me-2 fw-bold text-muted small text-uppercase">Giá</span>
-                        <input type="number" name="minPrice" class="form-control form-control-sm text-center shadow-sm border-light me-2" style="width: 90px; border-radius: 10px;" value="@ViewBag.MinPrice" placeholder="Min" />
-                        <span class="me-2 text-muted">-</span>
-                        <input type="number" name="maxPrice" class="form-control form-control-sm text-center shadow-sm border-light me-2" style="width: 90px; border-radius: 10px;" value="@ViewBag.MaxPrice" placeholder="Max" />
-                        <button type="submit" class="btn btn-sm btn-light border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                            <i class="bi bi-search text-success"></i>
-                        </button>
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-lg-4">
+                        <label class="form-label small fw-bold text-muted" for="productSearch">Tìm sản phẩm</label>
+                        <input id="productSearch" type="search" name="searchString" value="@ViewBag.SearchString" class="form-control form-control-sm" placeholder="Tên hoặc mô tả sản phẩm" />
                     </div>
-
-                    <div class="d-flex align-items-center gap-2 gap-md-4">
-
-                        <div class="btn-group shadow-sm" role="group">
-                            <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "desc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="desc" style="border-radius: 10px 0 0 10px;">
-                                Cao đến thấp
-                            </button>
-                            <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "asc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="asc" style="border-radius: 0 10px 10px 0;">
-                                Thấp đến cao
-                            </button>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label small fw-bold text-muted" for="minPrice">Giá từ</label>
+                        <input id="minPrice" type="number" min="0" name="minPrice" class="form-control form-control-sm" value="@ViewBag.MinPrice" placeholder="VNĐ/ngày" />
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label small fw-bold text-muted" for="maxPrice">Đến giá</label>
+                        <input id="maxPrice" type="number" min="0" name="maxPrice" class="form-control form-control-sm" value="@ViewBag.MaxPrice" placeholder="VNĐ/ngày" />
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label small fw-bold text-muted" for="guestCount">Số người</label>
+                        <input id="guestCount" type="number" min="1" max="100" name="guestCount" class="form-control form-control-sm" value="@ViewBag.GuestCount" placeholder="Sức chứa tối thiểu" />
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label small fw-bold text-muted" for="rentalStartFilter">Ngày nhận</label>
+                        <input id="rentalStartFilter" type="date" name="rentalStart" class="form-control form-control-sm" value="@ViewBag.RentalStart" />
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label small fw-bold text-muted" for="rentalEndFilter">Ngày trả</label>
+                        <input id="rentalEndFilter" type="date" name="rentalEnd" class="form-control form-control-sm" value="@ViewBag.RentalEnd" />
+                    </div>
+                    <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <label class="form-check-label d-flex align-items-center gap-2">
+                            <input type="checkbox" name="availableOnly" value="true" class="form-check-input m-0" checked="@(ViewBag.AvailableOnly ? "checked" : null)" />
+                            Chỉ hiển thị sản phẩm còn hàng theo lịch đã chọn
+                        </label>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <div class="btn-group shadow-sm" role="group" aria-label="Sắp xếp theo giá">
+                                <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "desc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="desc">Giá cao đến thấp</button>
+                                <button type="button" class="btn btn-sm @(ViewBag.SortOrder == "asc" ? "btn-secondary text-white" : "btn-light text-muted") btn-sort" data-sort="asc">Giá thấp đến cao</button>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-success">Lọc sản phẩm</button>
+                            <a asp-action="ProductList" class="btn btn-sm btn-outline-secondary">Xóa lọc</a>
+                            <div class="d-flex align-items-center bg-light border rounded-pill px-2 py-1">
+                                <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage <= 1 ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage - 1)" aria-label="Trang trước">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <span class="mx-2 fw-bold small">@ViewBag.CurrentPage / @ViewBag.TotalPages</span>
+                                <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage + 1)" aria-label="Trang tiếp">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
                         </div>
-
-                        <div class="d-flex align-items-center bg-light border rounded-pill px-2 py-1 shadow-sm">
-                            <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage <= 1 ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage - 1)">
-                                <i class="bi bi-chevron-left"></i>
-                            </button>
-
-                            <span class="mx-2 fw-bold small" style="letter-spacing: 1px;">
-                                @ViewBag.CurrentPage / @ViewBag.TotalPages
-                            </span>
-
-                            <button type="button" class="btn btn-sm btn-link text-decoration-none btn-page p-0 px-2 @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "text-muted disabled" : "text-dark fw-bold")" data-page="@(ViewBag.CurrentPage + 1)">
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
-                        </div>
-
                     </div>
                 </div>
+                @if (!string.IsNullOrEmpty(ViewBag.FilterError as string))
+                {
+                    <div class="alert alert-warning mt-3 mb-0">@ViewBag.FilterError</div>
+                }
             </form>
 
             <div class="row g-4" id="product-list-container">
@@ -128,6 +142,10 @@
                                 <div class="product-info-minimal">
                                     <span class="luxury-cat-name">@(item.Category?.Name ?? "Dã ngoại")</span>
                                     <span class="luxury-title">@item.Name</span>
+                                    @if (item.MaxGuests.HasValue)
+                                    {
+                                        <span class="small text-muted">Phù hợp tối đa @item.MaxGuests người</span>
+                                    }
                                     <div class="luxury-price">@item.PricePerDay.ToString("#,##0") đ <span class="text-muted fw-light" style="font-size: 0.8rem;">/ ngày</span></div>
                                 </div>
                             </a>

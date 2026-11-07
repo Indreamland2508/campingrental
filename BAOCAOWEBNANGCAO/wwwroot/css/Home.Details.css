@@ -4,7 +4,7 @@
 }
 
 .font-serif {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: var(--font-brand);
 }
 
 /* 1. TỐI ƯU HÓA KHÔNG GIAN */
@@ -50,7 +50,7 @@ body {
 }
 
 .product-name-luxury {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-brand);
     font-size: 2.5rem; /* Cỡ chữ lớn hơn một chút */
     font-weight: 700;
     color: var(--forest-dark);
@@ -59,7 +59,7 @@ body {
 }
 
 .price-tag-luxury {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-brand);
     font-size: 1.8rem;
     font-weight: 600;
     color: #111827;
@@ -174,7 +174,7 @@ body {
     }
 
     .quality-icons .text-center p {
-        font-family: 'Playfair Display', serif; /* Dùng font Serif cho nhãn icon */
+        font-family: var(--font-brand);
         font-size: 0.8rem;
         margin-top: 8px;
         color: #4b5563;

@@ -1,6 +1,8 @@
 ﻿using BAOCAOWEBNANGCAO.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore; // Nhớ thêm thư viện này nếu dùng đoạn code tạo sản phẩm
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BAOCAOWEBNANGCAO.Data
 {
@@ -8,26 +10,35 @@ namespace BAOCAOWEBNANGCAO.Data
     {
         public static async Task SeedDefaultData(IServiceProvider service)
         {
-            var userManager = service.GetService<UserManager<IdentityUser>>();
-            var roleManager = service.GetService<RoleManager<IdentityRole>>();
+            var userManager = service.GetRequiredService<UserManager<IdentityUser>>();
+            var roleManager = service.GetRequiredService<RoleManager<IdentityRole>>();
+            var configuration = service.GetRequiredService<IConfiguration>();
 
-
-            // 1. Tạo Role "Admin" (Đã có)
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                var result = await roleManager.CreateAsync(new IdentityRole("Admin"));
+                EnsureSucceeded(result, "creating the Admin role");
             }
 
             if (!await roleManager.RoleExistsAsync("Staff"))
             {
-                await roleManager.CreateAsync(new IdentityRole("Staff"));
+                var result = await roleManager.CreateAsync(new IdentityRole("Staff"));
+                EnsureSucceeded(result, "creating the Staff role");
             }
 
-            var adminEmail = "admin@gmail.com";
-            var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-
-            if (existingAdmin == null)
+            var adminEmail = configuration["BootstrapAdmin:Email"]?.Trim();
+            var adminPassword = configuration["BootstrapAdmin:Password"];
+            if (string.IsNullOrWhiteSpace(adminEmail) != string.IsNullOrWhiteSpace(adminPassword))
             {
+                throw new InvalidOperationException(
+                    "BootstrapAdmin:Email and BootstrapAdmin:Password must either both be configured or both be omitted.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(adminEmail) &&
+                await userManager.FindByEmailAsync(adminEmail) == null)
+            {
+                var bootstrapPassword = adminPassword
+                    ?? throw new InvalidOperationException("BootstrapAdmin:Password is required to create the bootstrap administrator.");
                 var newAdmin = new IdentityUser
                 {
                     UserName = adminEmail,
@@ -35,18 +46,14 @@ namespace BAOCAOWEBNANGCAO.Data
                     EmailConfirmed = true
                 };
 
-                // Mật khẩu Admin
-                await userManager.CreateAsync(newAdmin, "Admin@123");
+                var createResult = await userManager.CreateAsync(newAdmin, bootstrapPassword);
+                EnsureSucceeded(createResult, "creating the bootstrap administrator");
 
-                // Gán quyền Admin
-                await userManager.AddToRoleAsync(newAdmin, "Admin");
+                var roleResult = await userManager.AddToRoleAsync(newAdmin, "Admin");
+                EnsureSucceeded(roleResult, "assigning the Admin role to the bootstrap administrator");
             }
 
-            var context = service.GetService<CampingDbContext>();
-            if (context != null && !context.Products.Any())
-            {
-            }
-            // Kiểm tra xem bảng Products đã có dữ liệu chưa. Nếu trống thì mới thêm vào.
+            var context = service.GetRequiredService<CampingDbContext>();
             if (!context.Products.Any())
             {
                 var sanPhamMau = new List<Product>
@@ -239,6 +246,15 @@ namespace BAOCAOWEBNANGCAO.Data
 
                 context.Products.AddRange(sanPhamMau);
                 await context.SaveChangesAsync();
+            }
+        }
+
+        private static void EnsureSucceeded(IdentityResult result, string operation)
+        {
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(error => error.Description));
+                throw new InvalidOperationException($"Identity failed while {operation}: {errors}");
             }
         }
     }

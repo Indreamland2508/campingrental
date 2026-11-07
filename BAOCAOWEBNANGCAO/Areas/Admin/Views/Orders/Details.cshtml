@@ -10,7 +10,7 @@
 <div class="container-fluid px-4 py-4 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-dark m-0">📦 Chi tiết đơn hàng #@Model.Id</h2>
+            <h2 class="fw-bold text-dark m-0">📦 Đơn @Model.PublicOrderCode <span class="text-muted fs-6">(#@Model.Id nội bộ)</span></h2>
             <p class="text-muted small">Cập nhật trạng thái và quản lý tài chính đơn thuê</p>
         </div>
         <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
@@ -23,6 +23,55 @@
         <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (Model.CancellationRequestedAt != null)
+    {
+        <div class="alert alert-warning rounded-4">
+            <strong>Khách yêu cầu hủy</strong> (@Model.CancellationRequestedAt.Value.ToVietnamTime().ToString("dd/MM/yyyy HH:mm"))
+            <div>Lý do: @(Model.CancellationReason ?? "Không cung cấp")</div>
+            @if (Model.CancellationResolvedAt == null)
+            {
+                <form asp-action="ResolveCancellation" method="post" class="mt-3 d-flex gap-2">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="text" name="resolution" class="form-control" maxlength="500" placeholder="Ghi chú xử lý" />
+                    <button type="submit" name="approve" value="true" class="btn btn-danger text-nowrap">Duyệt hủy</button>
+                    <button type="submit" name="approve" value="false" class="btn btn-outline-secondary text-nowrap">Từ chối</button>
+                </form>
+            }
+            else
+            {
+                <div class="mt-2">Kết quả: @Model.CancellationResolution</div>
+            }
+        </div>
+    }
+
+    @if (Model.RentalChangeRequestedAt != null)
+    {
+        <div class="alert @(Model.RentalChangeResolvedAt == null ? "alert-info" : "alert-secondary") rounded-4">
+            <strong>Khách yêu cầu đổi lịch</strong> (@Model.RentalChangeRequestedAt.Value.ToVietnamTime().ToString("dd/MM/yyyy HH:mm"))
+            <div>Lịch hiện tại: @Model.RentalStartDate.ToString("dd/MM/yyyy") – @Model.RentalEndDate.ToString("dd/MM/yyyy")</div>
+            <div>Lịch đề nghị: @Model.RequestedRentalStartDate?.ToString("dd/MM/yyyy") – @Model.RequestedRentalEndDate?.ToString("dd/MM/yyyy")</div>
+            <div>Lý do: @(Model.RentalChangeReason ?? "Không cung cấp")</div>
+            @if (Model.RentalChangeResolvedAt == null)
+            {
+                <form asp-action="ResolveRentalChange" method="post" class="mt-3 d-flex flex-wrap gap-2">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="text" name="resolution" class="form-control flex-grow-1" maxlength="500" placeholder="Ghi chú xử lý/chênh lệch" />
+                    <button type="submit" name="approve" value="true" class="btn btn-success text-nowrap">Duyệt lịch mới</button>
+                    <button type="submit" name="approve" value="false" class="btn btn-outline-secondary text-nowrap">Từ chối</button>
+                </form>
+                <small class="d-block mt-2">Nếu tổng mới cao hơn, hệ thống giữ lịch 30 phút để khách bổ sung tiền cọc. Nếu tổng thấp hơn, tổng tiền đơn giữ nguyên.</small>
+            }
+            else
+            {
+                <div class="mt-2">Kết quả: @Model.RentalChangeResolution</div>
+            }
         </div>
     }
 
@@ -53,6 +102,18 @@
                     <div>
                         <label class="small text-muted d-block">Ghi chú</label>
                         <em class="text-muted small">@(string.IsNullOrEmpty(Model.Note) ? "Không có ghi chú" : Model.Note)</em>
+                    </div>
+                    <hr class="opacity-25">
+                    <div class="small text-muted">
+                        Đồng ý chính sách bảo mật:
+                        @if (Model.PrivacyConsentAt.HasValue)
+                        {
+                            <strong>Có · @Model.PrivacyConsentAt.Value.ToVietnamTime().ToString("dd/MM/yyyy HH:mm") · phiên bản @Model.PrivacyConsentVersion</strong>
+                        }
+                        else
+                        {
+                            <strong>Không có bản ghi (đơn được tạo trước khi bật ghi nhận)</strong>
+                        }
                     </div>
                 </div>
             </div>
@@ -88,17 +149,57 @@
                     <i class="bi bi-wallet2"></i> Cập nhật Tiền nong
                 </div>
                 <div class="card-body py-4">
-                    <form asp-action="UpdateStatus" method="post">
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <div class="mb-3">
-                            <select name="paymentStatus" class="form-select border-warning shadow-sm fw-bold">
-                                <!option value="Unpaid" @(Model.PaymentStatus == "Unpaid" ? "selected" : "")>🔴 Khách chưa cọc</!option>
-                                <!option value="Deposited" @(Model.PaymentStatus == "Deposited" ? "selected" : "")>🟡 Đã nhận cọc (@Model.DepositAmount.ToString("#,##0")₫)</!option>
-                                <!option value="Paid" @(Model.PaymentStatus == "Paid" ? "selected" : "")>🟢 Đã thu đủ tiền</!option>
-                            </select>
+                    @if (Model.Status != "Cancelled" && Model.Status != "Completed" && Model.Status != "Expired")
+                    {
+                        <form asp-action="UpdateStatus" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <select name="paymentStatus" class="form-select border-warning shadow-sm fw-bold">
+                                    <!option value="Unpaid" @(Model.PaymentStatus == "Unpaid" ? "selected" : "")>🔴 Khách chưa cọc</!option>
+                                    <!option value="Partial" @(Model.PaymentStatus == "Partial" ? "selected" : "")>🟠 Đã nhận một phần</!option>
+                                    <!option value="Deposited" @(Model.PaymentStatus == "Deposited" ? "selected" : "")>🟡 Đã nhận cọc (@Model.DepositAmount.ToString("#,##0")₫)</!option>
+                                    <!option value="Paid" @(Model.PaymentStatus == "Paid" ? "selected" : "")>🟢 Đã thu đủ tiền</!option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold shadow-sm">LƯU TRẠNG THÁI TIỀN</button>
+                        </form>
+                    }
+                    <hr />
+                    <div class="small mb-2">Đã thanh toán: <strong>@Model.AmountPaid.ToString("#,##0")₫</strong></div>
+                    <div class="small mb-2">Trạng thái hoàn tiền:
+                        <strong>@(Model.RefundStatus == "DetailsRequired" ? "Chờ khách cung cấp tài khoản" : Model.RefundStatus == "Pending" ? "Chờ nhân viên chuyển khoản" : Model.RefundStatus == "Refunded" ? "Đã hoàn" : Model.RefundStatus)</strong>
+                    </div>
+                    <div class="small mb-2">Số tiền hoàn theo chính sách: <strong>@Model.RefundAmount.ToString("#,##0")₫</strong></div>
+                    @if (Model.RefundStatus == "Pending" &&
+                         !string.IsNullOrWhiteSpace(Model.RefundBankName) &&
+                         !string.IsNullOrWhiteSpace(Model.RefundBankAccountNumber) &&
+                         !string.IsNullOrWhiteSpace(Model.RefundBankAccountHolder))
+                    {
+                        <div class="alert alert-warning small mt-3">
+                            <strong>Thông tin nhận hoàn (chỉ dùng để chuyển khoản):</strong><br />
+                            Ngân hàng: @Model.RefundBankName<br />
+                            Số tài khoản: @Model.RefundBankAccountNumber<br />
+                            Chủ tài khoản: @Model.RefundBankAccountHolder
                         </div>
-                        <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold shadow-sm">LƯU TRẠNG THÁI TIỀN</button>
-                    </form>
+                    }
+                    else if (Model.RefundStatus == "DetailsRequired" && Model.RefundAmount > 0)
+                    {
+                        <div class="alert alert-info small mt-3">Đang chờ khách xác minh đơn và gửi thông tin tài khoản trên trang tra cứu.</div>
+                    }
+                    @if ((Model.Status == "Cancelled" || Model.Status == "Expired") && Model.RefundStatus == "Pending")
+                    {
+                        <form asp-action="UpdateRefund" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-2">
+                                <select name="refundStatus" class="form-select">
+                                    <!option value="Pending" @(Model.RefundStatus == "Pending" ? "selected" : "")>Chờ hoàn thủ công</!option>
+                                    <!option value="Refunded" @(Model.RefundStatus == "Refunded" ? "selected" : "")>Đã hoàn thủ công</!option>
+                                </select>
+                            </div>
+                            <textarea name="notes" class="form-control mb-2" maxlength="500" placeholder="Mã giao dịch/ghi chú hoàn tiền">@Model.RefundNotes</textarea>
+                            <button type="submit" class="btn btn-outline-danger w-100">CẬP NHẬT HOÀN TIỀN</button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
@@ -153,6 +254,48 @@
                             </tfoot>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <div class="card detail-card mt-4">
+                <div class="card-header header-finance">
+                    <i class="bi bi-bank"></i> Lịch sử giao dịch SePay
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.SePayTransactions is IEnumerable<BAOCAOWEBNANGCAO.Models.SePayTransaction> transactions && transactions.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>SePay ID</th>
+                                        <th>Thời gian</th>
+                                        <th>Mã tham chiếu</th>
+                                        <th>Nội dung</th>
+                                        <th class="text-end">Số tiền</th>
+                                        <th>Đối soát</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transaction in transactions)
+                                    {
+                                        <tr>
+                                            <td>@transaction.SePayId</td>
+                                            <td>@transaction.TransactionDate</td>
+                                            <td>@transaction.ReferenceCode</td>
+                                            <td>@transaction.Content</td>
+                                            <td class="text-end">@transaction.TransferAmount.ToString("#,##0")₫</td>
+                                            <td>@(transaction.AppliedToOrder ? "Đã áp dụng" : "Chưa áp dụng")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Chưa có giao dịch SePay nào được ghi nhận cho đơn này.</p>
+                    }
                 </div>
             </div>
 

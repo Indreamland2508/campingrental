@@ -2,42 +2,55 @@
 
 @{
     ViewData["Title"] = "Thanh toán đơn hàng";
+    var qrUrl = ViewBag.PaymentQrUrl as string;
+    var transferContent = $"DH{Model.PublicOrderCode.Replace("-", string.Empty)}";
+    var amountToPay = (long)Math.Max(0, Model.DepositAmount - Model.AmountPaid);
 }
 
 <link rel="stylesheet" href="~/css/Cart.Payment.css" />
 
 <div class="container mt-5 text-center mb-5">
     <h2 class="font-serif fw-bold text-forest mb-2">Thanh toán tiền cọc.</h2>
-    <p class="fs-5 text-muted">Mã đơn hàng: <strong class="text-forest">#@Model.Id</strong></p>
+    <p class="fs-5 text-muted">Mã đơn hàng: <strong class="text-forest">@Model.PublicOrderCode</strong></p>
 
     <div class="card mx-auto shadow-lg border-0 mt-4" style="max-width: 500px; border-radius: 20px; overflow: hidden;">
         <div class="card-body p-4 p-md-5">
-            <h4 class="card-title font-serif fw-bold mb-3 text-forest">Quét mã QR để thanh toán</h4>
-            <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
-                Vui lòng dùng App Ngân hàng quét mã QR dưới đây. Trình duyệt sẽ <strong class="text-success">tự động chuyển trang</strong> ngay khi nhận được tiền cọc.
-            </p>
-
-            @{
-                string bankId = "MB"; // Thay bằng NH của bạn
-                string accountNo = "0982412582005"; // Thay Số TK
-                string accountName = "NGUYEN HOANG CHAU"; // Thay Tên
-                string transferContent = $"DH{Model.Id}";
-                long amountToPay = (long)Model.DepositAmount;
-                string qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact.png?amount={amountToPay}&addInfo={transferContent}&accountName={accountName}";
+            @if (!string.IsNullOrWhiteSpace(qrUrl))
+            {
+                <h4 class="card-title font-serif fw-bold mb-3 text-forest">Quét mã QR để thanh toán</h4>
+                <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                    Vui lòng dùng App Ngân hàng quét mã QR dưới đây. Trình duyệt sẽ <strong class="text-success">tự động chuyển trang</strong> ngay khi nhận được tiền cọc.
+                </p>
+            }
+            else
+            {
+                <h4 class="card-title font-serif fw-bold mb-3 text-forest">Chưa thể tạo mã thanh toán</h4>
+                <p class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
+                    Hệ thống chưa có thông tin tài khoản nhận tiền đã được xác nhận. Vui lòng liên hệ hỗ trợ trước khi thanh toán.
+                </p>
             }
 
-            <div class="bg-light p-3 rounded-4 mb-4 d-inline-block border border-light shadow-sm">
-                <img src="@qrUrl" alt="Mã QR" class="img-fluid rounded" style="max-width: 250px;" />
-            </div>
+            @if (!string.IsNullOrWhiteSpace(qrUrl))
+            {
+                <div class="bg-light p-3 rounded-4 mb-4 d-inline-block border border-light shadow-sm">
+                    <img src="@qrUrl" alt="Mã QR" class="img-fluid rounded" style="max-width: 250px;" />
+                </div>
 
-            <div class="d-flex justify-content-center align-items-center mb-4 pb-4 border-bottom">
-                <div class="spinner-border text-success spinner-border-sm me-2" role="status"></div>
-                <span class="text-success fw-bold" style="letter-spacing: 0.5px;">Hệ thống đang chờ thanh toán...</span>
-            </div>
+                <div class="d-flex justify-content-center align-items-center mb-4 pb-4 border-bottom">
+                    <div class="spinner-border text-success spinner-border-sm me-2" role="status"></div>
+                    <span class="text-success fw-bold" style="letter-spacing: 0.5px;">Hệ thống đang chờ thanh toán...</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-start" role="alert">
+                    QR thanh toán hiện chưa được cấu hình. Vui lòng liên hệ bộ phận hỗ trợ và không chuyển tiền vào tài khoản chưa được xác nhận.
+                </div>
+            }
 
             <div class="alert text-start border-0 shadow-sm" style="background-color: #fcfcfc; border-left: 4px solid #1a3a28 !important;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 1px;">Cần cọc (50%)</span>
+                    <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 1px;">Cần thanh toán để đủ cọc</span>
                     <strong class="text-danger fs-5">@amountToPay.ToString("N0") VNĐ</strong>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-2">
@@ -46,20 +59,23 @@
                 </div>
             </div>
 
-            <p class="small text-muted mt-3 mb-0 fst-italic">
-                <i class="bi bi-info-circle me-1"></i> Vui lòng nhập đúng nội dung chuyển khoản để hệ thống duyệt tự động.
-            </p>
+            @if (!string.IsNullOrWhiteSpace(qrUrl))
+            {
+                <p class="small text-muted mt-3 mb-0 fst-italic">
+                    <i class="bi bi-info-circle me-1"></i> Vui lòng nhập đúng nội dung chuyển khoản để hệ thống duyệt tự động.
+                </p>
+            }
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        var orderId = @Model.Id;
+        var orderCode = '@Model.PublicOrderCode';
 
         // Cứ 3 giây hỏi server 1 lần
         var checkInterval = setInterval(function () {
-            fetch('/Cart/CheckPaymentStatus?id=' + orderId)
+            fetch('/Cart/CheckPaymentStatus?code=' + encodeURIComponent(orderCode))
                 .then(response => response.json())
                 .then(data => {
                     // Nếu tiền đã vào (Cọc hoặc Trả đủ)
@@ -67,7 +83,7 @@
                         clearInterval(checkInterval); // Dừng hỏi
 
                         // ĐÂY CHÍNH LÀ LÚC CHUYỂN HƯỚNG TỰ ĐỘNG SANG TRANG SUCCESS!
-                        window.location.href = '/Cart/OrderSuccess/' + orderId;
+                        window.location.href = '/Cart/OrderSuccess?code=' + encodeURIComponent(orderCode);
                     }
                 })
                 .catch(error => console.error('Lỗi:', error));

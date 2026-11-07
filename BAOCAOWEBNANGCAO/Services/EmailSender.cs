@@ -4,43 +4,52 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace BAOCAOWEBNANGCAO.Services
 {
     public class EmailSender : IEmailSender
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<EmailSender> _logger;
+        private const string DefaultScriptUrl = "https://script.google.com/macros/s/AKfycbxw91rFj1M1KHaR4ox8vOMG3zqEVBs6cQBeVb9NyGNhpzaOS67SvsP966sJ8n4E-RaaNw/exec";
+
+        public EmailSender(
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ILogger<EmailSender> logger)
+        {
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _logger = logger;
+        }
+
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            try
+            var scriptUrl = _configuration["Email:GatewayUrl"] ?? DefaultScriptUrl;
+            if (!Uri.TryCreate(scriptUrl, UriKind.Absolute, out var gatewayUri) ||
+                gatewayUri.Scheme != Uri.UriSchemeHttps)
             {
-                var scriptUrl = "https://script.google.com/macros/s/AKfycbxw91rFj1M1KHaR4ox8vOMG3zqEVBs6cQBeVb9NyGNhpzaOS67SvsP966sJ8n4E-RaaNw/exec";
-
-                using var client = new HttpClient();
-
-                // Đóng gói bức thư
-                var payload = new
-                {
-                    to = email,
-                    subject = subject,
-                    htmlBody = htmlMessage
-                };
-
-                var jsonPayload = JsonSerializer.Serialize(payload);
-                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                // Bắn qua đường lướt web HTTPS (Render KHÔNG THỂ CHẶN)
-                var response = await client.PostAsync(scriptUrl, content);
-                var responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("KẾT QUẢ TỪ GOOGLE SCRIPT: " + responseString);
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("LỖI TỪ GOOGLE SCRIPT: " + await response.Content.ReadAsStringAsync());
-                }
+                throw new InvalidOperationException("The email gateway URL must be a valid HTTPS URL.");
             }
-            catch (Exception ex)
+
+            var payload = new
             {
-                Console.WriteLine("LỖI GỬI MAIL (HTTP): " + ex.Message);
-            }
+                to = email,
+                subject,
+                htmlBody = htmlMessage
+            };
+
+            using var content = new StringContent(
+                JsonSerializer.Serialize(payload),
+                Encoding.UTF8,
+                "application/json");
+            using var response = await _httpClientFactory.CreateClient(nameof(EmailSender))
+                .PostAsync(gatewayUri, content);
+            response.EnsureSuccessStatusCode();
+            _logger.LogInformation("Email gateway accepted a message.");
         }
     }
 }

@@ -1,6 +1,6 @@
 /* Đồng bộ Font và Màu sắc thương hiệu */
 .font-serif {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-family: var(--font-brand);
 }
 
 .text-forest {
